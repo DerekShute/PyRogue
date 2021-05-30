@@ -23,15 +23,14 @@ class Display:
         """Handler for 'with', returns Console instance"""
         tileset = tcod.tileset.load_tilesheet("assets/terminal16x16_gs_ro.png", 16, 16, tcod.tileset.CHARMAP_CP437)
         # TODO: tileset arguments based on file used.  We could probably break out an argument list if passed a name
-        
+
         self._context = tcod.context.new(columns=self._xsize, rows=self._ysize, tileset=tileset, title=self._title, vsync=True)
         self._console = tcod.Console(self._xsize, self._ysize, order="F")
         return self
 
     def __exit__(self, *args: Any):
         """Handler for 'with' closure"""
-        self._console.close()  # via tcod/console.py __exit__
-        self._console = None
+        # self._console only wants to be closed from the root console, so leave it alone
         self._context.close()  # via tcod/context.py __exit__
         self._context = None
 
@@ -49,10 +48,12 @@ class Display:
 
 if __name__=='__main__':
     import time
-    
+
     with Display(80, 25, title='unit test Display') as d:
         d.print(0, 0, 'made it')
         d.present()
-        time.sleep(10)
-    
+        time.sleep(2)
+
     print('*** Tests Passed ***')
+
+# EOF
