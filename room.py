@@ -1,3 +1,6 @@
+"""
+Simple rooms
+"""
 from position import Pos
 import random
 from typing import Tuple
