@@ -44,6 +44,10 @@ class Display:
         """Perform update"""
         self._context.present(self._console)
 
+    @property
+    def rgb(self):
+        return self._console.tiles_rgb
+
 # ===== Testing ===========================================
 
 if __name__=='__main__':
