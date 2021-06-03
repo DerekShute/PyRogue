@@ -7,17 +7,19 @@ Stolen liberally from tcod_tutorial_v2
 import tcod
 from typing import Any
 
+
 class Display:
     _title: str
     # TODO: Pos()
     _xsize: int
     _ysize: int
+    _console: tcod.Console
 
-    def __init__(self, xsize:int, ysize:int, title:str='<untitled project>'):
+    def __init__(self, xsize: int, ysize: int, title: str = '<untitled project>'):
         self._title = title
         self._xsize = xsize
         self._ysize = ysize
-        self._console:Console = None
+        self._console = None
 
     def __enter__(self):
         """Handler for 'with', returns Console instance"""
@@ -48,9 +50,10 @@ class Display:
     def rgb(self):
         return self._console.tiles_rgb
 
+
 # ===== Testing ===========================================
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import time
 
     with Display(80, 25, title='unit test Display') as d:
