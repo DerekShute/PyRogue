@@ -86,7 +86,7 @@ if __name__ == '__main__':
     def rectangle(x1: int, y1: int, x2: int, y2: int) -> Tuple[slice, slice]:
         return slice(x1, x2), slice(y1, y2)
 
-    with Display(80, 25, title = 'unit test Level') as d:
+    with Display(80, 25, title='unit test Level') as d:
         lvl = Level(80, 25, d)
         lvl.map.lit(rectangle(0, 0, 80, 25))
         lvl.map.explore(rectangle(0, 0, 80, 25))

@@ -41,7 +41,7 @@ class GameMap:
     def __init__(self, width: int, height: int, display: Display):
         self._display = display
         self.width, self.height = width, height
-        self.tiles = np.full((width, height), fill_value = _TILES[GameMap.WALL], order="F")
+        self.tiles = np.full((width, height), fill_value=_TILES[GameMap.WALL], order="F")
 
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
