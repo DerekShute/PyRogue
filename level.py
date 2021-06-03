@@ -80,13 +80,13 @@ class Level:
 
 # ===== TESTING ===========================================
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import time
 
-    def rectangle(x1:int, y1:int, x2:int, y2:int) -> Tuple[slice, slice]:
+    def rectangle(x1: int, y1: int, x2: int, y2: int) -> Tuple[slice, slice]:
         return slice(x1, x2), slice(y1, y2)
 
-    with Display(80, 25, title='unit test Level') as d:
+    with Display(80, 25, title = 'unit test Level') as d:
         lvl = Level(80, 25, d)
         lvl.map.lit(rectangle(0, 0, 80, 25))
         lvl.map.explore(rectangle(0, 0, 80, 25))
@@ -107,7 +107,7 @@ if __name__=='__main__':
         lvl.map.set_tile(Pos((20, 5)), GameMap.DOOR)
 
         lvl.render()
-        d.present() # TODO: not sure about this
+        d.present()   # TODO: not sure about this
         time.sleep(5)
         print(str(lvl))
         assert str(lvl) == 'Level : Room @(0,0)-@(7,7),Room @(1,12)-@(5,5),Room @(10,12)-@(7,7),Room @(40,10)-@(0,0),'

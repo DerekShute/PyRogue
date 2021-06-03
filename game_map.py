@@ -27,6 +27,7 @@ _TILES = {
     _DOOR: tile_types.door,
 }
 
+
 # ===== GameMap ===========================================
 
 class GameMap:
@@ -40,7 +41,7 @@ class GameMap:
     def __init__(self, width: int, height: int, display: Display):
         self._display = display
         self.width, self.height = width, height
-        self.tiles = np.full((width, height), fill_value=_TILES[GameMap.WALL], order="F")
+        self.tiles = np.full((width, height), fill_value = _TILES[GameMap.WALL], order="F")
 
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
@@ -91,20 +92,20 @@ class GameMap:
             t = self.tiles[p.x, p.y]['dark']
         self._display.rgb[p.x, p.y] = t
 
-    def lit(self, inner: Tuple[slice, slice], lit: bool=True):
+    def lit(self, inner: Tuple[slice, slice], lit: bool = True):
         """Set a region to lit / visible"""
         self.visible[inner] = lit
         self._display.rgb[inner] = np.select(
-            condlist = [self.visible[inner], self.explored[inner]],
-            choicelist = [self.tiles[inner]["light"], self.tiles[inner]["dark"]],
-            default = tile_types.SHROUD
+            condlist=[self.visible[inner], self.explored[inner]],
+            choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
+            default=tile_types.SHROUD
         )
 
     def lit_tile(self, p: Pos, lit: bool = True):
         self.visible[p.x, p.y] = lit
         # TODO: is it worth pushing it through?
 
-    def explore(self, inner: Tuple[slice, slice], known: bool=True):
+    def explore(self, inner: Tuple[slice, slice], known: bool = True):
         """Mark a region as player-discovered"""
         self.explored[inner] = known
         self._display.rgb[inner] = np.select(
@@ -113,20 +114,20 @@ class GameMap:
             default=tile_types.SHROUD
         )
 
-    def explore_tile(self, p: Pos, known: bool=True):
+    def explore_tile(self, p: Pos, known: bool = True):
         self.explored[p.x, p.y] = known
         # TODO: is it worth pushing it through?
 
 
 # ===== TESTING ===========================================
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import time
-    
+
     def rectangle(x1: int, y1: int, x2: int, y2: int) -> Tuple[slice, slice]:
         return slice(x1, x2), slice(y1, y2)
 
-    with Display(80,25,'testing GameMap') as d:
+    with Display(80, 25, 'testing GameMap') as d:
         m = GameMap(80, 25, d)
         m.set_tiles(rectangle(5, 5, 20, 20), GameMap.FLOOR)
         m.set_tile(Pos((8, 8)), GameMap.DOOR)
