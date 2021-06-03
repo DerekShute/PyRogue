@@ -15,7 +15,7 @@ class Display:
     _ysize: int
     _console: tcod.Console
 
-    def __init__(self, xsize: int, ysize: int, title: str='<untitled project>'):
+    def __init__(self, xsize: int, ysize: int, title: str = '<untitled project>'):
         self._title = title
         self._xsize = xsize
         self._ysize = ysize

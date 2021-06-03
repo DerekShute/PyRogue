@@ -4,6 +4,9 @@
 from __future__ import annotations
 from typing import Tuple
 
+
+# ===== Pos ===============================================
+
 class Pos:  # struct coord
     """
     A location or direction/distance
@@ -67,7 +70,7 @@ class Pos:  # struct coord
 # ===== TESTING ===========================================
 
 if __name__ == "__main__":
-    p = Pos((10,20))
+    p = Pos((10, 20))
     # print(p)
     assert str(p) == '@(10,20)'
     # print(Pos(p))

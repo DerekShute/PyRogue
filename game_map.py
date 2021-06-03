@@ -30,14 +30,14 @@ _TILES = {
 # ===== GameMap ===========================================
 
 class GameMap:
-    
-    # References for export.  Outside clients use GameMap.FLOOR
-    
-    FLOOR:int = _FLOOR
-    WALL:int = _WALL
-    DOOR:int = _DOOR
 
-    def __init__(self, width: int, height: int, display:Display):
+    # References for export.  Outside clients use GameMap.FLOOR
+
+    FLOOR: int = _FLOOR
+    WALL: int = _WALL
+    DOOR: int = _DOOR
+
+    def __init__(self, width: int, height: int, display: Display):
         self._display = display
         self.width, self.height = width, height
         self.tiles = np.full((width, height), fill_value=_TILES[GameMap.WALL], order="F")
@@ -57,7 +57,7 @@ class GameMap:
         If it isn't, but it's in the "explored" array, then draw it with the "dark" colors.
         Otherwise, the default is "SHROUD".
         """
-        
+
         # TODO: this needs to hold the topmost and hand the grid to the Display, which figures out colors and shapes
 
         self._display.rgb[0:self.width, 0:self.height] = np.select(
@@ -66,8 +66,8 @@ class GameMap:
             default=tile_types.SHROUD
         )
         # TODO : Entities
-    
-    def set_tiles(self, inner:Tuple[slice, slice], tile: int):
+
+    def set_tiles(self, inner: Tuple[slice, slice], tile: int):
         """
         Set the basics of the map: what is the underlying location?
         """
@@ -78,7 +78,7 @@ class GameMap:
             choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
             default=tile_types.SHROUD
         )
-        
+
     def set_tile(self, p: Pos, tile: int):
         """
         Set a single tile
@@ -91,20 +91,20 @@ class GameMap:
             t = self.tiles[p.x, p.y]['dark']
         self._display.rgb[p.x, p.y] = t
 
-    def lit(self, inner:Tuple[slice, slice], lit:bool=True):
+    def lit(self, inner: Tuple[slice, slice], lit: bool=True):
         """Set a region to lit / visible"""
         self.visible[inner] = lit
         self._display.rgb[inner] = np.select(
-            condlist=[self.visible[inner], self.explored[inner]],
-            choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
-            default=tile_types.SHROUD
+            condlist = [self.visible[inner], self.explored[inner]],
+            choicelist = [self.tiles[inner]["light"], self.tiles[inner]["dark"]],
+            default = tile_types.SHROUD
         )
-    
-    def lit_tile(self, p:Pos, lit:bool=True):
+
+    def lit_tile(self, p: Pos, lit: bool = True):
         self.visible[p.x, p.y] = lit
         # TODO: is it worth pushing it through?
-        
-    def explore(self, inner:Tuple[slice, slice], known:bool=True):
+
+    def explore(self, inner: Tuple[slice, slice], known: bool=True):
         """Mark a region as player-discovered"""
         self.explored[inner] = known
         self._display.rgb[inner] = np.select(
@@ -113,15 +113,17 @@ class GameMap:
             default=tile_types.SHROUD
         )
 
-    def explore_tile(self, p: Pos, known:bool=True):
+    def explore_tile(self, p: Pos, known: bool=True):
         self.explored[p.x, p.y] = known
         # TODO: is it worth pushing it through?
 
+
 # ===== TESTING ===========================================
+
 if __name__=='__main__':
     import time
     
-    def rectangle(x1:int, y1:int, x2:int, y2:int) -> Tuple[slice, slice]:
+    def rectangle(x1: int, y1: int, x2: int, y2: int) -> Tuple[slice, slice]:
         return slice(x1, x2), slice(y1, y2)
 
     with Display(80,25,'testing GameMap') as d:
@@ -135,13 +137,12 @@ if __name__=='__main__':
         time.sleep(2)
         m.lit(rectangle(0, 0, 10, 25), False)
         d.present()
-        
+
         time.sleep(2)
         m.explore(rectangle(5, 5, 20, 20), False)
         d.present()
         time.sleep(2)
-        
+
     print('*** Tests Passed ***')
 
 # EOF
-
