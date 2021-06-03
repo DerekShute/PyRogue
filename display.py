@@ -5,19 +5,23 @@ Stolen liberally from tcod_tutorial_v2
 """
 
 import tcod
-from typing import Any
+from typing import Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from tcod import Console
 
 class Display:
     _title: str
     # TODO: Pos()
     _xsize: int
     _ysize: int
+    _console: tcod.Console
 
     def __init__(self, xsize:int, ysize:int, title:str='<untitled project>'):
         self._title = title
         self._xsize = xsize
         self._ysize = ysize
-        self._console:Console = None
+        self._console = None
 
     def __enter__(self):
         """Handler for 'with', returns Console instance"""
