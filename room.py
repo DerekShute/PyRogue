@@ -36,6 +36,8 @@ class Room:  # struct room
 
     @property
     def max_x(self) -> int:
+        if self._max.x == 0:
+            return self._pos.x  # Math becomes weird
         return self._pos.x + self._max.x - 1
 
     @property
@@ -44,6 +46,8 @@ class Room:  # struct room
 
     @property
     def max_y(self) -> int:
+        if self._max.y == 0:
+            return self._pos.y  # Math becomes weird
         return self._pos.y + self._max.y - 1
 
     @property

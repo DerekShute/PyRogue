@@ -8,7 +8,7 @@ from room import Room
 from game_map import GameMap
 from display import Display
 from position import Pos
-from typing import List, Tuple, Iterator
+from typing import Dict, Tuple, Iterator
 import tcod
 
 
@@ -44,25 +44,25 @@ def tunnel_between(start: Pos, end: Pos, going_south=bool) -> Iterator[Pos]:
 
 class Level:
     map: GameMap
-    rooms: List[Room]
+    rooms: Dict[int, Room]
 
     def __init__(self, width: int, height: int, display: Display):
         """
         An empty level
         """
         self.map = GameMap(width, height, display)
-        self.rooms = []
+        self.rooms = {}  # So we can insert exactly.  Just easier this way
 
     def __str__(self):
         s = 'Level : '
-        for r in self.rooms:
-            s = s + str(r) + ','
+        for i, r in self.rooms.items():
+            s = s + '(' + str(i) + ')' + str(r) + ','
         return s
 
     # ===== Interface =====================================
 
     def add_room(self, i: int, r: Room):
-        self.rooms.insert(i, r)
+        self.rooms[i] = r
         self.map.set_tiles(r.shadow(), GameMap.FLOOR)
 
     def add_passage(self, start_pos: Pos, end_pos: Pos, going_south: bool):
@@ -109,8 +109,8 @@ if __name__ == '__main__':
         lvl.render()
         d.present()   # TODO: not sure about this
         time.sleep(5)
-        print(str(lvl))
-        assert str(lvl) == 'Level : Room @(0,0)-@(7,7),Room @(1,12)-@(5,5),Room @(10,12)-@(7,7),Room @(40,10)-@(0,0),'
+        # print(str(lvl))
+        assert str(lvl) == 'Level : (0)Room @(0,0)-@(7,7),(1)Room @(1,12)-@(5,5),(2)Room @(10,12)-@(7,7),(3)Room @(40,10)-@(0,0),'
 
     print('*** Tests Passed ***')
 
