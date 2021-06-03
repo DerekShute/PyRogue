@@ -5,10 +5,8 @@ Stolen liberally from tcod_tutorial_v2
 """
 
 import tcod
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
-if TYPE_CHECKING:
-    from tcod import Console
 
 class Display:
     _title: str
@@ -17,7 +15,7 @@ class Display:
     _ysize: int
     _console: tcod.Console
 
-    def __init__(self, xsize:int, ysize:int, title:str='<untitled project>'):
+    def __init__(self, xsize: int, ysize: int, title: str='<untitled project>'):
         self._title = title
         self._xsize = xsize
         self._ysize = ysize
@@ -52,9 +50,10 @@ class Display:
     def rgb(self):
         return self._console.tiles_rgb
 
+
 # ===== Testing ===========================================
 
-if __name__=='__main__':
+if __name__ == '__main__':
     import time
 
     with Display(80, 25, title='unit test Display') as d:

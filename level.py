@@ -11,6 +11,7 @@ from position import Pos
 from typing import List, Tuple, Iterator
 import tcod
 
+
 # ===== Service Routines ==================================
 
 def tunnel_between(start: Pos, end: Pos, going_south=bool) -> Iterator[Pos]:
@@ -38,19 +39,20 @@ def tunnel_between(start: Pos, end: Pos, going_south=bool) -> Iterator[Pos]:
     for x, y in tcod.los.bresenham(stop2, end).tolist():
         yield Pos((x, y))
 
+
 # ===== Level of dungeon ==================================
 
 class Level:
     map: GameMap
     rooms: List[Room]
-    
-    def __init__(self, width:int, height:int, display:Display):
+
+    def __init__(self, width: int, height: int, display: Display):
         """
         An empty level
         """
         self.map = GameMap(width, height, display)
         self.rooms = []
-        
+
     def __str__(self):
         s = 'Level : '
         for r in self.rooms:
@@ -58,15 +60,15 @@ class Level:
         return s
 
     # ===== Interface =====================================
-    
-    def add_room(self, i:int, r:Room):
+
+    def add_room(self, i: int, r: Room):
         self.rooms.insert(i, r)
         self.map.set_tiles(r.shadow(), GameMap.FLOOR)
-      
-    def add_passage(self, start_pos:Pos, end_pos:Pos, going_south:bool):
+
+    def add_passage(self, start_pos: Pos, end_pos: Pos, going_south: bool):
         """
         Create a double-bend passage between two points (which are included)
-        
+
         Note: needs 3 spaces vertical or horizontal clearance in order to remain sane
         """
         for p in tunnel_between(start_pos, end_pos, going_south):
@@ -74,6 +76,7 @@ class Level:
 
     def render(self):
         self.map.render()
+
 
 # ===== TESTING ===========================================
 
@@ -88,7 +91,7 @@ if __name__=='__main__':
         l.map.lit(rectangle(0, 0, 80, 25))
         l.map.explore(rectangle(0, 0, 80, 25))
         
-        l.add_room(0, Room(Pos((0,0)), Pos((7,7))))
+        l.add_room(0, Room(Pos((0, 0)), Pos((7, 7))))
         l.add_room(1, Room(Pos((1, 12)), Pos((5, 5))))
         l.add_room(2, Room(Pos((10, 12)), Pos((7, 7))))
         l.add_room(3, Room(Pos((40, 10)), Pos((0, 0))))    # "gone" room should not be drawn

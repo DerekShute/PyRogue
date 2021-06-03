@@ -1,6 +1,7 @@
 """
-The map is the grid that sits on top of the display.  Eventually we'd be able to have a map larger than the display: You'd see only
-a fraction of it in the display.
+The map is the grid that sits on top of the display.  Eventually we'd be able
+to have a map larger than the display: You'd see only a fraction of it in the
+display.
 
 From tcod_tutorial_v2
 """
@@ -21,10 +22,12 @@ _DOOR = 2
 # Internal reference to equate GameMap.FLOOR with tile_types.floor, which needs be known by nobody
 
 _TILES = {
-    _FLOOR : tile_types.floor,
-    _WALL : tile_types.wall,
-    _DOOR : tile_types.door,
+    _FLOOR: tile_types.floor,
+    _WALL: tile_types.wall,
+    _DOOR: tile_types.door,
 }
+
+# ===== GameMap ===========================================
 
 class GameMap:
     
