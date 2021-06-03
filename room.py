@@ -5,10 +5,14 @@ from position import Pos
 import random
 from typing import Tuple
 
-def rectangle(p1:Pos, p2:Pos) -> Tuple[slice, slice]:
+
+def rectangle(p1: Pos, p2: Pos) -> Tuple[slice, slice]:
+    """Simple rectangle inclusive of p1 and p2"""
     return slice(p1.x, p2.x), slice(p1.y, p2.y)
 
+
 # ===== Room ==============================================
+
 class Room:  # struct room
     """
     Room Structure
@@ -25,25 +29,25 @@ class Room:  # struct room
         return 'Room {}-{}'.format(self._pos, self._max)
 
     # ===== Interface routines ============================
-    
+
     @property
     def x(self) -> int:
         return self._pos.x
-    
+
     @property
     def max_x(self) -> int:
         return self._pos.x + self._max.x - 1
-    
+
     @property
     def y(self) -> int:
         return self._pos.y
-    
+
     @property
     def max_y(self) -> int:
         return self._pos.y + self._max.y - 1
-    
+
     @property
-    def xy(self) -> Tuple[int,int]:
+    def xy(self) -> Tuple[int, int]:
         return self._pos.xy
 
     @property
@@ -56,7 +60,7 @@ class Room:  # struct room
     @property
     def pos(self) -> Pos:
         return Pos(self._pos)
-    
+
     @property
     def max_pos(self) -> Pos:
         return Pos((self._pos.x + self._max.x, self._pos.y + self._max.y))
@@ -72,10 +76,11 @@ class Room:  # struct room
     def shadow(self):
         """Return the inner area of this room as a 2D array index."""
         return rectangle(self._pos, self.max_pos)
-        
+
+
 # ===== UNIT TEST =========================================
 if __name__ == '__main__':
-    r = Room(Pos((0,0)), Pos((10,20)))
+    r = Room(Pos((0, 0)), Pos((10, 20)))
     # print(r.center.x)
     assert r.center.x == 4
     # print(r.center.y)
@@ -89,6 +94,6 @@ if __name__ == '__main__':
     assert p.y > r.y
     assert p.y < r.max_y
     assert str(r.shadow()) == '(slice(0, 10, None), slice(0, 20, None))'
-    
+
     print('*** Tests passed ***')
 # EOF
