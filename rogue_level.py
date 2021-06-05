@@ -7,6 +7,7 @@ import math
 from position import Pos
 from room import Room
 from level import Level
+from item import Gold
 from display import Display
 from typing import Tuple
 
@@ -110,7 +111,7 @@ def connect_rooms(level: Level, r1: int, r2: int):
 
 # ==== Manufactury ========================================
 
-def room_factory(roomno: int, gone: bool = False):  # do_rooms()
+def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  # do_rooms()
     """
     We divide the screen into a 3x3 box and the room number defines
     which box it fits into
@@ -147,7 +148,12 @@ def room_factory(roomno: int, gone: bool = False):  # do_rooms()
                top.y + rand(1, BLOCK_Y_SIZE - size.y - 2)))
     r = Room(pos, size)
 
-    # TODO: Put the gold in
+    # Put the gold in
+    # TODO: if not amulet and max_level calc
+
+    if rand(0, 2) == 0:  # I think that rnd(2) is 0..2
+        gold = Gold(pos=r.rnd_pos, val=rand(2, 50 + 10 * levelno))
+        level.add_item(gold)
 
     # TODO: Put the monster in
 
@@ -220,7 +226,7 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display) -> Level
     """
     # "dig and populate all the rooms on this level"
 
-    lvl = Level(width, height, display)
+    level = Level(width, height, display)
 
     # TODO: do_rooms()
 
@@ -234,12 +240,13 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display) -> Level
 
     i = 0
     while i < MAXROOMS:
-        lvl.add_room(_ROOMLIST[i], room_factory(_ROOMLIST[i], i < limit))
+        room = room_factory(level, levelno, _ROOMLIST[i], i < limit)
+        level.add_room(_ROOMLIST[i], room)
         i = i + 1
 
     # Draw passages
 
-    do_passages(lvl)
+    do_passages(level)
 
     # TODO: no_food++
     # TODO: put_things()
@@ -248,11 +255,11 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display) -> Level
 
     # Place the staircase down
 
-    lvl.add_stairs(random.choice([x for _, x in lvl.rooms.items() if x.max_y != x.y]).rnd_pos)
+    level.add_stairs(random.choice([x for _, x in level.rooms.items() if x.max_y != x.y]).rnd_pos)
 
     # TODO: enter_room(&hero) - pick a starting location
 
-    return lvl
+    return level
 
 
 # ===== TESTING ===========================================

@@ -8,6 +8,7 @@ from room import Room
 from game_map import GameMap
 from display import Display
 from position import Pos
+from item import Item
 from typing import Dict, Tuple, Iterator, List
 import tcod
 
@@ -47,6 +48,7 @@ class Level:
     rooms: Dict[int, Room]
     stairs: List[Pos]  # TODO (eventually) "features" ?
     doors: List[Pos]
+    items: List[Tuple[Pos, Item]]
 
     def __init__(self, width: int, height: int, display: Display):
         """
@@ -56,6 +58,7 @@ class Level:
         self.rooms = {}  # So we can insert exactly.  Just easier this way
         self.stairs = []
         self.doors = []
+        self.items = []
 
     def __str__(self):
         s = 'Level : Rooms('
@@ -70,8 +73,12 @@ class Level:
         ds = ''
         for door in self.doors:
             ds = ds + f'{door},'
-        s = s + ds + '),'  # Doors(...)
-        s = s + ')'  # Closes Rooms(...)
+        s = s + ds + '),Items('  # Closes Doors(...)
+        i_s = ''
+        for item in self.items:
+            i_s = i_s + f'{item},'
+        s = s + i_s + '),'  # Items(...)
+        s = s + ')'
         return s
 
     # ===== Interface =====================================
@@ -97,8 +104,18 @@ class Level:
         for p in tunnel_between(start_pos, end_pos, going_south):
             self.map.set_tile(p, GameMap.FLOOR)
 
+    def add_item(self, item: Item):
+        """Add an item to the level/map"""
+        self.items.append(item)
+        # TODO: render?
+
     def render(self):
         self.map.render()
+
+        # TODO: tutorial attaches this to GameMap and adds the clause for visibility
+        # TODO: ordering - entity, item, tile
+        for item in self.items:
+            self.map.set_char(item.pos, item.char, item.color)
 
 
 # ===== TESTING ===========================================
@@ -129,6 +146,7 @@ if __name__ == '__main__':
         lvl.add_passage(Pos((11, 5)), Pos((20, 5)), False)   # (gone) to (gone) straight line
         lvl.add_door(Pos((20, 5)))
         lvl.add_stairs(Pos((5, 5)))
+        # TODO: items
         lvl.render()
         d.present()   # TODO: not sure about this
         time.sleep(5)
@@ -140,8 +158,9 @@ if __name__ == '__main__':
                '(3 : Room @(40,10)-@(0,0)),' \
                '),' \
                'Stairs(@(5,5),),' \
-               'Doors(@(3,7),@(4,11),@(7,3),@(9,15),@(15,11),@(20,5),)' \
-               ',)'
+               'Doors(@(3,7),@(4,11),@(7,3),@(9,15),@(15,11),@(20,5),),' \
+               'Items(),' \
+               ')'
     print('*** Tests Passed ***')
 
 # EOF
