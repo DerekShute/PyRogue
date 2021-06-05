@@ -18,6 +18,7 @@ import tile_types
 _FLOOR = 0
 _WALL = 1
 _DOOR = 2
+_STAIRS = 3
 
 # Internal reference to equate GameMap.FLOOR with tile_types.floor, which needs be known by nobody
 
@@ -25,6 +26,7 @@ _TILES = {
     _FLOOR: tile_types.floor,
     _WALL: tile_types.wall,
     _DOOR: tile_types.door,
+    _STAIRS: tile_types.down_stairs,
 }
 
 
@@ -37,6 +39,7 @@ class GameMap:
     FLOOR: int = _FLOOR
     WALL: int = _WALL
     DOOR: int = _DOOR
+    STAIRS: int = _STAIRS
 
     def __init__(self, width: int, height: int, display: Display):
         self._display = display
@@ -131,6 +134,7 @@ if __name__ == '__main__':
         m = GameMap(80, 25, d)
         m.set_tiles(rectangle(5, 5, 20, 20), GameMap.FLOOR)
         m.set_tile(Pos((8, 8)), GameMap.DOOR)
+        m.set_tile(Pos((6, 6)), GameMap.STAIRS)
         m.lit(rectangle(0, 0, 10, 25), True)
         # NOTE: lit but not explored is odd
         m.explore(rectangle(0, 0, 40, 10), True)

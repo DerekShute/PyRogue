@@ -37,8 +37,14 @@ def new_tile(
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
 
 
+# TODO: BLACK / WHITE
+
 # SHROUD represents unexplored, unseen tiles
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
+
+# TODO: floor light background / dark background as constant
+# TODO: wall light background / dark background as constant
+# TODO: darken()
 
 floor = new_tile(
     walkable=True,
@@ -58,5 +64,10 @@ door = new_tile(
     dark=(ord("+"), (150, 150, 150), (0, 0, 105)),
     light=(ord("+"), (255, 255, 255), (175, 150, 75)),
 )
-
+down_stairs = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(">"), (150, 150, 150), (50, 50, 150)),
+    light=(ord(">"), (255, 255, 255), (200, 180, 50)),
+)
 # EOF
