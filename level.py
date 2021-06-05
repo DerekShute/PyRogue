@@ -8,7 +8,7 @@ from room import Room
 from game_map import GameMap
 from display import Display
 from position import Pos
-from typing import Dict, Tuple, Iterator
+from typing import Dict, Tuple, Iterator, List
 import tcod
 
 
@@ -45,6 +45,7 @@ def tunnel_between(start: Pos, end: Pos, going_south=bool) -> Iterator[Pos]:
 class Level:
     map: GameMap
     rooms: Dict[int, Room]
+    stairs: List[Pos]
 
     def __init__(self, width: int, height: int, display: Display):
         """
@@ -52,11 +53,18 @@ class Level:
         """
         self.map = GameMap(width, height, display)
         self.rooms = {}  # So we can insert exactly.  Just easier this way
+        self.stairs = []
 
     def __str__(self):
-        s = 'Level : '
+        s = 'Level : Rooms('
+        rs = ''
         for i, r in self.rooms.items():
-            s = s + '(' + str(i) + ')' + str(r) + ','
+            rs = rs + f'({i} : {r}),'
+        s = s + rs + '), Stairs('
+        ss = ''
+        for stair in self.stairs:
+            ss = ss + f'{stair},'
+        s = s + ss + '),'
         return s
 
     # ===== Interface =====================================
@@ -64,6 +72,10 @@ class Level:
     def add_room(self, i: int, r: Room):
         self.rooms[i] = r
         self.map.set_tiles(r.shadow(), GameMap.FLOOR)
+
+    def add_stairs(self, pos: Pos):
+        self.stairs.append(pos)
+        self.map.set_tile(pos, GameMap.STAIRS)
 
     def add_passage(self, start_pos: Pos, end_pos: Pos, going_south: bool):
         """
@@ -105,12 +117,12 @@ if __name__ == '__main__':
         lvl.map.set_tile(Pos((15, 11)), GameMap.DOOR)
         lvl.add_passage(Pos((11, 5)), Pos((20, 5)), False)   # (gone) to (gone) straight line
         lvl.map.set_tile(Pos((20, 5)), GameMap.DOOR)
-
+        lvl.add_stairs(Pos((5, 5)))
         lvl.render()
         d.present()   # TODO: not sure about this
         time.sleep(5)
-        # print(str(lvl))
-        assert str(lvl) == 'Level : (0)Room @(0,0)-@(7,7),(1)Room @(1,12)-@(5,5),(2)Room @(10,12)-@(7,7),(3)Room @(40,10)-@(0,0),'
+        print(str(lvl))
+        assert str(lvl) == 'Level : Rooms((0 : Room @(0,0)-@(7,7)),(1 : Room @(1,12)-@(5,5)),(2 : Room @(10,12)-@(7,7)),(3 : Room @(40,10)-@(0,0)),), Stairs(@(5,5),),'
 
     print('*** Tests Passed ***')
 

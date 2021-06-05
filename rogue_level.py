@@ -158,7 +158,7 @@ def do_passages(level):
     """Connect rooms with tunnels"""
 
     connected = [[False for i in range(MAXROOMS)] for j in range(MAXROOMS)]
-    # connected[i][j] == True means connection exists from i to j (presumably the reverse)
+    # connected[i][j] == True => connection exists from i to j
     ingraph = []
 
     # starting with one room, connect it to a random adjacent room and
@@ -171,7 +171,9 @@ def do_passages(level):
         # find a room to connect with
         i = 0
         r2 = -1
-        candidates = [x for x in range(len(level.rooms)) if adjacent(r1, x) if x not in ingraph]
+        candidates = [
+            x for x in range(len(level.rooms)) if adjacent(r1, x) if x not in ingraph
+            ]
         if candidates == []:
             # if no adjacent rooms are outside the graph, pick a new room
             # to look from
@@ -245,7 +247,9 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display) -> Level
 
     # TODO: place the traps --- this is in passages?
 
-    # TODO: Place the staircase down
+    # Place the staircase down
+
+    lvl.add_stairs(random.choice([x for _, x in lvl.rooms.items() if x.max_y != x.y]).rnd_pos)
 
     # TODO: enter_room(&hero) - pick a starting location
 
