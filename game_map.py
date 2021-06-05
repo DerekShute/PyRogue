@@ -133,7 +133,7 @@ if __name__ == '__main__':
     with Display(80, 25, 'testing GameMap') as d:
         m = GameMap(80, 25, d)
         m.set_tiles(rectangle(5, 5, 20, 20), GameMap.FLOOR)
-        m.set_tile(Pos((8, 8)), GameMap.DOOR)
+        m.set_tile(Pos((4, 5)), GameMap.DOOR)
         m.set_tile(Pos((6, 6)), GameMap.STAIRS)
         m.lit(rectangle(0, 0, 10, 25), True)
         # NOTE: lit but not explored is odd

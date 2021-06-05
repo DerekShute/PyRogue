@@ -36,6 +36,8 @@ def new_tile(
     """Helper function for defining individual tile types """
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
 
+def darken_color(color: Tuple[int, int, int]) -> Tuple[int, int, int]:
+    return [sum(x) for x in zip(color, (-100, -100, -100))]
 
 # TODO: BLACK / WHITE
 
@@ -45,29 +47,40 @@ SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 # TODO: floor light background / dark background as constant
 # TODO: wall light background / dark background as constant
 # TODO: darken()
+FEATURE_LIGHT = (255, 255, 255)  # White
+FEATURE_DARK = darken_color(FEATURE_LIGHT)  # Gray
+FLOOR_LIGHT = (200, 180, 50)
+WALL_LIGHT = (130, 100, 50)
+
+DOOR_CHAR = ord("+")
+STAIR_CHAR = ord(">")
+SPACE_CHAR = ord(" ")
 
 floor = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
-    light=(ord(" "), (255, 255, 255), (200, 180, 50)),
+    dark=(SPACE_CHAR, (255, 255, 255), darken_color(FLOOR_LIGHT)),
+    light=(SPACE_CHAR, (255, 255, 255), FLOOR_LIGHT),
 )
+
 wall = new_tile(
     walkable=False,
     transparent=False,
-    dark=(ord(" "), (255, 255, 255), (0, 0, 100)),
-    light=(ord(" "), (255, 255, 255), (130, 110, 50)),
+    dark=(SPACE_CHAR, (255, 255, 255), darken_color(WALL_LIGHT)),
+    light=(SPACE_CHAR, (255, 255, 255), WALL_LIGHT),
 )
+
 door = new_tile(
     walkable=False,
     transparent=False,
-    dark=(ord("+"), (150, 150, 150), (0, 0, 105)),
-    light=(ord("+"), (255, 255, 255), (175, 150, 75)),
+    dark=(DOOR_CHAR, FEATURE_DARK, darken_color(WALL_LIGHT)),
+    light=(DOOR_CHAR, FEATURE_LIGHT, WALL_LIGHT),
 )
+
 down_stairs = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(">"), (150, 150, 150), (50, 50, 150)),
-    light=(ord(">"), (255, 255, 255), (200, 180, 50)),
+    dark=(STAIR_CHAR, FEATURE_DARK, darken_color(FLOOR_LIGHT)),
+    light=(STAIR_CHAR, FEATURE_LIGHT, FLOOR_LIGHT),
 )
 # EOF
