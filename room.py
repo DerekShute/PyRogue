@@ -72,10 +72,9 @@ class Room:  # struct room
     @property
     def rnd_pos(self) -> Pos:
         """
-        Pick a random spot in a room
+        Pick a random spot in a room.  Inclusive of border edges
         """
-        return Pos((random.randint(self.x, self.max_x - 2) + 1,
-                    random.randint(self.y, self.max_y - 2) + 1))
+        return Pos((random.randint(self.x, self.max_x), random.randint(self.y, self.max_y)))
 
     def shadow(self):
         """Return the inner area of this room as a 2D array index."""
@@ -85,18 +84,8 @@ class Room:  # struct room
 # ===== UNIT TEST =========================================
 if __name__ == '__main__':
     r = Room(Pos((0, 0)), Pos((10, 20)))
-    # print(r.center.x)
-    assert r.center.x == 4
-    # print(r.center.y)
-    assert r.center.y == 9
     assert str(r) == 'Room @(0,0)-@(10,20)'
-    p = r.rnd_pos
-    # print(p)
     assert str(r.max_pos) == '@(10,20)'
-    assert p.x > r.x
-    assert p.x < r.max_x
-    assert p.y > r.y
-    assert p.y < r.max_y
     assert str(r.shadow()) == '(slice(0, 10, None), slice(0, 20, None))'
 
     print('*** Tests passed ***')
