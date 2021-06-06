@@ -55,6 +55,7 @@ class TestRoom(unittest.TestCase):
         assert p == Pos((9, 19))
         self.assertTrue(True)
 
+
 # ===== Invocation ========================================
 
 if __name__ == '__main__':
