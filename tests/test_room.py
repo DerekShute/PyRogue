@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch
+import pyrogue
 from pyrogue.room import Room
 from pyrogue.position import Pos
 

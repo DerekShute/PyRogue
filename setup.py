@@ -2,5 +2,7 @@ from setuptools import setup
 
 setup(
 	name='Pyrogue',
-	packages=['pyrogue', ],
+	packages=['pyrogue', find_packages() ],
 )
+
+# EOF
