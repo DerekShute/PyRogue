@@ -5,7 +5,6 @@ Create a Rogue-style level
 import random
 import math
 from position import Pos
-from game_map import GameMap
 from room import Room
 from level import Level
 from display import Display
@@ -104,9 +103,9 @@ def connect_rooms(level: Level, r1: int, r2: int):
 
     level.add_passage(start_pos, end_pos, going_south)
     if not r1_gone:
-        level.map.set_tile(start_pos, GameMap.DOOR)
+        level.add_door(start_pos)
     if not r2_gone:
-        level.map.set_tile(end_pos, GameMap.DOOR)
+        level.add_door(end_pos)
 
 
 # ==== Manufactury ========================================

@@ -45,7 +45,8 @@ def tunnel_between(start: Pos, end: Pos, going_south=bool) -> Iterator[Pos]:
 class Level:
     map: GameMap
     rooms: Dict[int, Room]
-    stairs: List[Pos]
+    stairs: List[Pos]  # TODO (eventually) "features" ?
+    doors: List[Pos]
 
     def __init__(self, width: int, height: int, display: Display):
         """
@@ -54,17 +55,23 @@ class Level:
         self.map = GameMap(width, height, display)
         self.rooms = {}  # So we can insert exactly.  Just easier this way
         self.stairs = []
+        self.doors = []
 
     def __str__(self):
         s = 'Level : Rooms('
         rs = ''
         for i, r in self.rooms.items():
             rs = rs + f'({i} : {r}),'
-        s = s + rs + '), Stairs('
+        s = s + rs + '),Stairs('
         ss = ''
         for stair in self.stairs:
             ss = ss + f'{stair},'
-        s = s + ss + '),'
+        s = s + ss + '),Doors('
+        ds = ''
+        for door in self.doors:
+            ds = ds + f'{door},'
+        s = s + ds + '),'  # Doors(...)
+        s = s + ')'  # Closes Rooms(...)
         return s
 
     # ===== Interface =====================================
@@ -76,6 +83,10 @@ class Level:
     def add_stairs(self, pos: Pos):
         self.stairs.append(pos)
         self.map.set_tile(pos, GameMap.STAIRS)
+
+    def add_door(self, pos: Pos):
+        self.doors.append(pos)
+        self.map.set_tile(pos, GameMap.DOOR)
 
     def add_passage(self, start_pos: Pos, end_pos: Pos, going_south: bool):
         """
@@ -108,22 +119,29 @@ if __name__ == '__main__':
         lvl.add_room(2, Room(Pos((10, 12)), Pos((7, 7))))
         lvl.add_room(3, Room(Pos((40, 10)), Pos((0, 0))))    # "gone" room should not be drawn
         lvl.add_passage(Pos((3, 7)), Pos((4, 11)), True)     # 0 to 1
-        lvl.map.set_tile(Pos((3, 7)), GameMap.DOOR)
-        lvl.map.set_tile(Pos((4, 11)), GameMap.DOOR)
+        lvl.add_door(Pos((3, 7)))
+        lvl.add_door(Pos((4, 11)))
         lvl.add_passage(Pos((7, 3)), Pos((9, 15)), False)    # 0 to 2
-        lvl.map.set_tile(Pos((7, 3)), GameMap.DOOR)
-        lvl.map.set_tile(Pos((9, 15)), GameMap.DOOR)
+        lvl.add_door(Pos((7, 3)))
+        lvl.add_door(Pos((9, 15)))
         lvl.add_passage(Pos((11, 5)), Pos((15, 11)), True)   # (gone) to 1
-        lvl.map.set_tile(Pos((15, 11)), GameMap.DOOR)
+        lvl.add_door(Pos((15, 11)))
         lvl.add_passage(Pos((11, 5)), Pos((20, 5)), False)   # (gone) to (gone) straight line
-        lvl.map.set_tile(Pos((20, 5)), GameMap.DOOR)
+        lvl.add_door(Pos((20, 5)))
         lvl.add_stairs(Pos((5, 5)))
         lvl.render()
         d.present()   # TODO: not sure about this
         time.sleep(5)
-        print(str(lvl))
-        assert str(lvl) == 'Level : Rooms((0 : Room @(0,0)-@(7,7)),(1 : Room @(1,12)-@(5,5)),(2 : Room @(10,12)-@(7,7)),(3 : Room @(40,10)-@(0,0)),), Stairs(@(5,5),),'
-
+        # print(str(lvl))
+        assert str(lvl) == 'Level : Rooms(' \
+               '(0 : Room @(0,0)-@(7,7)),' \
+               '(1 : Room @(1,12)-@(5,5)),' \
+               '(2 : Room @(10,12)-@(7,7)),' \
+               '(3 : Room @(40,10)-@(0,0)),' \
+               '),' \
+               'Stairs(@(5,5),),' \
+               'Doors(@(3,7),@(4,11),@(7,3),@(9,15),@(15,11),@(20,5),)' \
+               ',)'
     print('*** Tests Passed ***')
 
 # EOF
