@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
-from room import Room
-from position import Pos
+from pyrogue.room import Room
+from pyrogue.position import Pos
 
 
 # ===== Service Routines ==================================
