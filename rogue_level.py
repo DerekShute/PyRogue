@@ -113,7 +113,7 @@ def connect_rooms(level: Level, r1: int, r2: int):
 def randmonster(levelno: int, wander: bool) -> int:
     """
     Pick a monster to show up.  The lower (deeper) the level the meaner the monster.
-    
+
     Returns the ord of the monster's character ID
     """
 

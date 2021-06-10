@@ -17,7 +17,7 @@ MONSTER_TEMPLATES = (
     'name=centaur carry=15 exp=17 lvl=4 armor=4 dmg=1x2/1x5/1x5',
     'name=dragon carry=100 flags=mean exp=5000 lvl=10 armor=-1 dmg=1x8/1x8/3x10',
     'name=emu flags=mean exp=2 lvl=1 armor=7 dmg=1x2',
-    'name=venus_flytrap flags=mean exp=80 lvl=8 armor=3 dmg=%%%x0', # TODO xstr in comment?
+    'name=venus_flytrap flags=mean exp=80 lvl=8 armor=3 dmg=%%%x0',  # TODO xstr in comment?
     'name=griffin carry=20 flags=mean_fly_regenerate exp=2000 lvl=13 armor=2 dmg=4x3/3x5',
     'name=hobgoblin flags=mean exp=3 lvl=1 armor=1 dmg=1x8',
     'name=ice_monster exp=5 lvl=1 armor=8 dmg=0x0',
@@ -32,7 +32,7 @@ MONSTER_TEMPLATES = (
     'name=rattlesnake flags=mean exp=9 lvl=2 armor=3 dmg=1x6',
     'name=snake flags=mean exp=2 lvl=1 armor=5 dmg=1x3',
     'name=troll carry=50 flags=regenerate_mean exp=120 lvl=6 armor=4 dmg=1x8/1x8/2x6',
-    'name=black_unicorn flags=mean exp=190 lvl=7 armor=-2 dmg=1x9/1x9/2x9', 
+    'name=black_unicorn flags=mean exp=190 lvl=7 armor=-2 dmg=1x9/1x9/2x9',
     'name=vampire carry=20 flags=regenerate_mean exp=350 lvl=8 armor=1 dmg=1x10',
     'name=wraith exp=55 lvl=5 armor=4 dmg=1x6',
     'name=xeroc carry=30 exp=100 lvl=7 armor=7 dmg=4x4',
@@ -57,9 +57,9 @@ def unpack(template: str) -> Dict[str, str]:
     """
     Convert from the string descriptor into a list of values and
     a dict of key-value pairs.
-    
+
     Caller then ships the resulting tuple as *args, **kwargs to a factory
-    
+
     Key value pairs will replace underbar with a space
     Returns:
         args (list of strings)
@@ -73,12 +73,12 @@ def unpack(template: str) -> Dict[str, str]:
         elif p[2][0] == '-' and p[2][1:].isdigit():
             as_dict[p[0]] = 0 - int(p[2][1:])
         else:
-            as_dict[p[0]] = p[2].replace('_',' ')  # XXX=yyy format
+            as_dict[p[0]] = p[2].replace('_', ' ')  # XXX=yyy format
     return as_dict
 
 
 def exp_add(mon: Dict[str, Any]) -> int:
-    """Experience to add for this monster's level/hit points""" 
+    """Experience to add for this monster's level/hit points"""
     mod = 0
     if mon['lvl'] == 1:
         mod = mon['maxhp'] // 8
@@ -122,19 +122,19 @@ class Monster:  # struct monster
         return self.disguise if self.disguise != 0 else chr(self.mtype)
 
     # ===== Interface =====================================
-    
+
     @staticmethod
     def factory(pos: Pos, levelno: int, code: int):
         """Convert the given MONSTER_TEMPLATES entry into a Monster"""
         lev_add = 0 if levelno < AMULETLEVEL else levelno - AMULETLEVEL
-        
+
         index = code - ord('A')
         if index > len(MONSTER_TEMPLATES) or index < 0:
             raise ValueError(f'code {code} ({index}) out of range')
         kwargs = unpack(MONSTER_TEMPLATES[index])
         # TODO: if code == ord('X') then this is in disguise=random_thing()
         # TODO: monster carry is % that it has an item, attached to monster.pack
-        
+
         kwargs['armor'] = kwargs['armor'] - lev_add  # Long live AD&D AC
         kwargs['lvl'] = kwargs['lvl'] + lev_add
         kwargs['maxhp'] = roll(kwargs['lvl'], 8)  # Long live AD&D hit dice
@@ -149,4 +149,3 @@ class Monster:  # struct monster
 # ===== Unit Testing ======================================
 
 # is in test_monster.py, elsewhere
-

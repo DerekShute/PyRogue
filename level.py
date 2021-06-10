@@ -51,7 +51,7 @@ class Level:
     doors: List[Pos]
     items: List[Item]
     monsters: List[Monster]
-    
+
     def __init__(self, width: int, height: int, display: Display):
         """
         An empty level
@@ -86,7 +86,7 @@ class Level:
         for monster in self.monsters:
             m_s = m_s + f'{monster},'  # TODO: Pos conversion won't work right.  need __repr__?
         s = s + m_s + '),'  # Monsters
-        
+
         s = s + ')'
         return s
 
@@ -131,6 +131,7 @@ class Level:
             self.map.set_char(item.pos, item.char, item.color)
         for monster in self.monsters:
             self.map.set_char(monster.pos, monster.char, (63, 127, 63))  # TODO: orc green
+
 
 # ===== TESTING ===========================================
 

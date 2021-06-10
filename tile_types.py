@@ -36,8 +36,10 @@ def new_tile(
     """Helper function for defining individual tile types """
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
 
+
 def darken_color(color: Tuple[int, int, int]) -> Tuple[int, int, int]:
     return [sum(x) for x in zip(color, (-100, -100, -100))]
+
 
 # TODO: BLACK / WHITE
 

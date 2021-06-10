@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import patch
 import rogue_level
 
+
 # ===== Service Routines ==================================
 
 def randint_return_min(*args, **kwargs):
@@ -20,6 +21,7 @@ def randint_return_max(*args, **kwargs):
     # print(f'from {args[0]} to {args[1]}')
     assert args[0] < args[1]   # Check for stupid mistake
     return args[1]
+
 
 # ===== Testing Rogue Level ===============================
 
@@ -67,6 +69,7 @@ class TestRandmonster(unittest.TestCase):
         assert r == 'D'
 
         self.assertTrue(True)
+
 
 # ===== Invocation ========================================
 

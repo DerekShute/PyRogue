@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import patch
 from monster import Monster
 
+
 # ===== Service Routines ==================================
 
 def randint_return_min(*args, **kwargs):
@@ -13,6 +14,7 @@ def randint_return_min(*args, **kwargs):
     # print(f'from {args[0]} to {args[1]}')
     assert args[0] < args[1]   # Check for stupid mistake
     return args[0]
+
 
 # ===== TestMonster =======================================
 
@@ -50,7 +52,7 @@ class TestMonster(unittest.TestCase):
     def test_oob_high(self):
         """Out of bounds monster index"""
         try:
-            mon = Monster.factory(None, 1, 100)
+            _ = Monster.factory(None, 1, 100)
             assert False
         except ValueError:
             pass
@@ -59,7 +61,7 @@ class TestMonster(unittest.TestCase):
     def test_oob_low(self):
         """Out of bounds low"""
         try:
-            mon = Monster.factory(None, 1, ord('A') - 1)
+            _ = Monster.factory(None, 1, ord('A') - 1)
             assert False
         except ValueError:
             pass
@@ -70,7 +72,7 @@ class TestMonster(unittest.TestCase):
         """At high dungeon levels, additional benefits (to be a monster)"""
         mock_randint.side_effect = randint_return_min
         mon = Monster.factory(None, 27, ord('A'))
-        #print(mon)
+        # print(mon)
         assert mon.lvl == 6 and mon.armor == 1 and mon.hpt == 6 and mon.maxhp == 6
         self.assertTrue(True)
 
@@ -82,6 +84,7 @@ class TestMonster(unittest.TestCase):
         # print(mon)
         assert mon.flags == 'mean haste'
         self.assertTrue(True)
+
 
 # ===== Invocation ========================================
 

@@ -11,6 +11,7 @@ from position import Pos
 COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
 
+
 # TODO: Thing goes in pyrogue
 # ===== Thing =============================================
 # TODO: dataclass?
@@ -24,7 +25,7 @@ class Thing:  # union thing
     _char: str = '&'  # No good default
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
 
-    def __init__(self, name:str, char: str, color: Tuple[int, int, int], pos:Pos = None):
+    def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None):
         self._pos = Pos(pos)
         self._name = name
         self._char = char
@@ -57,13 +58,14 @@ class Thing:  # union thing
 
 # ===== Item ==============================================
 
-class Item (Thing): # _o internal to union thing originally
+class Item (Thing):  # _o internal to union thing originally
     """Anything that can be picked up"""
     # TODO: _name ?
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 # TODO: 'collective' objects with _quantity
+
 
 # ===== Gold ==============================================
 
@@ -77,12 +79,14 @@ class Gold (Item):
     def __str__(self):
         return f'Gold({self._pos},{self._val})'
 
+
 # ===== TESTING ===========================================
+
 if __name__ == '__main__':
     # Note: see test_items
     g = Gold(val=10)
     assert str(g) == 'Gold(@(0,0),10)'
-    g = Gold(val=20, pos=Pos((20,20)))
+    g = Gold(val=20, pos=Pos((20, 20)))
     assert str(g) == 'Gold(@(20,20),20)'
     assert str(g.pos) == '@(20,20)'
     assert g.name == 'gold'

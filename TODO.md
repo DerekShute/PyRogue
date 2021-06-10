@@ -5,6 +5,8 @@ position.py
 monster.py
     AMULETLEVEL goes somemplace else
 
+    venus flytrap has odd damage declaration
+
     Monster
         * should this really be a dataclass?
 
