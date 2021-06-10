@@ -18,6 +18,7 @@ import tile_types
 _FLOOR = 0
 _WALL = 1
 _DOOR = 2
+_STAIRS = 3
 
 # Internal reference to equate GameMap.FLOOR with tile_types.floor, which needs be known by nobody
 
@@ -25,6 +26,7 @@ _TILES = {
     _FLOOR: tile_types.floor,
     _WALL: tile_types.wall,
     _DOOR: tile_types.door,
+    _STAIRS: tile_types.down_stairs,
 }
 
 
@@ -37,6 +39,7 @@ class GameMap:
     FLOOR: int = _FLOOR
     WALL: int = _WALL
     DOOR: int = _DOOR
+    STAIRS: int = _STAIRS
 
     def __init__(self, width: int, height: int, display: Display):
         self._display = display
@@ -92,6 +95,12 @@ class GameMap:
             t = self.tiles[p.x, p.y]['dark']
         self._display.rgb[p.x, p.y] = t
 
+    def set_char(self, p: Pos, char: int, color: Tuple[int, int, int]):
+        """Set a single character"""
+        # TODO: set the rgb directly somehow?  How do you define background color?
+        if self.visible[p.x, p.y]:
+            self._display.print(x=p.x, y=p.y, string=char, fg=color)
+
     def lit(self, inner: Tuple[slice, slice], lit: bool = True):
         """Set a region to lit / visible"""
         self.visible[inner] = lit
@@ -130,10 +139,12 @@ if __name__ == '__main__':
     with Display(80, 25, 'testing GameMap') as d:
         m = GameMap(80, 25, d)
         m.set_tiles(rectangle(5, 5, 20, 20), GameMap.FLOOR)
-        m.set_tile(Pos((8, 8)), GameMap.DOOR)
+        m.set_tile(Pos((4, 5)), GameMap.DOOR)
+        m.set_tile(Pos((6, 6)), GameMap.STAIRS)
         m.lit(rectangle(0, 0, 10, 25), True)
         # NOTE: lit but not explored is odd
         m.explore(rectangle(0, 0, 40, 10), True)
+        m.set_char(Pos((7, 7)), char='*', color=(255, 255, 0))
         d.present()
         time.sleep(2)
         m.lit(rectangle(0, 0, 10, 25), False)

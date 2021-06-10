@@ -5,9 +5,10 @@ Create a Rogue-style level
 import random
 import math
 from position import Pos
-from game_map import GameMap
 from room import Room
 from level import Level
+from monster import Monster
+from item import Gold
 from display import Display
 from typing import Tuple
 
@@ -31,7 +32,7 @@ Room numbers, which we scramble every level-generation to select disincluded roo
 # ===== Service Routines ==================================
 
 def rand(i1: int, i2: int) -> int:
-    """random.randint really wants in increasing order"""
+    """random.randint really wants in increasing order.  Note: rnd(n) -> 0 .. n-1 inclusive"""
     _i1 = min(i1, i2)
     _i2 = max(i1, i2)
     return random.randint(_i1, _i2)
@@ -104,14 +105,36 @@ def connect_rooms(level: Level, r1: int, r2: int):
 
     level.add_passage(start_pos, end_pos, going_south)
     if not r1_gone:
-        level.map.set_tile(start_pos, GameMap.DOOR)
+        level.add_door(start_pos)
     if not r2_gone:
-        level.map.set_tile(end_pos, GameMap.DOOR)
+        level.add_door(end_pos)
+
+
+def randmonster(levelno: int, wander: bool) -> int:
+    """
+    Pick a monster to show up.  The lower (deeper) the level the meaner the monster.
+
+    Returns the ord of the monster's character ID
+    """
+
+    LEVEL_MONS = 'KEBSHIROZLCQANYFTWPXUMVGJD'
+    WAND_MONS = 'KEBSH0ROZ0CQA0Y0TWP0UMVGJ0'
+
+    mlist = WAND_MONS if wander else LEVEL_MONS
+
+    while True:
+        mno = levelno + rand(-6, 3)  # rnd(10) - 6
+        if mno < 0:  # Under the beginning
+            mno = rand(0, 4)
+        if mno >= len(mlist) - 1:  # Off the end
+            mno = rand(21, len(mlist) - 1)  # rnd(5) + 21
+        if mlist[mno] != '0':
+            return ord(mlist[mno])
 
 
 # ==== Manufactury ========================================
 
-def room_factory(roomno: int, gone: bool = False):  # do_rooms()
+def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  # do_rooms()
     """
     We divide the screen into a 3x3 box and the room number defines
     which box it fits into
@@ -148,17 +171,28 @@ def room_factory(roomno: int, gone: bool = False):  # do_rooms()
                top.y + rand(1, BLOCK_Y_SIZE - size.y - 2)))
     r = Room(pos, size)
 
-    # TODO: Put the gold in
+    # Put the gold in
+    # TODO: if not amulet and max_level calc
 
-    # TODO: Put the monster in
+    gold = None
+    if rand(0, 2) == 0:  # I think that rnd(2) is 0..2
+        gold = Gold(pos=r.rnd_pos, val=rand(2, 50 + 10 * levelno))
+        level.add_item(gold)
+
+    # Put the monster in
+
+    if rand(0, 100) < 80 if gold else 25:
+        monster = Monster.factory(r.rnd_pos, randmonster(levelno, False))
+        level.add_monster(monster)
 
     return r
+
 
 def do_passages(level):
     """Connect rooms with tunnels"""
 
     connected = [[False for i in range(MAXROOMS)] for j in range(MAXROOMS)]
-    # connected[i][j] == True means connection exists from i to j (presumably the reverse)
+    # connected[i][j] == True => connection exists from i to j
     ingraph = []
 
     # starting with one room, connect it to a random adjacent room and
@@ -171,7 +205,9 @@ def do_passages(level):
         # find a room to connect with
         i = 0
         r2 = -1
-        candidates = [x for x in range(len(level.rooms)) if adjacent(r1, x) if x not in ingraph]
+        candidates = [
+            x for x in range(len(level.rooms)) if adjacent(r1, x) if x not in ingraph
+            ]
         if candidates == []:
             # if no adjacent rooms are outside the graph, pick a new room
             # to look from
@@ -219,7 +255,7 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display) -> Level
     """
     # "dig and populate all the rooms on this level"
 
-    lvl = Level(width, height, display)
+    level = Level(width, height, display)
 
     # TODO: do_rooms()
 
@@ -233,23 +269,26 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display) -> Level
 
     i = 0
     while i < MAXROOMS:
-        lvl.add_room(_ROOMLIST[i], room_factory(_ROOMLIST[i], i < limit))
+        room = room_factory(level, levelno, _ROOMLIST[i], i < limit)
+        level.add_room(_ROOMLIST[i], room)
         i = i + 1
 
     # Draw passages
 
-    do_passages(lvl)
+    do_passages(level)
 
     # TODO: no_food++
     # TODO: put_things()
 
     # TODO: place the traps --- this is in passages?
 
-    # TODO: Place the staircase down
+    # Place the staircase down
+
+    level.add_stairs(random.choice([x for _, x in level.rooms.items() if x.max_y != x.y]).rnd_pos)
 
     # TODO: enter_room(&hero) - pick a starting location
 
-    return lvl
+    return level
 
 
 # ===== TESTING ===========================================
