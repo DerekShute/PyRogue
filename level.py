@@ -8,6 +8,7 @@ from room import Room
 from game_map import GameMap
 from display import Display
 from position import Pos
+from monster import Monster
 from item import Item
 from typing import Dict, Tuple, Iterator, List
 import tcod
@@ -48,8 +49,9 @@ class Level:
     rooms: Dict[int, Room]
     stairs: List[Pos]  # TODO (eventually) "features" ?
     doors: List[Pos]
-    items: List[Tuple[Pos, Item]]
-
+    items: List[Item]
+    monsters: List[Monster]
+    
     def __init__(self, width: int, height: int, display: Display):
         """
         An empty level
@@ -59,6 +61,7 @@ class Level:
         self.stairs = []
         self.doors = []
         self.items = []
+        self.monsters = []
 
     def __str__(self):
         s = 'Level : Rooms('
@@ -77,7 +80,13 @@ class Level:
         i_s = ''
         for item in self.items:
             i_s = i_s + f'{item},'
-        s = s + i_s + '),'  # Items(...)
+        s = s + i_s + '),Monsters('  # Items(...)
+
+        m_s = ''
+        for monster in self.monsters:
+            m_s = m_s + f'{monster},'  # TODO: Pos conversion won't work right.  need __repr__?
+        s = s + m_s + '),'  # Monsters
+        
         s = s + ')'
         return s
 
@@ -109,6 +118,10 @@ class Level:
         self.items.append(item)
         # TODO: render?
 
+    def add_monster(self, monster: Monster):
+        """Add a monster to the level/map"""
+        self.monsters.append(monster)
+
     def render(self):
         self.map.render()
 
@@ -116,7 +129,8 @@ class Level:
         # TODO: ordering - entity, item, tile
         for item in self.items:
             self.map.set_char(item.pos, item.char, item.color)
-
+        for monster in self.monsters:
+            self.map.set_char(monster.pos, monster.char, (63, 127, 63))  # TODO: orc green
 
 # ===== TESTING ===========================================
 
@@ -160,6 +174,7 @@ if __name__ == '__main__':
                'Stairs(@(5,5),),' \
                'Doors(@(3,7),@(4,11),@(7,3),@(9,15),@(15,11),@(20,5),),' \
                'Items(),' \
+               'Monsters(),' \
                ')'
     print('*** Tests Passed ***')
 

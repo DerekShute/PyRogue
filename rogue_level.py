@@ -7,6 +7,7 @@ import math
 from position import Pos
 from room import Room
 from level import Level
+from monster import Monster
 from item import Gold
 from display import Display
 from typing import Tuple
@@ -31,7 +32,7 @@ Room numbers, which we scramble every level-generation to select disincluded roo
 # ===== Service Routines ==================================
 
 def rand(i1: int, i2: int) -> int:
-    """random.randint really wants in increasing order"""
+    """random.randint really wants in increasing order.  Note: rnd(n) -> 0 .. n-1 inclusive"""
     _i1 = min(i1, i2)
     _i2 = max(i1, i2)
     return random.randint(_i1, _i2)
@@ -109,6 +110,28 @@ def connect_rooms(level: Level, r1: int, r2: int):
         level.add_door(end_pos)
 
 
+def randmonster(levelno: int, wander: bool) -> int:
+    """
+    Pick a monster to show up.  The lower (deeper) the level the meaner the monster.
+    
+    Returns the ord of the monster's character ID
+    """
+
+    LEVEL_MONS = 'KEBSHIROZLCQANYFTWPXUMVGJD'
+    WAND_MONS = 'KEBSH0ROZ0CQA0Y0TWP0UMVGJ0'
+
+    mlist = WAND_MONS if wander else LEVEL_MONS
+
+    while True:
+        mno = levelno + rand(-6, 3)  # rnd(10) - 6
+        if mno < 0:  # Under the beginning
+            mno = rand(0, 4)
+        if mno >= len(mlist) - 1:  # Off the end
+            mno = rand(21, len(mlist) - 1)  # rnd(5) + 21
+        if mlist[mno] != '0':
+            return ord(mlist[mno])
+
+
 # ==== Manufactury ========================================
 
 def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  # do_rooms()
@@ -151,13 +174,19 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
     # Put the gold in
     # TODO: if not amulet and max_level calc
 
+    gold = None
     if rand(0, 2) == 0:  # I think that rnd(2) is 0..2
         gold = Gold(pos=r.rnd_pos, val=rand(2, 50 + 10 * levelno))
         level.add_item(gold)
 
-    # TODO: Put the monster in
+    # Put the monster in
+
+    if rand(0, 100) < 80 if gold else 25:
+        monster = Monster.factory(r.rnd_pos, randmonster(levelno, False))
+        level.add_monster(monster)
 
     return r
+
 
 def do_passages(level):
     """Connect rooms with tunnels"""
