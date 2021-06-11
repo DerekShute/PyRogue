@@ -88,18 +88,18 @@ def connect_rooms(level: Level, r1: int, r2: int):
     going_south = tunnel_south(r1, r2)
     if going_south:
         if not r1_gone:
-            start_pos = Pos((rand(level.rooms[r1].x + 1, level.rooms[r1].max_x - 1),
-                             level.rooms[r1].max_y + 1))
+            start_pos = Pos(rand(level.rooms[r1].x + 1, level.rooms[r1].max_x - 1),
+                            level.rooms[r1].max_y + 1)
         if not r2_gone:
-            end_pos = Pos((rand(level.rooms[r2].x + 1, level.rooms[r2].max_x - 1),
-                           level.rooms[r2].y - 1))
+            end_pos = Pos(rand(level.rooms[r2].x + 1, level.rooms[r2].max_x - 1),
+                          level.rooms[r2].y - 1)
     else:
         if not r1_gone:
-            start_pos = Pos((level.rooms[r1].max_x + 1,
-                             rand(level.rooms[r1].y + 1, level.rooms[r1].max_y - 1)))
+            start_pos = Pos(level.rooms[r1].max_x + 1,
+                            rand(level.rooms[r1].y + 1, level.rooms[r1].max_y - 1))
         if not r2_gone:
-            end_pos = Pos((level.rooms[r2].x - 1,
-                           rand(level.rooms[r2].y + 1, level.rooms[r2].max_y - 1)))
+            end_pos = Pos(level.rooms[r2].x - 1,
+                          rand(level.rooms[r2].y + 1, level.rooms[r2].max_y - 1))
 
     # Gone rooms don't get the dignification of having a door
 
@@ -143,7 +143,7 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
 
     # Find upper left corner of box that this room goes in
     rx, ry = room_xy(roomno)
-    top = Pos((rx * BLOCK_X_SIZE, ry * BLOCK_Y_SIZE))  # Nothing goes on this horiz/vert
+    top = Pos(rx * BLOCK_X_SIZE, ry * BLOCK_Y_SIZE)  # Nothing goes on this horiz/vert
 
     # In order to fit a curvy passage, you need at least 3 spaces clearance along the
     # "dig direction".  This all takes into account.
@@ -153,9 +153,9 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
         # them): it only connects adjacent rooms and if you remove more than
         # one then something can be isolated in a corner or the map becomes
         # disjoint
-        pos = Pos((top.x + rand(1, BLOCK_X_SIZE - 3),
-                   top.y + rand(1, BLOCK_Y_SIZE - 3)))
-        return Room(pos, Pos((0, 0)))
+        pos = Pos(top.x + rand(1, BLOCK_X_SIZE - 3),
+                  top.y + rand(1, BLOCK_Y_SIZE - 3))
+        return Room(pos, Pos(0, 0))
 
     # Set room type
 
@@ -166,9 +166,9 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
     # else not maze...
     # figure out the size first, then work backwards and randomly pick an appropriate
     # position that legally fits
-    size = Pos((rand(4, BLOCK_X_SIZE - 3), rand(4, BLOCK_Y_SIZE - 3)))
-    pos = Pos((top.x + rand(1, BLOCK_X_SIZE - size.x - 2),
-               top.y + rand(1, BLOCK_Y_SIZE - size.y - 2)))
+    size = Pos(rand(4, BLOCK_X_SIZE - 3), rand(4, BLOCK_Y_SIZE - 3))
+    pos = Pos(top.x + rand(1, BLOCK_X_SIZE - size.x - 2),
+              top.y + rand(1, BLOCK_Y_SIZE - size.y - 2))
     r = Room(pos, size)
 
     # Put the gold in

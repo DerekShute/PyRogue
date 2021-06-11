@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # Note: see test_items
     g = Gold(val=10)
     assert str(g) == 'Gold(@(0,0),10)'
-    g = Gold(val=20, pos=Pos((20, 20)))
+    g = Gold(val=20, pos=Pos(20, 20))
     assert str(g) == 'Gold(@(20,20),20)'
     assert str(g.pos) == '@(20,20)'
     assert g.name == 'gold'
