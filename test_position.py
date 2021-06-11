@@ -22,11 +22,10 @@ class TestPosition(unittest.TestCase):
         assert eval(repr(p)) == p
 
         assert Pos(5, 15) == Pos(Pos(5, 15))
-        
+
         assert not Pos(1, 1) == Pos(2, 2)
         assert Pos(1, 2) == Pos(x=1, y=2)
 
-        
         self.assertTrue(True)
 
 
