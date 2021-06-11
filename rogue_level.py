@@ -182,7 +182,7 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
     # Put the monster in
 
     if rand(0, 100) < 80 if gold else 25:
-        monster = Monster.factory(r.rnd_pos, randmonster(levelno, False))
+        monster = Monster.factory(r.rnd_pos, levelno, randmonster(levelno, False))
         level.add_monster(monster)
 
     return r
