@@ -2,7 +2,7 @@
     Position!
 """
 from __future__ import annotations
-from typing import Tuple
+from typing import Any, Tuple
 
 
 # ===== Pos ===============================================
@@ -16,17 +16,18 @@ class Pos:  # struct coord
     _x: int = 0
     _y: int = 0
 
-    def __init__(self, pos: Tuple = None, x: int = None, y: int = None):
-        """
-        Params
-            pos : tuple (x, y)
-        """
-        if pos is not None:
-            self._x, self._y = tuple(pos)  # "unpack" is the magic word
-        elif x is not None:
+    def __init__(self, x: Any = None, y: int = None):
+        self._x = 0
+        self._y = 0
+        if x is None and y is None:
+            self._x = 0
+            self._y = 0
+        elif type(x) is int:
             self._x = x
-        if y is not None:
-            self._y = y
+            if y is not None:
+                self._y = y
+        else:
+            self._x, self._y = tuple(x)  # "unpack"
 
     def __eq__(self, other) -> bool:
         return self._x == other._x and self._y == other._y
@@ -36,6 +37,9 @@ class Pos:  # struct coord
 
     def __str__(self) -> str:
         return f'@({self._x},{self._y})'
+
+    def __repr__(self) -> str:
+        return f'Pos({self._x},{self._y})'
 
     def __iter__(self):
         """
@@ -69,20 +73,6 @@ class Pos:  # struct coord
 
 # ===== TESTING ===========================================
 
-if __name__ == "__main__":
-    p = Pos((10, 20))
-    # print(p)
-    assert str(p) == '@(10,20)'
-    # print(Pos(p))
-    # print(p.x)
-    assert p.x == 10
-    # print(p.y)
-    assert p.y == 20
-    # print(p.xy)
-    assert p.xy == (10, 20)
-    assert not Pos((1, 1)) == Pos((2, 2))
-    assert Pos((1, 2)) == Pos(x=1, y=2)
-
-    print('*** Tests passed ***')
+# Is in test_position.py
 
 # EOF
