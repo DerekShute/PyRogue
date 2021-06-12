@@ -76,6 +76,7 @@ class TestGeneration(unittest.TestCase):
 
     def test(self):
         lvl = rogue_level.RogueLevel(1, 80, 25, None)
+        assert lvl
         self.assertTrue(True)
 
 
