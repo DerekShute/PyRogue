@@ -1,7 +1,3 @@
-position.py
-    Pos
-        * __repr__ -> eval(repr(x)) == x
-        * Cases where we want to represent it so we can factory it, save game pickling (?)
 monster.py
     AMULETLEVEL goes somemplace else
 
@@ -15,4 +11,7 @@ monster.py
         * pack, chance of having an item
         * behavior change if ring of aggravation
         * destination position if aggressive or greedy
-        
+
+./rogue_level.py:68:1: C901 'connect_rooms' is too complex (11)
+1     C901 'connect_rooms' is too complex (11)
+  

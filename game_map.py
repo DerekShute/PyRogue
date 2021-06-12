@@ -77,11 +77,12 @@ class GameMap:
         """
         t = _TILES[tile]
         self.tiles[inner] = t
-        self._display.rgb[inner] = np.select(
-            condlist=[self.visible[inner], self.explored[inner]],
-            choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
-            default=tile_types.SHROUD
-        )
+        if self._display:
+            self._display.rgb[inner] = np.select(
+                condlist=[self.visible[inner], self.explored[inner]],
+                choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
+                default=tile_types.SHROUD
+            )
 
     def set_tile(self, p: Pos, tile: int):
         """
@@ -93,22 +94,24 @@ class GameMap:
             t = self.tiles[p.x, p.y]['light']
         else:
             t = self.tiles[p.x, p.y]['dark']
-        self._display.rgb[p.x, p.y] = t
+        if self._display:
+            self._display.rgb[p.x, p.y] = t
 
     def set_char(self, p: Pos, char: int, color: Tuple[int, int, int]):
         """Set a single character"""
         # TODO: set the rgb directly somehow?  How do you define background color?
-        if self.visible[p.x, p.y]:
+        if self.visible[p.x, p.y] and self._display:
             self._display.print(x=p.x, y=p.y, string=char, fg=color)
 
     def lit(self, inner: Tuple[slice, slice], lit: bool = True):
         """Set a region to lit / visible"""
         self.visible[inner] = lit
-        self._display.rgb[inner] = np.select(
-            condlist=[self.visible[inner], self.explored[inner]],
-            choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
-            default=tile_types.SHROUD
-        )
+        if self._display:
+            self._display.rgb[inner] = np.select(
+                condlist=[self.visible[inner], self.explored[inner]],
+                choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
+                default=tile_types.SHROUD
+            )
 
     def lit_tile(self, p: Pos, lit: bool = True):
         self.visible[p.x, p.y] = lit
@@ -117,11 +120,12 @@ class GameMap:
     def explore(self, inner: Tuple[slice, slice], known: bool = True):
         """Mark a region as player-discovered"""
         self.explored[inner] = known
-        self._display.rgb[inner] = np.select(
-            condlist=[self.visible[inner], self.explored[inner]],
-            choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
-            default=tile_types.SHROUD
-        )
+        if self._display:
+            self._display.rgb[inner] = np.select(
+                condlist=[self.visible[inner], self.explored[inner]],
+                choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
+                default=tile_types.SHROUD
+            )
 
     def explore_tile(self, p: Pos, known: bool = True):
         self.explored[p.x, p.y] = known

@@ -71,6 +71,15 @@ class TestRandmonster(unittest.TestCase):
         self.assertTrue(True)
 
 
+class TestGeneration(unittest.TestCase):
+    """Smoke test the whole darn thing"""
+
+    def test(self):
+        lvl = rogue_level.RogueLevel(1, 80, 25, None)
+        assert lvl
+        self.assertTrue(True)
+
+
 # ===== Invocation ========================================
 
 if __name__ == '__main__':
