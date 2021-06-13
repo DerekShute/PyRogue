@@ -139,6 +139,10 @@ class Player:
     def pos(self) -> Pos:
         return self._pos
 
+    @property
+    def name(self) -> str:
+        return 'Player'
+
     # ===== Stat interface ================================
     # TODO: who cares?
     @property

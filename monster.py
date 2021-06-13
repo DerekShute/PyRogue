@@ -119,6 +119,10 @@ class Monster:  # struct monster
     # if player is wearing ring of aggrevation runto(cp)
     #
 
+    def __str__(self) -> str:
+        return f'Monster({self.name}:{Pos(self.pos)},HP={self.hpt}/{self.maxhp},AC={self.armor},' \
+               f'dmg=\'{self.dmg}\',flags=\'{self.flags}\')'
+
     # ===== Display =======================================
 
     @property
@@ -126,6 +130,15 @@ class Monster:  # struct monster
         """Return map display information"""
         # TODO: render priority
         return self.pos, self.disguise if self.disguise != 0 else chr(self.mtype), ORC_GREEN
+
+    # ===== Base Interface ================================
+
+    def set_pos(self, pos: Pos):
+        self.pos = pos
+    
+    # TODO: pos property must hide self.pos
+    
+    # TODO: name property must hide self.name
 
     # ===== Interface =====================================
 

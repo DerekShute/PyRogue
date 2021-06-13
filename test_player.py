@@ -38,6 +38,7 @@ class TestPlayer(unittest.TestCase):
         assert repr(p) == 'Player(pos=(10, 10),stats=Stats(stren=16, arm=10, dmg=\'1x4\', ' \
                'maxhp=12, hpt=12, exp=0, level=0), food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
+        assert p.name == 'Player'
         self.assertTrue(True)
 
     # Mapping, leveling, Display

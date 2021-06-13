@@ -15,6 +15,7 @@ COLOR_WHITE = (255, 255, 255)
 # TODO: Thing goes in pyrogue
 # ===== Thing =============================================
 # TODO: dataclass?
+# TODO: not sure what to do with this.
 class Thing:  # union thing
     """
     Structure for monsters and player (superclass)
@@ -46,10 +47,11 @@ class Thing:  # union thing
         return self._pos.xy
 
     @property
-    def pos(self):
+    def pos(self) -> Pos:
         return Pos(self._pos)
 
-    # TODO: setter of pos
+    def set_pos(self, pos: Pos):
+        self._pos = pos
 
     @property
     def name(self):
@@ -60,7 +62,7 @@ class Thing:  # union thing
 
 class Item (Thing):  # _o internal to union thing originally
     """Anything that can be picked up"""
-    # TODO: _name ?
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -76,23 +78,14 @@ class Gold (Item):
         self._val = val
         super().__init__(*args, name='gold', char='*', color=COLOR_YELLOW, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Gold({self._pos},{self._val})'
 
+    def __repr__(self) -> str:
+        return f'Gold(pos={repr(self._pos)},val={self._val})'
 
 # ===== TESTING ===========================================
 
-if __name__ == '__main__':
-    # Note: see test_items
-    g = Gold(val=10)
-    assert str(g) == 'Gold(@(0,0),10)'
-    g = Gold(val=20, pos=Pos(20, 20))
-    assert str(g) == 'Gold(@(20,20),20)'
-    assert str(g.pos) == '@(20,20)'
-    assert g.name == 'gold'
-    assert g.char == '*'
-    assert g.color == COLOR_YELLOW
-
-    print('*** Tests passed ***')
+# See test_items.py
 
 # EOF

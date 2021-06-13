@@ -12,7 +12,14 @@ Combat
     Player.melee_dmg() is responsible for figuring out the weapon in use and the effects of rings and other considerations
     
     Likewise Monster.melee_dmg()
-    
+
+Basic Stuff
+
+    Items, Monsters, and Player must respond to:
+        * pos property
+        * set_pos() method
+        * name
+
 Map Display / Level
 
     Same polymorphism for Monsters, Players, and Items.  Support:

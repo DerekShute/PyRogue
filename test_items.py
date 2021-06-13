@@ -12,13 +12,12 @@ class TestGold(unittest.TestCase):
         """Test Elementary stuff"""
         g = Gold(val=10)
         assert str(g) == 'Gold(@(0,0),10)'
+
         g = Gold(val=20, pos=Pos((20, 20)))
         assert str(g) == 'Gold(@(20,20),20)'
         assert str(g.pos) == '@(20,20)'
         assert g.name == 'gold'
-        assert g.char == '*'
-        assert g.color == (255, 255, 0)
-
+        assert repr(g) == repr(eval(repr(g)))
         self.assertTrue(True)
 
 
