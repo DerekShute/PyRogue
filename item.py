@@ -31,6 +31,14 @@ class Thing:  # union thing
         self._char = char
         self._color = color
 
+    # ===== Display =======================================
+
+    @property
+    def char(self) -> Tuple[Pos, str, Tuple[int, int, int]]:
+        """Return map display information"""
+        # TODO: render priority
+        return self._pos, self._char, self._color
+
     # ===== Interface =====================================
 
     @property
@@ -46,14 +54,6 @@ class Thing:  # union thing
     @property
     def name(self):
         return self._name
-
-    @property
-    def color(self):
-        return self._color
-
-    @property
-    def char(self):
-        return self._char
 
 
 # ===== Item ==============================================
