@@ -4,7 +4,7 @@
 
 import unittest
 from unittest.mock import patch
-from player import roll, Player
+from player import roll, Player, Stats
 from position import Pos
 
 
