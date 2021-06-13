@@ -117,6 +117,7 @@ class TestMonster(unittest.TestCase):
         assert color == (63, 127, 63)
         self.assertTrue(True)
 
+
 # ===== Invocation ========================================
 
 if __name__ == '__main__':

@@ -135,9 +135,9 @@ class Monster:  # struct monster
 
     def set_pos(self, pos: Pos):
         self.pos = pos
-    
+
     # TODO: pos property must hide self.pos
-    
+
     # TODO: name property must hide self.name
 
     # ===== Interface =====================================
