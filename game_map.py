@@ -49,10 +49,6 @@ class GameMap:
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
 
-    def in_bounds(self, x: int, y: int) -> bool:
-        """Return True if x and y are inside of the bounds of this map."""
-        return 0 <= x < self.width and 0 <= y < self.height
-
     def render(self) -> None:
         """
         Renders the map.
@@ -96,6 +92,12 @@ class GameMap:
             t = self.tiles[p.x, p.y]['dark']
         if self._display:
             self._display.rgb[p.x, p.y] = t
+
+    def can_enter(self, p: Pos) -> bool:
+        """Based on boundaries and tiles, can an entity enter this square?"""
+        if 0 <= p.x < self.width and 0 <= p.y < self.height:
+            return self.tiles[p.x, p.y]['walkable']
+        return False
 
     def set_char(self, p: Pos, char: int, color: Tuple[int, int, int]):
         """Set a single character"""

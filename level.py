@@ -131,6 +131,12 @@ class Level:
     def add_player(self, player: Player):
         """Add the player to the level/map"""
         self.player = player
+        player.attach_level(self)
+
+    def can_enter(self, pos: Pos) -> bool:
+        if self.map.can_enter(pos) and not any(m.pos == pos for m in self.monsters):
+            return True
+        return False
 
     def render(self):
         self.map.render()

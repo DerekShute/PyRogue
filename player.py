@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from item import Item
 from position import Pos
 from typing import Tuple
+from actions import Action
+from player_input import PlayerInputHandler
+from display import Display
 
 HUNGERTIME = 1300
 """Turns before hunger state change, I guess"""
@@ -108,16 +111,20 @@ class Player:
     _food_left: int
     _stats: Stats = None
     _cur_armor: Item = None
+    _level = None
+    _input: PlayerInputHandler = None
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         self._stats = stats
         self._pos = pos
         self._food_left = food_left
+        self._input = PlayerInputHandler()
 
     def __str__(self):
         return f'Player({Pos(self._pos)},{self._stats})'
 
     def __repr__(self):
+        # TODO: self._input not reconstructable
         return f'Player(pos={repr(self._pos)},stats={repr(self._stats)}, food_left={self._food_left})'
 
     # TODO: methods to retrieve effective AC, hit points, etc.
@@ -142,6 +149,28 @@ class Player:
     @property
     def name(self) -> str:
         return 'Player'
+
+    def attach_level(self, level) -> str:
+        self._level = level
+
+    # ===== Action callbacks ==============================
+    
+    def move(self, dx: int, dy: int):
+        self._pos = Pos(self._pos.x + dx, self._pos.y + dy)  # TODO: Pos addition
+        # TODO : returns timer tick cost
+
+    @property
+    def input_handler(self):
+        """Gameloop needs input handler so it can collect actions"""
+        return self._input
+    
+    # ===== Timer / AI / Action Interface ==========================
+    
+    def perform(self):
+        # TODO: returns timer tick cost
+        action = self._input.get_action()
+        if action is not None:
+            action.perform(self, self._level)
 
     # ===== Stat interface ================================
     # TODO: who cares?
@@ -200,11 +229,7 @@ class Player:
 
 
 # ===== Unit Test =========================================
-# TODO: goes elsewhere
 
-if __name__ == '__main__':
-    p = Player.factory(pos=Pos(3, 3))
-    assert repr(eval(repr(p))) == repr(p)
+# See test_player.py
 
-    print('*** Tests Passed ***')
 # EOF

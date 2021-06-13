@@ -73,7 +73,7 @@ wall = new_tile(
 )
 
 door = new_tile(
-    walkable=False,
+    walkable=True,
     transparent=False,
     dark=(DOOR_CHAR, FEATURE_DARK, darken_color(WALL_LIGHT)),
     light=(DOOR_CHAR, FEATURE_LIGHT, WALL_LIGHT),
