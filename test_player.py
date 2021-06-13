@@ -32,6 +32,11 @@ class TestPlayer(unittest.TestCase):
     def test(self):
         """Smoke test"""
         p = Player.factory(pos=(10, 10))
+        # print(str(p))
+        assert str(p) == 'Player(@(10,10),Stats(Str=16,XP=0(0),AC=10,Dmg=\'1x4\',HP=12/12))'
+        # print(repr(p))
+        assert repr(p) == 'Player(pos=(10, 10),stats=Stats(stren=16, arm=10, dmg=\'1x4\', ' \
+               'maxhp=12, hpt=12, exp=0, level=0), food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
         self.assertTrue(True)
 
