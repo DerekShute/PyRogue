@@ -144,6 +144,7 @@ class Level:
         if self.player is not None:
             self.map.set_char(*self.player.char)
 
+
 # ===== TESTING ===========================================
 
 if __name__ == '__main__':

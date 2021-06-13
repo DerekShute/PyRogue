@@ -104,7 +104,7 @@ class Stats:  # struct stats
     _hpt: int
     _dmg: str
     _maxhp: int
-    
+
     def __init__(self, stren: int = 0, exp: int = 0, lvl: int = 0,
                  ac: int = 0, dmg: str = '', max_hp: int = 0):
         self._str = stren

@@ -4,7 +4,7 @@
 
 import unittest
 from unittest.mock import patch
-from player import roll, Player, Stats, strike
+from player import roll, Player
 from position import Pos
 
 
@@ -15,6 +15,7 @@ def randint_return_min(*args, **kwargs):
     # print(f'from {args[0]} to {args[1]}')
     assert args[0] < args[1]   # Check for stupid mistake
     return args[0]
+
 
 def randint_return_max(*args, **kwargs):
     """If asked to random.randint(x,y), return y"""
@@ -30,7 +31,7 @@ class TestPlayer(unittest.TestCase):
 
     def test(self):
         """Smoke test"""
-        p = Player.factory(pos = (10, 10))
+        p = Player.factory(pos=(10, 10))
         assert repr(eval(repr(p))) == repr(p)
         self.assertTrue(True)
 
@@ -38,7 +39,7 @@ class TestPlayer(unittest.TestCase):
 
     def test_pos(self):
         """Test positioning and set-positioning"""
-        p = Player.factory(pos = Pos(10, 10))
+        p = Player.factory(pos=Pos(10, 10))
         assert p.pos == Pos(10, 10)
         p.set_pos(Pos(20, 20))
         assert p.pos == Pos(20, 20)
@@ -46,7 +47,7 @@ class TestPlayer(unittest.TestCase):
 
     def test_char(self):
         """Test map display"""
-        p = Player.factory(pos = Pos(10, 10))
+        p = Player.factory(pos=Pos(10, 10))
         pos, char, color = p.char
         assert pos == Pos(10, 10)
         assert char == '@'
@@ -85,7 +86,7 @@ class TestRoll(unittest.TestCase):
     def test_lowest(self, mock_randint):
         mock_randint.side_effect = randint_return_min
         dmg = roll('1x4')
-        #print(dmg)
+        # print(dmg)
         assert dmg == 1
         self.assertTrue(True)
 
@@ -93,7 +94,7 @@ class TestRoll(unittest.TestCase):
     def test_highest(self, mock_randint):
         mock_randint.side_effect = randint_return_max
         dmg = roll('1x4')
-        #print(dmg)
+        # print(dmg)
         assert dmg == 4
         self.assertTrue(True)
 
@@ -101,7 +102,7 @@ class TestRoll(unittest.TestCase):
     def test_summation(self, mock_randint):
         mock_randint.side_effect = randint_return_max
         dmg = roll('10x4')
-        #print(dmg)
+        # print(dmg)
         assert mock_randint.call_count == 10
         assert dmg == 40
         self.assertTrue(True)

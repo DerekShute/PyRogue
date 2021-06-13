@@ -24,7 +24,7 @@ def strike(dmg_str: str) -> bool:
     # TODO: goes elsewhere
     for attack in dmg_str.split('/'):
         # TODO make attack type
-        dmg = roll(attack) # TODO: THIS DOES NOT WORK
+        dmg = roll(attack)  # TODO: THIS DOES NOT WORK
         assert dmg
     return True
 
@@ -56,6 +56,7 @@ PLAYER_CHAR = '@'
 
 PLAYER_COLOR = (255, 255, 255)  # White TODO: consolidate definitions
 
+
 @dataclass
 class Stats:  # struct stats
     """
@@ -74,7 +75,8 @@ class Stats:  # struct stats
             self.hpt = self.maxhp
 
     def __str__(self):
-        return f'Stats(Str={self.stren},XP={self.exp}({self.level}),AC={self.arm},Dmg=\'{self.dmg}\',HP={self.hpt}/{self.maxhp})'
+        return f'Stats(Str={self.stren},XP={self.exp}({self.level}),AC={self.arm},' \
+               'Dmg=\'{self.dmg}\',HP={self.hpt}/{self.maxhp})'
 
     # ===== Combat ========================================
 
@@ -97,6 +99,7 @@ class Stats:  # struct stats
     def ac(self):
         """Armor class"""
         return self.arm
+
 
 # ===== Player ============================================
 
