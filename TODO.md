@@ -21,6 +21,12 @@ Display / Map / Level
     * Safe to place player: no monster at that square, maze wall, etc.
     * Render priority
 
+Basic Stuff
+    * Everyone responds to .pos , .set_pos(), .name
+
+Thing
+    * superclass of Item, theoretically superclass of Monster and Player
+
 Rogue Level
     * Traps
     * Maze rooms

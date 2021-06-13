@@ -138,9 +138,9 @@ class Level:
         # TODO: tutorial attaches this to GameMap and adds the clause for visibility
         # TODO: ordering - entity, item, tile
         for item in self.items:
-            self.map.set_char(item.pos, item.char, item.color)
+            self.map.set_char(*item.char)
         for monster in self.monsters:
-            self.map.set_char(monster.pos, monster.char, (63, 127, 63))  # TODO: orc green
+            self.map.set_char(*monster.char)
         if self.player is not None:
             self.map.set_char(*self.player.char)
 

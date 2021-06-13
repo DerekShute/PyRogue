@@ -76,7 +76,7 @@ class Stats:  # struct stats
 
     def __str__(self):
         return f'Stats(Str={self.stren},XP={self.exp}({self.level}),AC={self.arm},' \
-               'Dmg=\'{self.dmg}\',HP={self.hpt}/{self.maxhp})'
+               f'Dmg=\'{self.dmg}\',HP={self.hpt}/{self.maxhp})'
 
     # ===== Combat ========================================
 
@@ -115,7 +115,7 @@ class Player:
         self._food_left = food_left
 
     def __str__(self):
-        return f'Player({self._pos},{self._stats})'
+        return f'Player({Pos(self._pos)},{self._stats})'
 
     def __repr__(self):
         return f'Player(pos={repr(self._pos)},stats={repr(self._stats)}, food_left={self._food_left})'
@@ -138,6 +138,10 @@ class Player:
     @property
     def pos(self) -> Pos:
         return self._pos
+
+    @property
+    def name(self) -> str:
+        return 'Player'
 
     # ===== Stat interface ================================
     # TODO: who cares?

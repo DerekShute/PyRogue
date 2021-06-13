@@ -5,6 +5,7 @@
 import unittest
 from unittest.mock import patch
 from monster import Monster
+from position import Pos
 
 
 # ===== Service Routines ==================================
@@ -22,11 +23,23 @@ class TestMonster(unittest.TestCase):
     """Test random monster factory (less cool than it sounds)"""
 
     @patch('random.randint')
+    def test(self, mock_randint):
+        """Smoke Test"""
+        mock_randint.side_effect = randint_return_min
+        mon = Monster.factory(None, 1, ord('A'))
+        # print(str(mon))
+        assert str(mon) == 'Monster(aquator:@(0,0),HP=5/5,AC=2,dmg=\'0x0/0x0\',flags=\'mean\')'
+        # print(repr(mon))
+        assert mon == eval(repr(mon))
+        assert mon.name == 'aquator'
+        self.assertTrue(True)
+
+    @patch('random.randint')
     def test_lowest(self, mock_randint):
         mock_randint.side_effect = randint_return_min
         mon = Monster.factory(None, 1, ord('A'))
         # print(mon)
-        assert str(mon) == 'Monster(pos=None, name=\'aquator\', carry=0, ' \
+        assert repr(mon) == 'Monster(pos=None, name=\'aquator\', carry=0, ' \
                'flags=\'mean\', exp=20, lvl=5, armor=2, hpt=5, maxhp=5, ' \
                'dmg=\'0x0/0x0\', mtype=65, disguise=0, dest=None)'
         self.assertTrue(True)
@@ -83,6 +96,25 @@ class TestMonster(unittest.TestCase):
         mon = Monster.factory(None, 31, ord('A'))
         # print(mon)
         assert mon.flags == 'mean haste'
+        self.assertTrue(True)
+
+    # Mapping, leveling, Display
+
+    def test_pos(self):
+        """Test positioning and set-positioning"""
+        mon = Monster.factory(Pos(10, 10), 1, ord('G'))
+        assert mon.pos == Pos(10, 10)
+        mon.set_pos(Pos(20, 20))
+        assert mon.pos == Pos(20, 20)
+        self.assertTrue(True)
+
+    def test_char(self):
+        """Test map display"""
+        mon = Monster.factory(Pos(10, 10), 1, ord('G'))
+        pos, char, color = mon.char
+        assert pos == Pos(10, 10)
+        assert char == 'G'
+        assert color == (63, 127, 63)
         self.assertTrue(True)
 
 

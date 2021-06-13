@@ -4,7 +4,7 @@
 
 import random
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from position import Pos
 
 
@@ -39,6 +39,8 @@ MONSTER_TEMPLATES = (
     'name=yeti carry=30 exp=50 lvl=4 armor=6 dmg=1x6/1x6',
     'name=zombie flags=mean exp=6 lvl=2 armor=8 dmg=1x8',
 )
+
+ORC_GREEN = (63, 127, 63)  # TODO: color per monster somehow?  Subtype?
 
 
 # ===== Service Routines ===================================
@@ -91,31 +93,6 @@ def exp_add(mon: Dict[str, Any]) -> int:
     return mod
 
 
-# ===== Stats =============================================
-
-class Stats:  # struct stats
-    """
-    Structure describing a fighting being
-    """
-    _str: int
-    _exp: int
-    _level: int
-    _arm: int
-    _hpt: int
-    _dmg: str
-    _maxhp: int
-
-    def __init__(self, stren: int = 0, exp: int = 0, lvl: int = 0,
-                 ac: int = 0, dmg: str = '', max_hp: int = 0):
-        self._str = stren
-        self._exp = exp
-        self._level = lvl
-        self._arm = ac
-        self._dmg = dmg
-        self._maxhp = max_hp
-        self._hpt = max_hp  # assumption
-
-
 # ===== Monster ===========================================
 
 @dataclass
@@ -142,9 +119,26 @@ class Monster:  # struct monster
     # if player is wearing ring of aggrevation runto(cp)
     #
 
+    def __str__(self) -> str:
+        return f'Monster({self.name}:{Pos(self.pos)},HP={self.hpt}/{self.maxhp},AC={self.armor},' \
+               f'dmg=\'{self.dmg}\',flags=\'{self.flags}\')'
+
+    # ===== Display =======================================
+
     @property
-    def char(self) -> str:
-        return self.disguise if self.disguise != 0 else chr(self.mtype)
+    def char(self) -> Tuple[Pos, str, Tuple[int, int, int]]:
+        """Return map display information"""
+        # TODO: render priority
+        return self.pos, self.disguise if self.disguise != 0 else chr(self.mtype), ORC_GREEN
+
+    # ===== Base Interface ================================
+
+    def set_pos(self, pos: Pos):
+        self.pos = pos
+
+    # TODO: pos property must hide self.pos
+
+    # TODO: name property must hide self.name
 
     # ===== Interface =====================================
 
