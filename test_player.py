@@ -38,9 +38,9 @@ class TestPlayer(unittest.TestCase):
 
     def test_pos(self):
         """Test positioning and set-positioning"""
-        p = Player.factory(pos = Pos(10, 10))        
+        p = Player.factory(pos = Pos(10, 10))
         assert p.pos == Pos(10, 10)
-        p.set_pos(Pos(20,20))
+        p.set_pos(Pos(20, 20))
         assert p.pos == Pos(20, 20)
         self.assertTrue(True)
 

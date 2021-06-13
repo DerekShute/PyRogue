@@ -76,9 +76,6 @@ class Stats:  # struct stats
     def __str__(self):
         return f'Stats(Str={self.stren},XP={self.exp}({self.level}),AC={self.arm},Dmg=\'{self.dmg}\',HP={self.hpt}/{self.maxhp})'
 
-#    def __repr__(self):
-#        return f'Stats({self.stren},{self.exp},{self.level},{self.arm},\'{self.dmg}\',{self.hpt},{self.maxhp})'
-
     # ===== Combat ========================================
 
     @property
@@ -123,7 +120,7 @@ class Player:
     # TODO: methods to retrieve effective AC, hit points, etc.
 
     # ===== Display =======================================
-    
+
     @property
     def char(self) -> Tuple[Pos, str, Tuple[int, int, int]]:
         """Return map display information"""
@@ -131,7 +128,7 @@ class Player:
         return self._pos, PLAYER_CHAR, PLAYER_COLOR
 
     # ===== Base Interface ================================
-    
+
     def set_pos(self, pos: Pos):
         self._pos = pos
 
@@ -144,15 +141,15 @@ class Player:
     @property
     def lvl(self) -> int:
         return self._stats.level
-    
+
     @property
     def hpt(self) -> int:
         return self._stats.hpt
-    
+
     @property
     def exp(self) -> int:
         return self._stats.exp
-    
+
     @property
     def stren(self) -> int:
         return self._stats.stren
@@ -183,7 +180,7 @@ class Player:
         return self._stats.ac
 
     # ===== Constructor ===================================
-    
+
     @staticmethod
     def factory(pos: Pos = None):   # init_player
         plr = Player(pos=pos, stats=Stats(**INIT_STATS))
@@ -199,8 +196,8 @@ class Player:
 # TODO: goes elsewhere
 
 if __name__ == '__main__':
-    p = Player.factory(pos=Pos(3,3))
+    p = Player.factory(pos=Pos(3, 3))
     assert repr(eval(repr(p))) == repr(p)
-    
+
     print('*** Tests Passed ***')
 # EOF
