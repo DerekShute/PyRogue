@@ -91,6 +91,31 @@ def exp_add(mon: Dict[str, Any]) -> int:
     return mod
 
 
+# ===== Stats =============================================
+
+class Stats:  # struct stats
+    """
+    Structure describing a fighting being
+    """
+    _str: int
+    _exp: int
+    _level: int
+    _arm: int
+    _hpt: int
+    _dmg: str
+    _maxhp: int
+
+    def __init__(self, stren: int = 0, exp: int = 0, lvl: int = 0,
+                 ac: int = 0, dmg: str = '', max_hp: int = 0):
+        self._str = stren
+        self._exp = exp
+        self._level = lvl
+        self._arm = ac
+        self._dmg = dmg
+        self._maxhp = max_hp
+        self._hpt = max_hp  # assumption
+
+
 # ===== Monster ===========================================
 
 @dataclass
@@ -102,7 +127,7 @@ class Monster:  # struct monster
     name: str = '<Unknown Monster>'
     carry: int = 0
     flags: str = ''
-    exp: int = 0
+    exp: int = 0  # TODO: these are Stats
     lvl: int = 0
     armor: int = 0
     hpt: int = 0       # Hit points, subject to change

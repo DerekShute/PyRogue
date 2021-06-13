@@ -11,6 +11,8 @@ from monster import Monster
 from item import Gold
 from display import Display
 from typing import Tuple
+from player import Player
+
 
 # ===== Constants =========================================
 
@@ -249,7 +251,7 @@ def do_passages(level):
 
 # ===== ROGUE LEVEL =======================================
 
-def RogueLevel(levelno: int, width: int, height: int, display: Display) -> Level:
+def RogueLevel(levelno: int, width: int, height: int, display: Display, player: Player) -> Level:
     """
     Factory for Rogue-style levels
     """
@@ -286,7 +288,13 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display) -> Level
 
     level.add_stairs(random.choice([x for _, x in level.rooms.items() if x.max_y != x.y]).rnd_pos)
 
-    # TODO: enter_room(&hero) - pick a starting location
+    # pick a starting location
+
+    if player is not None:
+        starting_room = random.choice([x for _, x in level.rooms.items() if x.max_y != x.y])
+        player.set_pos(starting_room.rnd_pos)
+        # TODO: position has to be safe to be.
+        level.add_player(player)
 
     return level
 
@@ -319,7 +327,8 @@ if __name__ == '__main__':
     random.seed()
 
     with Display(NUMCOLS, NUMLINES, title='unit test rogue_level') as d:
-        lvl = RogueLevel(1, NUMCOLS, NUMLINES, d)
+        p = Player.factory()
+        lvl = RogueLevel(1, NUMCOLS, NUMLINES, d, player=p)
         print(str(lvl))
         lvl.map.lit(rectangle(0, 0, 80, 25))   # TODO
         lvl.map.explore(rectangle(0, 0, 80, 25))  # TODO
