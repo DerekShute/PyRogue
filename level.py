@@ -9,6 +9,7 @@ from game_map import GameMap
 from display import Display
 from position import Pos
 from monster import Monster
+from player import Player
 from item import Item
 from typing import Dict, Tuple, Iterator, List
 import tcod
@@ -51,6 +52,7 @@ class Level:
     doors: List[Pos]
     items: List[Item]
     monsters: List[Monster]
+    player: Player
 
     def __init__(self, width: int, height: int, display: Display):
         """
@@ -62,6 +64,7 @@ class Level:
         self.doors = []
         self.items = []
         self.monsters = []
+        self.player = None
 
     def __str__(self):
         s = 'Level : Rooms('
@@ -86,6 +89,9 @@ class Level:
         for monster in self.monsters:
             m_s = m_s + f'{monster},'  # TODO: Pos conversion won't work right.  need __repr__?
         s = s + m_s + '),'  # Monsters
+
+        if self.player is not None:
+            s = s + f'{self.player},'
 
         s = s + ')'
         return s
@@ -122,6 +128,10 @@ class Level:
         """Add a monster to the level/map"""
         self.monsters.append(monster)
 
+    def add_player(self, player: Player):
+        """Add the player to the level/map"""
+        self.player = player
+
     def render(self):
         self.map.render()
 
@@ -131,7 +141,8 @@ class Level:
             self.map.set_char(item.pos, item.char, item.color)
         for monster in self.monsters:
             self.map.set_char(monster.pos, monster.char, (63, 127, 63))  # TODO: orc green
-
+        if self.player is not None:
+            self.map.set_char(*self.player.char)
 
 # ===== TESTING ===========================================
 

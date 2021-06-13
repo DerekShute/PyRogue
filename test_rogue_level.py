@@ -75,7 +75,7 @@ class TestGeneration(unittest.TestCase):
     """Smoke test the whole darn thing"""
 
     def test(self):
-        lvl = rogue_level.RogueLevel(1, 80, 25, None)
+        lvl = rogue_level.RogueLevel(1, 80, 25, None, player=None)
         assert lvl
         self.assertTrue(True)
 
