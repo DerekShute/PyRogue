@@ -3,11 +3,12 @@
 """
 
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from player import roll, Player, Stats
 from position import Pos
 from actions import MovementAction
 from level import Level
+
 
 # ===== Service Routines ==================================
 
@@ -79,8 +80,7 @@ class TestPlayerAI(unittest.TestCase):
     @patch('player_input.PlayerInputHandler.get_action')
     def test_perform_move_allowed(self, mock_get_action):
         """Player was allowed to move"""
-        mock_get_action.return_value = MovementAction(-1,-1)
-        l = Level(80, 25, None)
+        mock_get_action.return_value = MovementAction(-1, -1)
         p = Player.factory(pos=Pos(10, 10))
         with patch.object(Level, 'can_enter', return_value=True) as patched_level:
             p.attach_level(Level(80, 25, None))
@@ -93,8 +93,7 @@ class TestPlayerAI(unittest.TestCase):
     @patch('player_input.PlayerInputHandler.get_action')
     def test_perform_move_denied(self, mock_get_action):
         """Player was not allowed to move"""
-        mock_get_action.return_value = MovementAction(-1,-1)
-        l = Level(80, 25, None)
+        mock_get_action.return_value = MovementAction(-1, -1)
         p = Player.factory(pos=Pos(10, 10))
         with patch.object(Level, 'can_enter', return_value=False) as patched_level:
             p.attach_level(Level(80, 25, None))
@@ -105,6 +104,7 @@ class TestPlayerAI(unittest.TestCase):
         self.assertTrue(True)
 
     # TODO: bump actions, take actions, etc.
+
 
 # ===== Test Combat Interface =============================
 

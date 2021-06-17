@@ -1,13 +1,13 @@
 """
     Input-Handler loops: Main Menu, Gameplay, etc.
-    
+
     Concept stolen shamelessly from https://github.com/HexDecimal/roguelike-tutorial
 """
 
-from typing import Tuple, Any, Optional
 from display import Display
 from level import Level
 from player import Player
+
 
 # ===== Game Loop Superclass ==============================
 
@@ -43,7 +43,6 @@ class MainGameloop (Gameloop):
         self._display.dispatch_events(self._player.input_handler)
         # TODO: escape action reverts to _previous (return value?)
         self._player.perform()  # TODO: this actually hooks into timer logic
-        
         # TODO: if we're doing a submenu, then override this and return to this.  Capture _prevous
         return self
 

@@ -8,6 +8,7 @@ import tcod
 from typing import Any
 from player_input import PlayerInputHandler
 
+
 class Display:
     _title: str
     # TODO: Pos()
@@ -51,7 +52,7 @@ class Display:
         events = tcod.event.wait()
         for event in events:
             input_handler.dispatch(event)  # TODO: return value cuts it short
-  
+
     @property
     def rgb(self):
         return self._console.tiles_rgb

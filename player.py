@@ -154,7 +154,7 @@ class Player:
         self._level = level
 
     # ===== Action callbacks ==============================
-    
+
     def move(self, dx: int, dy: int):
         self._pos = Pos(self._pos.x + dx, self._pos.y + dy)  # TODO: Pos addition
         # TODO : returns timer tick cost
@@ -163,9 +163,9 @@ class Player:
     def input_handler(self):
         """Gameloop needs input handler so it can collect actions"""
         return self._input
-    
+
     # ===== Timer / AI / Action Interface ==========================
-    
+
     def perform(self):
         # TODO: returns timer tick cost
         action = self._input.get_action()

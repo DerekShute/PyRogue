@@ -1,5 +1,4 @@
 import tcod
-from dataclasses import dataclass
 from typing import Any, Optional, List
 from actions import EscapeAction, MovementAction, Action
 
@@ -15,7 +14,7 @@ MOVE_KEYS = {
 
 class PlayerInputHandler(tcod.event.EventDispatch[Any]):
     """Base input handler right now: movement"""
-    
+
     _inputq: List[Action] = []
     """Queued Actions on behalf of the Player AI"""
 

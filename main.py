@@ -11,6 +11,7 @@ from rogue_level import RogueLevel
 NUMCOLS = 80
 NUMLINES = 25
 
+
 def main():
 
     def rectangle(x1: int, y1: int, x2: int, y2: int) -> Tuple[slice, slice]:
