@@ -6,6 +6,7 @@ Stolen liberally from tcod_tutorial_v2
 
 import tcod
 from typing import Any
+from player_input import PlayerInputHandler
 
 
 class Display:
@@ -45,6 +46,12 @@ class Display:
     def present(self):
         """Perform update"""
         self._context.present(self._console)
+
+    def dispatch_events(self, input_handler: PlayerInputHandler):
+        """Burying the TCOD details somewhere"""
+        events = tcod.event.wait()
+        for event in events:
+            input_handler.dispatch(event)  # TODO: return value cuts it short
 
     @property
     def rgb(self):

@@ -1,3 +1,21 @@
+Main state machine -> Main menu, gameplay, menus, endgame
+
+    * Need a generalization of InputHandler distinguishing player game input versus menu input
+        * Then can create MainMenu and submenus
+
+AI
+    * subsection and generalization.  Player AI is player input, and is a stack of handlers
+
+    * Then monster actions
+
+Engine
+
+    * Everything hangs off of Engine
+    
+Maps and Levels
+
+    * Make level a part of GameMap, rather than the reverse
+
 monster.py
     AMULETLEVEL goes somemplace else
 
@@ -14,6 +32,9 @@ monster.py
 
 ./rogue_level.py:68:1: C901 'connect_rooms' is too complex (11)
 1     C901 'connect_rooms' is too complex (11)
+
+rogue_level
+    player.Stats is imported but unused (except by eval()
 
 Display / Map / Level
     * Consolidate colors into a set of manifest constants

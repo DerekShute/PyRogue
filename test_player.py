@@ -6,6 +6,8 @@ import unittest
 from unittest.mock import patch
 from player import roll, Player, Stats
 from position import Pos
+from actions import MovementAction
+from level import Level
 
 
 # ===== Service Routines ==================================
@@ -24,10 +26,10 @@ def randint_return_max(*args, **kwargs):
     return args[1]
 
 
-# ===== Tests =============================================
+# ===== Test Player Basics ================================
 
 class TestPlayer(unittest.TestCase):
-    """Test damage ('AxB') die rolls"""
+    """Test Player"""
 
     def test(self):
         """Smoke test"""
@@ -40,8 +42,6 @@ class TestPlayer(unittest.TestCase):
         assert repr(eval(repr(p))) == repr(p)
         assert p.name == 'Player'
         self.assertTrue(True)
-
-    # Mapping, leveling, Display
 
     def test_pos(self):
         """Test positioning and set-positioning"""
@@ -60,22 +60,74 @@ class TestPlayer(unittest.TestCase):
         assert color == (255, 255, 255)
         self.assertTrue(True)
 
-    # Combat interface
+
+# ===== Test Action =======================================
+
+class TestPlayerActionCallback(unittest.TestCase):
+
+    def test_move(self):
+        """Move action moves the player"""
+        p = Player.factory(pos=Pos(10, 10))
+        p.move(-1, -1)
+        assert p.pos == Pos(9, 9)
+        self.assertTrue(True)
+
+
+# ===== Test AI Callback ==================================
+
+class TestPlayerAI(unittest.TestCase):
+
+    @patch('player_input.PlayerInputHandler.get_action')
+    def test_perform_move_allowed(self, mock_get_action):
+        """Player was allowed to move"""
+        mock_get_action.return_value = MovementAction(-1, -1)
+        p = Player.factory(pos=Pos(10, 10))
+        with patch.object(Level, 'can_enter', return_value=True) as patched_level:
+            p.attach_level(Level(80, 25, None))
+            p.perform()
+            patched_level.assert_called_once()
+        mock_get_action.assert_called_once()
+        assert p.pos == Pos(9, 9)
+        self.assertTrue(True)
+
+    @patch('player_input.PlayerInputHandler.get_action')
+    def test_perform_move_denied(self, mock_get_action):
+        """Player was not allowed to move"""
+        mock_get_action.return_value = MovementAction(-1, -1)
+        p = Player.factory(pos=Pos(10, 10))
+        with patch.object(Level, 'can_enter', return_value=False) as patched_level:
+            p.attach_level(Level(80, 25, None))
+            p.perform()
+            patched_level.assert_called_once()
+        mock_get_action.assert_called_once()
+        assert p.pos == Pos(10, 10)
+        self.assertTrue(True)
+
+    # TODO: bump actions, take actions, etc.
+
+
+# ===== Test Combat Interface =============================
+
+class TestPlayerCombat(unittest.TestCase):
+    """Player Combat Interface"""
 
     def test_melee_dmg_adj(self):
         p = Player.factory()
         # print (p.melee_dmg_adj)
         assert p.melee_dmg_adj == 1
+        self.assertTrue(True)
 
     def test_melee_hit_adj(self):
         p = Player.factory()
         # print (p.melee_hit_adj)
         assert p.melee_hit_adj == 0
+        self.assertTrue(True)
 
     def test_ac(self):
         p = Player.factory()
         # print (p.ac)
         assert p.ac == 10  # TODO: armor
+        self.assertTrue(True)
 
     @patch('random.randint')
     def test_melee_dmg(self, mock_randint):
@@ -83,6 +135,7 @@ class TestPlayer(unittest.TestCase):
         p = Player.factory()
         # print (p.melee_dmg())
         assert p.melee_dmg() == 2  # STR 16 -> +1, TODO: weapon
+        self.assertTrue(True)
 
 
 class TestRoll(unittest.TestCase):
