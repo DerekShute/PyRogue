@@ -7,9 +7,7 @@ from dataclasses import dataclass
 from item import Item
 from position import Pos
 from typing import Tuple
-from actions import Action
 from player_input import PlayerInputHandler
-from display import Display
 
 HUNGERTIME = 1300
 """Turns before hunger state change, I guess"""
