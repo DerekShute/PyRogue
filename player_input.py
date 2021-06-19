@@ -1,6 +1,6 @@
 import tcod
 from typing import Any, Optional, List
-from actions import EscapeAction, MovementAction, Action
+from actions import EscapeAction, MovementAction, Action, PickupAction
 
 
 MOVE_KEYS = {
@@ -29,6 +29,8 @@ class PlayerInputHandler(tcod.event.EventDispatch[Any]):
         key = event.sym
         if key == tcod.event.K_ESCAPE:
             self._inputq.append(EscapeAction())
+        elif key == tcod.event.K_g:
+            self._inputq.append(PickupAction())
         elif key in MOVE_KEYS:
             self._inputq.append(MovementAction(*MOVE_KEYS[key]))
 

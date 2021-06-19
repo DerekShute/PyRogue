@@ -25,12 +25,16 @@ class Thing:  # union thing
     _name: str = '<unknown>'
     _char: int = ord('&')  # No good default
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
+    _level = None  # TODO: 'parent'
 
-    def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None):
+    def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, level=None):
         self._pos = Pos(pos)
         self._name = name
         self._char = ord(char)
         self._color = color
+        self._level = level
+        if level is not None:
+            level.add_item(self)
 
     # ===== Display =======================================
 
@@ -53,6 +57,14 @@ class Thing:  # union thing
     def set_pos(self, pos: Pos):
         self._pos = pos
 
+    def set_level(self, level):
+        """Put the Thing on the map, or remove it from the map"""
+        if level is None:
+            self._level.remove_item(self)
+        self._level = level
+        if level is not None:
+            self._level.add_item(self)
+
     @property
     def name(self):
         return self._name
@@ -65,6 +77,12 @@ class Item (Thing):  # _o internal to union thing originally
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    # ===== Interface =====================================
+
+    @property
+    def quantity(self):
+        return None
 
 # TODO: 'collective' objects with _quantity
 
@@ -83,6 +101,12 @@ class Gold (Item):
 
     def __repr__(self) -> str:
         return f'Gold(pos={repr(self._pos)},val={self._val})'
+
+    # ===== Interface =====================================
+
+    @property
+    def quantity(self) -> int:
+        return self._val
 
 # ===== TESTING ===========================================
 
