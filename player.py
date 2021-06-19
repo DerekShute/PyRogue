@@ -114,6 +114,7 @@ class Player:
     _level = None
     _input: PlayerInputHandler = None
     _msg: MessageBuffer = None
+    _purse: int = 0  # Gold collected, an infinitely large pocket
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME,
                  msg: MessageBuffer = None):
@@ -144,7 +145,7 @@ class Player:
     def display(self) -> str:
         """Status-line"""
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
-        return f'HP:{self._stats.hpt}/{self._stats.maxhp} Level:{self._stats.level}({self._stats.exp}) STR:{self._stats.stren}'
+        return f'HP:{self._stats.hpt}/{self._stats.maxhp} Level:{self._stats.level}({self._stats.exp}) STR:{self._stats.stren} GP:{self._purse}'
 
     # ===== Base Interface ================================
 
@@ -175,6 +176,24 @@ class Player:
     def move(self, dx: int, dy: int):
         self._pos = Pos(self._pos.x + dx, self._pos.y + dy)  # TODO: Pos addition
         # TODO : returns timer tick cost
+
+    def bump(self, dx: int, dy: int):
+        self.add_msg('Ouch!')
+
+    def pick_up(self, item: Item):
+        if item is None:
+            self.add_msg('No item there to pick up!')
+            return
+        if item.name == 'gold':
+            # AD&D would award XP for treasure, but not Rogue apparently
+            self.add_msg(f'You pick up {item.quantity} gold pieces!')
+            self._purse = self._purse + item.quantity
+            item.set_level(None)
+            del item  # Poof
+        else:
+            self.add_msg(f'You pick up the {item.name}')
+            # TODO: remove from level, add to inventory
+            # TODO: after verifying you can
 
     @property
     def input_handler(self):

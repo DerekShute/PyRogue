@@ -124,6 +124,10 @@ class Level:
         self.items.append(item)
         # TODO: render?
 
+    def remove_item(self, item: Item):
+        self.items.remove(item)
+        # TODO: render
+
     def add_monster(self, monster: Monster):
         """Add a monster to the level/map"""
         self.monsters.append(monster)
@@ -150,6 +154,9 @@ class Level:
         if self.player is not None:
             self.map.set_char(*self.player.char)
 
+    def items_at(self, pos: Pos) -> List[Item]:
+        """A list of items at this location"""
+        return [item for item in self.items if item.pos == pos]
 
 # ===== TESTING ===========================================
 

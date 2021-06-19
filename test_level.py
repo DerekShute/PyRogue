@@ -6,7 +6,7 @@ import unittest
 from level import Level
 from position import Pos
 from room import Room
-
+from item import Gold
 
 class TestLevel(unittest.TestCase):
 
@@ -20,6 +20,21 @@ class TestLevel(unittest.TestCase):
         assert not lvl.can_enter(Pos(7, 7))    # just outside
         assert not lvl.can_enter(Pos(30, 30))  # Way out there
         assert not lvl.can_enter(Pos(-1, -1))  # Way out there
+        self.assertTrue(True)
+
+    def test_item_at_location(self):
+        """Exercise 'list of items at position' plus add and remove"""
+        lvl = Level(10, 10, None)
+        lvl.add_room(0, Room(Pos(0, 0), Pos(7, 7)))
+        assert lvl.items_at(Pos(5, 5)) == []
+        gold = Gold(val=10, pos=Pos(5, 5), level=lvl)
+        assert lvl.items_at(Pos(5, 5)) == [gold]
+        lvl.remove_item(gold)
+        assert lvl.items_at(Pos(5, 5)) == []
+        gold.set_level(lvl)
+        assert lvl.items_at(Pos(5, 5)) == [gold]
+        gold.set_level(None)
+        assert lvl.items_at(Pos(5, 5)) == []
         self.assertTrue(True)
 
 

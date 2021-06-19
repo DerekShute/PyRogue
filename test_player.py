@@ -6,8 +6,9 @@ import unittest
 from unittest.mock import patch
 from player import roll, Player, Stats
 from position import Pos
-from actions import MovementAction
+from actions import MovementAction, PickupAction
 from level import Level
+from item import Gold
 
 
 # ===== Service Routines ==================================
@@ -41,6 +42,7 @@ class TestPlayer(unittest.TestCase):
                'maxhp=12, hpt=12, exp=0, level=0), food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
         assert p.name == 'Player'
+        assert p.display == 'HP:12/12 Level:0(0) STR:16 GP:0'
         self.assertTrue(True)
 
     def test_pos(self):
@@ -101,6 +103,20 @@ class TestPlayerAI(unittest.TestCase):
             patched_level.assert_called_once()
         mock_get_action.assert_called_once()
         assert p.pos == Pos(10, 10)
+        self.assertTrue(True)
+
+    @patch('player_input.PlayerInputHandler.get_action')
+    def test_perform_pickup_gold(self, mock_get_action):
+        """Pick up an Item"""
+        mock_get_action.return_value = PickupAction()
+        p = Player.factory(pos=Pos(10, 10))
+        level = Level(80, 25, None)
+        gold = Gold(val=10, pos=Pos(10, 10), level=level)
+        p.attach_level(level)
+        p.perform()
+        mock_get_action.assert_called_once()
+        assert level.items == []  # Gone from map
+        assert p.display == 'HP:12/12 Level:0(0) STR:16 GP:10'
         self.assertTrue(True)
 
     # TODO: bump actions, take actions, etc.

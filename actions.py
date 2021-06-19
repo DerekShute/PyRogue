@@ -34,10 +34,22 @@ class MovementAction(Action):
 
     def perform(self, entity: Player, level: Level) -> None:
         dest = Pos(entity.pos.x + self.dx, entity.pos.y + self.dy)
-        if level.can_enter(dest):
+        if level.can_enter(dest):  # TODO: might depend on 'can entity enter square'
             entity.move(self.dx, self.dy)
-        else:
-            entity.add_msg('Ouch!')
             # TODO: update display for the two positions involved
+            # TODO: consequences of entering square
+        # TODO: elif entity here then MeleeAction(attacker, defender).perform()
+        else:
+            entity.bump(self.dx, self.dy)  # TODO: thing you're bonking against
+            # TODO: BumpAction as first level, and if can-enter then MoveAction.perform()
+
+
+class PickupAction(Action):
+    def perform(self, entity: Player, level: Level) -> None:
+        items = level.items_at(entity.pos)
+        if items == []:
+            entity.pick_up(None)
+        else:
+            entity.pick_up(items[0])  # TODO: top of stack vs menu to select
 
 # EOF

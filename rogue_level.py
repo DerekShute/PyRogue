@@ -178,8 +178,7 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
 
     gold = None
     if rand(0, 2) == 0:  # I think that rnd(2) is 0..2
-        gold = Gold(pos=r.rnd_pos, val=rand(2, 50 + 10 * levelno))
-        level.add_item(gold)
+        gold = Gold(pos=r.rnd_pos, val=rand(2, 50 + 10 * levelno), level=level)
 
     # Put the monster in
 
