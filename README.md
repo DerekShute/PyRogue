@@ -1,3 +1,5 @@
+![Label](https://github.com/DerekShute/PyRogue/actions/workflows/python-app.yml/badge.svg)
+
 # PyRogue
 Port (sort of) the venerable Rogue roguelike to Python
 
