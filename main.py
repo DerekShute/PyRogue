@@ -8,7 +8,6 @@ from player import Player
 from gameloop import MainGameloop
 from rogue_level import RogueLevel
 from message import MessageBuffer
-from position import Pos
 
 
 # Map size 80x25, but create a 80x26 display for last-line status
