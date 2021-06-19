@@ -1,7 +1,7 @@
 """
     Messages to the player at the top of the screen
 """
-from position import Pos
+
 
 class MessageBuffer:
     _message: str = None  # TODO: buffering and view

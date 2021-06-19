@@ -6,7 +6,6 @@ Stolen liberally from tcod_tutorial_v2
 
 from typing import Any, Tuple
 import tcod
-from typing import Any
 from player_input import PlayerInputHandler
 
 
@@ -50,11 +49,12 @@ class Display:
         """Print something to display, wrapper around tcod.console print"""
         self._console.print_box(x=x, y=y, string=string, height=1, width=self._xsize, fg=fg)
 
-    def present(self, player = None):
+    def present(self, player=None):
         """Perform update"""
         # Contextual to the player (the human)
         # TODO: convention is last line, but original game uses line 0
-        self.msg(x=0, y=self._ysize - 1, string=player.curr_msg.ljust(self._xsize))
+        if player is not None:
+            self.msg(x=0, y=self._ysize - 1, string=player.curr_msg.ljust(self._xsize))
         self._context.present(self._console)
 
     def dispatch_events(self, input_handler: PlayerInputHandler):
