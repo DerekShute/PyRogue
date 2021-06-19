@@ -103,7 +103,10 @@ class GameMap:
         """Set a single character"""
         # TODO: set the rgb directly somehow?  How do you define background color?
         if self.visible[p.x, p.y] and self._display:
-            self._display.print(x=p.x, y=p.y, string=char, fg=color)
+            self._display.set_char(x=p.x, y=p.y, ch=char, fg=color)
+
+    def msg(self, text):
+        self._display.msg(x=0, y=25, string=text)
 
     def lit(self, inner: Tuple[slice, slice], lit: bool = True):
         """Set a region to lit / visible"""
@@ -150,7 +153,7 @@ if __name__ == '__main__':
         m.lit(rectangle(0, 0, 10, 25), True)
         # NOTE: lit but not explored is odd
         m.explore(rectangle(0, 0, 40, 10), True)
-        m.set_char(Pos((7, 7)), char='*', color=(255, 255, 0))
+        m.set_char(Pos((7, 7)), char=ord('*'), color=(255, 255, 0))
         d.present()
         time.sleep(2)
         m.lit(rectangle(0, 0, 10, 25), False)

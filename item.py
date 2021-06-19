@@ -23,19 +23,19 @@ class Thing:  # union thing
     """
     _pos: Pos = None
     _name: str = '<unknown>'
-    _char: str = '&'  # No good default
+    _char: int = ord('&')  # No good default
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
 
     def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None):
         self._pos = Pos(pos)
         self._name = name
-        self._char = char
+        self._char = ord(char)
         self._color = color
 
     # ===== Display =======================================
 
     @property
-    def char(self) -> Tuple[Pos, str, Tuple[int, int, int]]:
+    def char(self) -> Tuple[Pos, int, Tuple[int, int, int]]:
         """Return map display information"""
         # TODO: render priority
         return self._pos, self._char, self._color

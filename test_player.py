@@ -56,7 +56,7 @@ class TestPlayer(unittest.TestCase):
         p = Player.factory(pos=Pos(10, 10))
         pos, char, color = p.char
         assert pos == Pos(10, 10)
-        assert char == '@'
+        assert char == ord('@')
         assert color == (255, 255, 255)
         self.assertTrue(True)
 

@@ -1,3 +1,15 @@
+Messages
+
+    * Relocated status line to bottom of display (+1 line)
+
+    * currently assumes map coord == display coord
+
+    * Might be able to replace the display slice, but this is nontrivial
+
+    * TODO: history and display of history
+
+    * TODO: Multiline and --more--
+
 Main state machine -> Main menu, gameplay, menus, endgame
 
     * Need a generalization of InputHandler distinguishing player game input versus menu input

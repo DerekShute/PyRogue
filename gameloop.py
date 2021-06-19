@@ -39,7 +39,7 @@ class MainGameloop (Gameloop):
 
     def run(self) -> Gameloop:
         self._level.render()
-        self._display.present()
+        self._display.present(self._player)
         self._display.dispatch_events(self._player.input_handler)
         # TODO: escape action reverts to _previous (return value?)
         self._player.perform()  # TODO: this actually hooks into timer logic

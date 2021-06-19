@@ -113,7 +113,7 @@ class TestMonster(unittest.TestCase):
         mon = Monster.factory(Pos(10, 10), 1, ord('G'))
         pos, char, color = mon.char
         assert pos == Pos(10, 10)
-        assert char == 'G'
+        assert char == ord('G')
         assert color == (63, 127, 63)
         self.assertTrue(True)
 
