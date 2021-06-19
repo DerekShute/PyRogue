@@ -145,7 +145,9 @@ class Player:
     def display(self) -> str:
         """Status-line"""
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
-        return f'HP:{self._stats.hpt}/{self._stats.maxhp} Level:{self._stats.level}({self._stats.exp}) STR:{self._stats.stren} GP:{self._purse}'
+        return f'HP:{self._stats.hpt}/{self._stats.maxhp} ' \
+               f'Level:{self._stats.level}({self._stats.exp}) '\
+               f'STR:{self._stats.stren} GP:{self._purse}'
 
     # ===== Base Interface ================================
 

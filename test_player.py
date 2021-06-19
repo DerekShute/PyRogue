@@ -111,7 +111,7 @@ class TestPlayerAI(unittest.TestCase):
         mock_get_action.return_value = PickupAction()
         p = Player.factory(pos=Pos(10, 10))
         level = Level(80, 25, None)
-        gold = Gold(val=10, pos=Pos(10, 10), level=level)
+        _ = Gold(val=10, pos=Pos(10, 10), level=level)
         p.attach_level(level)
         p.perform()
         mock_get_action.assert_called_once()

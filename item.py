@@ -27,7 +27,7 @@ class Thing:  # union thing
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
     _level = None  # TODO: 'parent'
 
-    def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, level = None):
+    def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, level=None):
         self._pos = Pos(pos)
         self._name = name
         self._char = ord(char)
@@ -79,7 +79,7 @@ class Item (Thing):  # _o internal to union thing originally
         super().__init__(*args, **kwargs)
 
     # ===== Interface =====================================
-    
+
     @property
     def quantity(self):
         return None

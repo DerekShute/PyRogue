@@ -8,6 +8,9 @@ from position import Pos
 from room import Room
 from item import Gold
 
+
+# ===== Test Level ========================================
+
 class TestLevel(unittest.TestCase):
 
     def test_can_enter(self):
