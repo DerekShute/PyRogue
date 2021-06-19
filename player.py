@@ -8,6 +8,8 @@ from item import Item
 from position import Pos
 from typing import Tuple
 from player_input import PlayerInputHandler
+from message import MessageBuffer
+
 
 HUNGERTIME = 1300
 """Turns before hunger state change, I guess"""
@@ -53,7 +55,7 @@ STR_PLUS = (-7, -6, -5, -4, -3, -2, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0-15
             0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3)
 """adjustments to hit probabilities due to strength"""
 
-PLAYER_CHAR = '@'
+PLAYER_CHAR = ord('@')
 
 PLAYER_COLOR = (255, 255, 255)  # White TODO: consolidate definitions
 
@@ -111,12 +113,15 @@ class Player:
     _cur_armor: Item = None
     _level = None
     _input: PlayerInputHandler = None
+    _msg: MessageBuffer = None
 
-    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
+    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME,
+                 msg: MessageBuffer = None):
         self._stats = stats
         self._pos = pos
         self._food_left = food_left
         self._input = PlayerInputHandler()
+        self._msg = msg
 
     def __str__(self):
         return f'Player({Pos(self._pos)},{self._stats})'
@@ -135,6 +140,12 @@ class Player:
         # TODO: render priority
         return self._pos, PLAYER_CHAR, PLAYER_COLOR
 
+    @property
+    def display(self) -> str:
+        """Status-line"""
+        # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
+        return f'HP:{self._stats.hpt}/{self._stats.maxhp} Level:{self._stats.level}({self._stats.exp}) STR:{self._stats.stren}'
+
     # ===== Base Interface ================================
 
     def set_pos(self, pos: Pos):
@@ -150,6 +161,14 @@ class Player:
 
     def attach_level(self, level) -> str:
         self._level = level
+
+    def add_msg(self, text: str):
+        if self._msg is not None:
+            self._msg.add(text)  # TODO: censor message for visibility of source, etc.
+
+    @property
+    def curr_msg(self):
+        return self._msg.msg if self._msg.msg else f'{self.display}'
 
     # ===== Action callbacks ==============================
 
@@ -168,6 +187,7 @@ class Player:
         # TODO: returns timer tick cost
         action = self._input.get_action()
         if action is not None:
+            self.add_msg('')
             action.perform(self, self._level)
 
     # ===== Stat interface ================================
@@ -216,8 +236,8 @@ class Player:
     # ===== Constructor ===================================
 
     @staticmethod
-    def factory(pos: Pos = None):   # init_player
-        plr = Player(pos=pos, stats=Stats(**INIT_STATS))
+    def factory(pos: Pos = None, msg: MessageBuffer = None):   # init_player
+        plr = Player(pos=pos, stats=Stats(**INIT_STATS), msg=msg)
         # cur_armor Armor: ring_mail, known, a_class = RING_MAIL
         # one food
         # cur_weapon Weapon: mace, known, hplus=1 dplus=1

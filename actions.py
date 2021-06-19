@@ -36,6 +36,8 @@ class MovementAction(Action):
         dest = Pos(entity.pos.x + self.dx, entity.pos.y + self.dy)
         if level.can_enter(dest):
             entity.move(self.dx, self.dy)
+        else:
+            entity.add_msg('Ouch!')
             # TODO: update display for the two positions involved
 
 # EOF

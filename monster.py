@@ -129,7 +129,7 @@ class Monster:  # struct monster
     def char(self) -> Tuple[Pos, str, Tuple[int, int, int]]:
         """Return map display information"""
         # TODO: render priority
-        return self.pos, self.disguise if self.disguise != 0 else chr(self.mtype), ORC_GREEN
+        return self.pos, self.disguise if self.disguise != 0 else self.mtype, ORC_GREEN
 
     # ===== Base Interface ================================
 

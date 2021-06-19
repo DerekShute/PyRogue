@@ -26,7 +26,6 @@ class PlayerInputHandler(tcod.event.EventDispatch[Any]):
         raise SystemExit()
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
-        print(str(event))
         key = event.sym
         if key == tcod.event.K_ESCAPE:
             self._inputq.append(EscapeAction())

@@ -7,7 +7,10 @@ from display import Display
 from player import Player
 from gameloop import MainGameloop
 from rogue_level import RogueLevel
+from message import MessageBuffer
 
+
+# Map size 80x25, but create a 80x26 display for last-line status
 NUMCOLS = 80
 NUMLINES = 25
 
@@ -19,12 +22,15 @@ def main():
 
     random.seed()
 
-    with Display(NUMCOLS, NUMLINES, title='PyRogue') as d:
-        p = Player.factory()
+    with Display(NUMCOLS, NUMLINES + 1, title='PyRogue') as d:
+        # TODO: attach msgbuf to display at location?
+        msgbuf = MessageBuffer()
+        p = Player.factory(msg=msgbuf)
         lvl = RogueLevel(1, NUMCOLS, NUMLINES, d, player=p)
-        lvl.map.lit(rectangle(0, 0, NUMCOLS, NUMLINES - 1))   # TODO
-        lvl.map.explore(rectangle(0, 0, NUMCOLS, NUMLINES - 1))  # TODO
+        lvl.map.lit(rectangle(0, 0, NUMCOLS, NUMLINES))   # TODO
+        lvl.map.explore(rectangle(0, 0, NUMCOLS, NUMLINES))  # TODO
         loop = MainGameloop(level=lvl, player=p, display=d)
+        p.add_msg('Welcome to the dungeon!')
         while True:
             loop = loop.run()
             if loop is None:
