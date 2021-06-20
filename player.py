@@ -162,7 +162,11 @@ class Player:
     def name(self) -> str:
         return 'Player'
 
-    def attach_level(self, level) -> str:
+    @property
+    def level(self):
+        return self._level
+
+    def attach_level(self, level):
         self._level = level
 
     def add_msg(self, text: str):
@@ -175,12 +179,17 @@ class Player:
 
     # ===== Action callbacks ==============================
 
+    def bump(self, dx: int, dy: int):
+        self.add_msg('Ouch!')
+
+    def descend(self):
+        self.add_msg('You stumble down the stairs.')  # TODO: real message?
+        self._level.remove_player()
+        # Once not on the level, the game main loop takes care of it
+
     def move(self, dx: int, dy: int):
         self._pos = Pos(self._pos.x + dx, self._pos.y + dy)  # TODO: Pos addition
         # TODO : returns timer tick cost
-
-    def bump(self, dx: int, dy: int):
-        self.add_msg('Ouch!')
 
     def pick_up(self, item: Item):
         if item is None:
@@ -209,7 +218,7 @@ class Player:
         action = self._input.get_action()
         if action is not None:
             self.add_msg('')
-            action.perform(self, self._level)
+            action.perform(self)
 
     # ===== Stat interface ================================
     # TODO: who cares?

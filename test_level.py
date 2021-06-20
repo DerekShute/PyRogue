@@ -40,6 +40,9 @@ class TestLevel(unittest.TestCase):
         assert lvl.items_at(Pos(5, 5)) == []
         self.assertTrue(True)
 
+# TODO: stairs at location
+# TODO: need entire test_map module for tile type test
+
 
 # ===== Invocation ========================================
 

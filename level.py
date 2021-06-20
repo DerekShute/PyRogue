@@ -137,6 +137,11 @@ class Level:
         self.player = player
         player.attach_level(self)
 
+    def remove_player(self):
+        """Remove the player from the level/map"""
+        self.player.attach_level(None)
+        self.player = None
+
     def can_enter(self, pos: Pos) -> bool:
         if self.map.can_enter(pos) and not any(m.pos == pos for m in self.monsters):
             return True
@@ -157,6 +162,10 @@ class Level:
     def items_at(self, pos: Pos) -> List[Item]:
         """A list of items at this location"""
         return [item for item in self.items if item.pos == pos]
+
+    def is_stairs(self, pos: Pos) -> bool:
+        """Is this the stairs?"""
+        return self.map.tile_at(pos) == GameMap.STAIRS
 
 
 # ===== TESTING ===========================================

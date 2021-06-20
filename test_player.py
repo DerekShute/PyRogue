@@ -45,6 +45,14 @@ class TestPlayer(unittest.TestCase):
         assert p.display == 'HP:12/12 Level:0(0) STR:16 GP:0'
         self.assertTrue(True)
 
+    def test_level(self):
+        """Player attachment to level"""
+        p = Player.factory(pos=Pos(10, 10))
+        lvl = Level(80, 25, None)
+        p.attach_level(lvl)
+        assert p.level == lvl  # Test point in neighborhood
+        self.assertTrue(True)
+  
     def test_pos(self):
         """Test positioning and set-positioning"""
         p = Player.factory(pos=Pos(10, 10))

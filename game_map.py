@@ -80,17 +80,27 @@ class GameMap:
                 default=tile_types.SHROUD
             )
 
+    def tile_at(self, p: Pos) -> int:
+        """What tile is right here?"""
+        tile = self.tiles[p.x, p.y]
+        if tile == _TILES[GameMap.WALL]:  # TODO: is there a more elegant solution?
+            return GameMap.WALL
+        if tile == _TILES[GameMap.DOOR]:
+            return GameMap.DOOR
+        if tile == _TILES[GameMap.STAIRS]:
+            return GameMap.STAIRS
+
     def set_tile(self, p: Pos, tile: int):
         """
         Set a single tile
         """
         self.tiles[p.x, p.y] = _TILES[tile]
-        t = tile_types.SHROUD
-        if self.visible[p.x, p.y] and self.explored[p.x, p.y]:
-            t = self.tiles[p.x, p.y]['light']
-        else:
-            t = self.tiles[p.x, p.y]['dark']
         if self._display:
+            t = tile_types.SHROUD
+            if self.visible[p.x, p.y] and self.explored[p.x, p.y]:
+                t = self.tiles[p.x, p.y]['light']
+            else:
+                t = self.tiles[p.x, p.y]['dark']
             self._display.rgb[p.x, p.y] = t
 
     def can_enter(self, p: Pos) -> bool:

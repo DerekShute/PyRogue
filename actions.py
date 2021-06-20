@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class Action:
-    def perform(self, entity: Player, level: Level) -> None:
+    def perform(self, entity: Player) -> None:
         """Perform this action with the objects needed to determine its scope.
 
         This method must be overridden by Action subclasses.
@@ -21,8 +21,17 @@ class Action:
         raise NotImplementedError()
 
 
+class DescendAction(Action):
+    """Go down"""
+    def perform(self, entity: Player) -> None:
+        if entity.level.is_stairs(entity.pos):
+            entity.descend()
+        else:
+            entity.add_msg('No stairs here!')  # TODO real message
+
+
 class EscapeAction(Action):
-    def perform(self, entity: Player, level: Level) -> None:
+    def perform(self, entity: Player) -> None:
         raise SystemExit()
 
 
@@ -32,9 +41,9 @@ class MovementAction(Action):
         self.dx = dx  # TODO: Pos
         self.dy = dy
 
-    def perform(self, entity: Player, level: Level) -> None:
+    def perform(self, entity: Player) -> None:
         dest = Pos(entity.pos.x + self.dx, entity.pos.y + self.dy)
-        if level.can_enter(dest):  # TODO: might depend on 'can entity enter square'
+        if entity.level.can_enter(dest):  # TODO: might depend on 'can entity enter square'
             entity.move(self.dx, self.dy)
             # TODO: update display for the two positions involved
             # TODO: consequences of entering square
@@ -45,8 +54,8 @@ class MovementAction(Action):
 
 
 class PickupAction(Action):
-    def perform(self, entity: Player, level: Level) -> None:
-        items = level.items_at(entity.pos)
+    def perform(self, entity: Player) -> None:
+        items = entity.level.items_at(entity.pos)
         if items == []:
             entity.pick_up(None)
         else:
