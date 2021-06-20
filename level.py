@@ -46,6 +46,7 @@ def tunnel_between(start: Pos, end: Pos, going_south=bool) -> Iterator[Pos]:
 # ===== Level of dungeon ==================================
 
 class Level:
+    levelno: int = 0
     map: GameMap
     rooms: Dict[int, Room]
     stairs: List[Pos]  # TODO (eventually) "features" ?
@@ -54,10 +55,11 @@ class Level:
     monsters: List[Monster]
     player: Player
 
-    def __init__(self, width: int, height: int, display: Display):
+    def __init__(self, levelno: int, width: int, height: int, display: Display):
         """
         An empty level
         """
+        self.levelno = levelno
         self.map = GameMap(width, height, display)
         self.rooms = {}  # So we can insert exactly.  Just easier this way
         self.stairs = []
@@ -137,6 +139,11 @@ class Level:
         self.player = player
         player.attach_level(self)
 
+    def remove_player(self):
+        """Remove the player from the level/map"""
+        self.player.attach_level(None)
+        self.player = None
+
     def can_enter(self, pos: Pos) -> bool:
         if self.map.can_enter(pos) and not any(m.pos == pos for m in self.monsters):
             return True
@@ -158,6 +165,10 @@ class Level:
         """A list of items at this location"""
         return [item for item in self.items if item.pos == pos]
 
+    def is_stairs(self, pos: Pos) -> bool:
+        """Is this the stairs?"""
+        return any(stair for stair in self.stairs if stair == pos)
+
 
 # ===== TESTING ===========================================
 
@@ -168,7 +179,7 @@ if __name__ == '__main__':
         return slice(x1, x2), slice(y1, y2)
 
     with Display(80, 25, title='unit test Level') as d:
-        lvl = Level(80, 25, d)
+        lvl = Level(1, 80, 25, d)
         lvl.map.lit(rectangle(0, 0, 80, 25))
         lvl.map.explore(rectangle(0, 0, 80, 25))
 

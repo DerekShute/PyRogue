@@ -26,13 +26,19 @@ def main():
         # TODO: attach msgbuf to display at location?
         msgbuf = MessageBuffer()
         p = Player.factory(msg=msgbuf)
-        lvl = RogueLevel(1, NUMCOLS, NUMLINES, d, player=p)
-        lvl.map.lit(rectangle(0, 0, NUMCOLS, NUMLINES))   # TODO
-        lvl.map.explore(rectangle(0, 0, NUMCOLS, NUMLINES))  # TODO
-        loop = MainGameloop(level=lvl, player=p, display=d)
+        loop = MainGameloop(player=p, display=d)
         p.add_msg('Welcome to the dungeon!')
+        level_no = 0
+        lvl = None
         while True:
-            loop = loop.run()
+            if p.level is None:
+                if lvl is not None:
+                    del lvl
+                level_no = level_no + 1
+                lvl = RogueLevel(level_no, NUMCOLS, NUMLINES, d, player=p)
+                lvl.map.lit(rectangle(0, 0, NUMCOLS, NUMLINES))   # TODO
+                lvl.map.explore(rectangle(0, 0, NUMCOLS, NUMLINES))  # TODO
+            loop = loop.run(p)
             if loop is None:
                 break
 

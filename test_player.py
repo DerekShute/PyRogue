@@ -6,9 +6,10 @@ import unittest
 from unittest.mock import patch
 from player import roll, Player, Stats
 from position import Pos
-from actions import MovementAction, PickupAction
+from actions import MovementAction, PickupAction, DescendAction
 from level import Level
 from item import Gold
+from message import MessageBuffer
 
 
 # ===== Service Routines ==================================
@@ -42,7 +43,15 @@ class TestPlayer(unittest.TestCase):
                'maxhp=12, hpt=12, exp=0, level=0), food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
         assert p.name == 'Player'
-        assert p.display == 'HP:12/12 Level:0(0) STR:16 GP:0'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:0(0)'
+        self.assertTrue(True)
+
+    def test_level(self):
+        """Player attachment to level"""
+        p = Player.factory(pos=Pos(10, 10))
+        lvl = Level(1, 80, 25, None)
+        p.attach_level(lvl)
+        assert p.level == lvl  # Test point in neighborhood
         self.assertTrue(True)
 
     def test_pos(self):
@@ -83,40 +92,73 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_move_allowed(self, mock_get_action):
         """Player was allowed to move"""
         mock_get_action.return_value = MovementAction(-1, -1)
-        p = Player.factory(pos=Pos(10, 10))
+        p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
         with patch.object(Level, 'can_enter', return_value=True) as patched_level:
-            p.attach_level(Level(80, 25, None))
+            p.attach_level(Level(1, 80, 25, None))
             p.perform()
             patched_level.assert_called_once()
         mock_get_action.assert_called_once()
         assert p.pos == Pos(9, 9)
+        assert p.curr_msg == p.display
         self.assertTrue(True)
 
     @patch('player_input.PlayerInputHandler.get_action')
     def test_perform_move_denied(self, mock_get_action):
         """Player was not allowed to move"""
         mock_get_action.return_value = MovementAction(-1, -1)
-        p = Player.factory(pos=Pos(10, 10))
+        p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
         with patch.object(Level, 'can_enter', return_value=False) as patched_level:
-            p.attach_level(Level(80, 25, None))
+            p.attach_level(Level(1, 80, 25, None))
             p.perform()
             patched_level.assert_called_once()
         mock_get_action.assert_called_once()
         assert p.pos == Pos(10, 10)
+        assert p.curr_msg == 'Ouch!'
         self.assertTrue(True)
 
     @patch('player_input.PlayerInputHandler.get_action')
     def test_perform_pickup_gold(self, mock_get_action):
         """Pick up an Item"""
         mock_get_action.return_value = PickupAction()
-        p = Player.factory(pos=Pos(10, 10))
-        level = Level(80, 25, None)
+        p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
+        level = Level(1, 80, 25, None)
         _ = Gold(val=10, pos=Pos(10, 10), level=level)
         p.attach_level(level)
         p.perform()
         mock_get_action.assert_called_once()
         assert level.items == []  # Gone from map
-        assert p.display == 'HP:12/12 Level:0(0) STR:16 GP:10'
+        assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: ? Exp:0(0)'
+        assert p.curr_msg == 'You pick up 10 gold pieces!'
+        self.assertTrue(True)
+
+    @patch('player_input.PlayerInputHandler.get_action')
+    def test_perform_descend(self, mock_get_action):
+        """Stumble down the stairs"""
+        mock_get_action.return_value = DescendAction()
+        p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
+        level = Level(1, 80, 25, None)
+        level.add_stairs(Pos(10, 10))
+        level.add_player(p)
+        p.perform()
+        mock_get_action.assert_called_once()
+        assert p.level is None  # No longer on this level
+        assert p.levelno == 2
+        assert p.curr_msg == 'You stumble down the stairs.'
+        # TODO: Level number in display
+        self.assertTrue(True)
+
+    @patch('player_input.PlayerInputHandler.get_action')
+    def test_perform_descend_denied(self, mock_get_action):
+        """Try to stumble down non-existent stairs"""
+        mock_get_action.return_value = DescendAction()
+        p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
+        level = Level(1, 80, 25, None)
+        level.add_player(p)
+        p.perform()
+        mock_get_action.assert_called_once()
+        assert p.level == level  # Haven't moved
+        assert p.levelno == 1
+        assert p.curr_msg == 'No stairs here!'
         self.assertTrue(True)
 
     # TODO: bump actions, take actions, etc.

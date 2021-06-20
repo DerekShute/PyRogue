@@ -256,7 +256,7 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
     """
     # "dig and populate all the rooms on this level"
 
-    level = Level(width, height, display)
+    level = Level(levelno, width, height, display)
 
     # TODO: do_rooms()
 
