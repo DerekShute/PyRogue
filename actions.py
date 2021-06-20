@@ -42,13 +42,16 @@ class MovementAction(Action):
 
     def perform(self, entity: Player) -> None:
         dest = Pos(entity.pos.x + self.dx, entity.pos.y + self.dy)
-        if entity.level.can_enter(dest):  # TODO: might depend on 'can entity enter square'
+        monsters = entity.level.monsters_at(dest)
+        if len(monsters) > 0:
+            # TODO: other games verify if monster nonhostile.  Not Rogue.
+            entity.fight(monsters[0])
+        elif entity.level.can_enter(dest):  # TODO: might depend on 'can entity enter square'
             entity.move(self.dx, self.dy)
             # TODO: update display for the two positions involved
             # TODO: consequences of entering square
-        # TODO: elif entity here then MeleeAction(attacker, defender).perform(), or verify attack if nonhostile
         else:
-            entity.bump(self.dx, self.dy)  # TODO: thing you're bonking against
+            entity.bump(pos=dest)  # TODO: thing you're bonking against
             # TODO: BumpAction as first level, and if can-enter then MoveAction.perform()
 
 

@@ -66,42 +66,15 @@ Rogue Level
     * Treasure rooms
     * put_things
 
-stats mechanism / combat
-    see roll_em for several attacks : specifies thatt (attacker thing) thdef (defender) weapon, and 'hurl'
+Combat
+    * Must take weapon / armor / rings / confusion effect / etc. into consideration
     
-    if no weapon, stats->dmg, dplus = hplus = 0, cp = att->s_dmg
-    else:
-        hplus = weap->hplus, dplus = weap->dplus
+    * Projectile rules
     
-        if weap == cur_weapon (held, so must be player, unless monster can make you hit yourself)
+    * helpless target?  Additional bonus
     
-           if a ADD_DAM ring (on either hand)
-               dplus += cur_ring->o_arm  (the ring plus, I think)
-           if a ADD_HIT ring (on either hand)
-               hplus += cur_ring->o_arm
-        cp = weap->damage
-        if hurl
-            thrown/shot rules, hurldmg, hplus+=cur_weap->hplus, dplus+=cur_weapon->dplus
-            else other stuff
-    
-    helpless target?  Additional bonus
-    
-    def_arm = def->s_arm
-    if defender is player (pstats)
-        def_arm += cur_armor value
-        ring of protection? def_arm += ring->o_arm
-    
-    Strikes are noted in damage string: 1x4/1x4/1x8 -> three strikes, two are 1d4, last is 1d8
-    for each strike
-        convert damage string: DICExSIDES
-        if swing (level, armor, hplus + str_plus[att->s_str])
-            proll = roll(ndice, nsides)
-            damage = dplus + proll + add_dam[att->s_str)
-            defender->hpt -= max(0, damage)
-            did_hit = TRUE
-            
-     return did_hit
-     
+    * Combat turns off healing quiet time
+
 Stats use
 
     * doctor daemon: pstats.lvl, pstats.hpt max_hp(?)

@@ -134,6 +134,10 @@ class Level:
         """Add a monster to the level/map"""
         self.monsters.append(monster)
 
+    def remove_monster(self, monster: Monster):
+        """Remove monster from the level/map"""
+        self.monsters.remove(monster)
+
     def add_player(self, player: Player):
         """Add the player to the level/map"""
         self.player = player
@@ -164,6 +168,9 @@ class Level:
     def items_at(self, pos: Pos) -> List[Item]:
         """A list of items at this location"""
         return [item for item in self.items if item.pos == pos]
+
+    def monsters_at(self, pos: Pos) -> List[Monster]:
+        return [monster for monster in self.monsters if monster.pos == pos]
 
     def is_stairs(self, pos: Pos) -> bool:
         """Is this the stairs?"""

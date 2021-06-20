@@ -113,6 +113,8 @@ class Monster:  # struct monster
     mtype: int = 0
     disguise: int = 0  # For xeroc in disguise
     dest: Pos = None   # AI: where it is going.  Player location, room gold (see room->r_gold)
+    _level = None      # Level
+
     # pack: Item = None   # What the monster is holding and drops
     # TODO: t_room = room it is in (why?)
     # t_turn = TRUE
@@ -136,9 +138,54 @@ class Monster:  # struct monster
     def set_pos(self, pos: Pos):
         self.pos = pos
 
+    @property
+    def level(self):
+        return self._level
+
+    def attach_level(self, level):
+        level.add_monster(self)
+        self._level = level
+
+    def detach_level(self):
+        if self._level is not None:  # Test cases omit having one
+            self._level.remove_monster(self)
+            self._level = None
+
     # TODO: pos property must hide self.pos
 
     # TODO: name property must hide self.name
+
+    # ===== Combat Interface ==============================
+    
+    @property
+    def ac(self):
+        return self.armor
+
+    def death(self, entity):
+        # TODO: certain monsters have consequences: Venus Flytrap, Leprechaun
+        # TODO: drops everything in pack
+        self.detach_level()
+
+    # TODO: wakes up monsters, and need a solution for monster hitting monster
+
+    def add_hit_msg(self, entity):
+        pass
+
+    def add_was_hit_msg(self, entity):
+        pass
+
+    def add_miss_msg(self, entity):
+        pass
+
+    def add_was_missed_msg(self, entity):
+        pass
+
+    def take_damage(self, amount):
+        self.hpt = max(0, self.hpt - amount)
+
+    @property
+    def xp_value(self) -> int:
+        return self.exp
 
     # ===== Interface =====================================
 
