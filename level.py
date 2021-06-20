@@ -165,7 +165,7 @@ class Level:
 
     def is_stairs(self, pos: Pos) -> bool:
         """Is this the stairs?"""
-        return self.map.tile_at(pos) == GameMap.STAIRS
+        return any(stair for stair in self.stairs if stair == pos)
 
 
 # ===== TESTING ===========================================

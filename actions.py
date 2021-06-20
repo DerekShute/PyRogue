@@ -47,7 +47,7 @@ class MovementAction(Action):
             entity.move(self.dx, self.dy)
             # TODO: update display for the two positions involved
             # TODO: consequences of entering square
-        # TODO: elif entity here then MeleeAction(attacker, defender).perform()
+        # TODO: elif entity here then MeleeAction(attacker, defender).perform(), or verify attack if nonhostile
         else:
             entity.bump(self.dx, self.dy)  # TODO: thing you're bonking against
             # TODO: BumpAction as first level, and if can-enter then MoveAction.perform()

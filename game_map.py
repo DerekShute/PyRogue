@@ -80,16 +80,6 @@ class GameMap:
                 default=tile_types.SHROUD
             )
 
-    def tile_at(self, p: Pos) -> int:
-        """What tile is right here?"""
-        tile = self.tiles[p.x, p.y]
-        if tile == _TILES[GameMap.WALL]:  # TODO: is there a more elegant solution?
-            return GameMap.WALL
-        if tile == _TILES[GameMap.DOOR]:
-            return GameMap.DOOR
-        if tile == _TILES[GameMap.STAIRS]:
-            return GameMap.STAIRS
-
     def set_tile(self, p: Pos, tile: int):
         """
         Set a single tile

@@ -40,8 +40,14 @@ class TestLevel(unittest.TestCase):
         assert lvl.items_at(Pos(5, 5)) == []
         self.assertTrue(True)
 
-# TODO: stairs at location
-# TODO: need entire test_map module for tile type test
+    def test_stairs_at_location(self):
+        """Exercise 'there are stairs here' """
+        lvl = Level(10, 10, None)
+        lvl.add_room(0, Room(Pos(0, 0), Pos(7, 7)))
+        lvl.add_stairs(Pos(5, 5))
+        assert lvl.is_stairs(Pos(5, 5))
+        assert not lvl.is_stairs(Pos(0, 0))
+        self.assertTrue(True)
 
 
 # ===== Invocation ========================================
