@@ -53,7 +53,7 @@ class TestPlayer(unittest.TestCase):
         p.attach_level(lvl)
         assert p.level == lvl  # Test point in neighborhood
         self.assertTrue(True)
-  
+
     def test_pos(self):
         """Test positioning and set-positioning"""
         p = Player.factory(pos=Pos(10, 10))
@@ -141,7 +141,7 @@ class TestPlayerAI(unittest.TestCase):
         level.add_player(p)
         p.perform()
         mock_get_action.assert_called_once()
-        assert p.level == None  # No longer on this level
+        assert p.level is None  # No longer on this level
         assert p.levelno == 2
         assert p.curr_msg == 'You stumble down the stairs.'
         # TODO: Level number in display

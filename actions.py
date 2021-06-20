@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 from position import Pos
 
 if TYPE_CHECKING:
-    from level import Level
     from player import Player
 
 

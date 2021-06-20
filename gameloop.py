@@ -5,7 +5,6 @@
 """
 
 from display import Display
-from level import Level
 from player import Player
 
 
