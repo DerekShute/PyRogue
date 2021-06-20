@@ -115,6 +115,7 @@ class Player:
     _input: PlayerInputHandler = None
     _msg: MessageBuffer = None
     _purse: int = 0  # Gold collected, an infinitely large pocket
+    levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME,
                  msg: MessageBuffer = None):
@@ -123,6 +124,7 @@ class Player:
         self._food_left = food_left
         self._input = PlayerInputHandler()
         self._msg = msg
+        self.levelno = 0
 
     def __str__(self):
         return f'Player({Pos(self._pos)},{self._stats})'
@@ -145,9 +147,8 @@ class Player:
     def display(self) -> str:
         """Status-line"""
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
-        return f'HP:{self._stats.hpt}/{self._stats.maxhp} ' \
-               f'Level:{self._stats.level}({self._stats.exp}) '\
-               f'STR:{self._stats.stren} GP:{self._purse}'
+        return f'Level: {self.levelno} Gold: {self._purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
+               f'Str:{self._stats.stren}({self._stats.stren}) Arm: ? Exp:{self._stats.level}({self._stats.exp})'
 
     # ===== Base Interface ================================
 
@@ -168,6 +169,7 @@ class Player:
 
     def attach_level(self, level):
         self._level = level
+        self.levelno = level.levelno if level is not None else self.levelno
 
     def add_msg(self, text: str):
         if self._msg is not None:
@@ -185,6 +187,7 @@ class Player:
     def descend(self):
         self.add_msg('You stumble down the stairs.')  # TODO: real message?
         self._level.remove_player()
+        self.levelno = self.levelno + 1
         # Once not on the level, the game main loop takes care of it
 
     def move(self, dx: int, dy: int):

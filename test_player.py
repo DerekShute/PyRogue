@@ -43,13 +43,13 @@ class TestPlayer(unittest.TestCase):
                'maxhp=12, hpt=12, exp=0, level=0), food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
         assert p.name == 'Player'
-        assert p.display == 'HP:12/12 Level:0(0) STR:16 GP:0'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:0(0)'
         self.assertTrue(True)
 
     def test_level(self):
         """Player attachment to level"""
         p = Player.factory(pos=Pos(10, 10))
-        lvl = Level(80, 25, None)
+        lvl = Level(1, 80, 25, None)
         p.attach_level(lvl)
         assert p.level == lvl  # Test point in neighborhood
         self.assertTrue(True)
@@ -94,7 +94,7 @@ class TestPlayerAI(unittest.TestCase):
         mock_get_action.return_value = MovementAction(-1, -1)
         p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
         with patch.object(Level, 'can_enter', return_value=True) as patched_level:
-            p.attach_level(Level(80, 25, None))
+            p.attach_level(Level(1, 80, 25, None))
             p.perform()
             patched_level.assert_called_once()
         mock_get_action.assert_called_once()
@@ -108,7 +108,7 @@ class TestPlayerAI(unittest.TestCase):
         mock_get_action.return_value = MovementAction(-1, -1)
         p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
         with patch.object(Level, 'can_enter', return_value=False) as patched_level:
-            p.attach_level(Level(80, 25, None))
+            p.attach_level(Level(1, 80, 25, None))
             p.perform()
             patched_level.assert_called_once()
         mock_get_action.assert_called_once()
@@ -121,13 +121,13 @@ class TestPlayerAI(unittest.TestCase):
         """Pick up an Item"""
         mock_get_action.return_value = PickupAction()
         p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
-        level = Level(80, 25, None)
+        level = Level(1, 80, 25, None)
         _ = Gold(val=10, pos=Pos(10, 10), level=level)
         p.attach_level(level)
         p.perform()
         mock_get_action.assert_called_once()
         assert level.items == []  # Gone from map
-        assert p.display == 'HP:12/12 Level:0(0) STR:16 GP:10'
+        assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: ? Exp:0(0)'
         assert p.curr_msg == 'You pick up 10 gold pieces!'
         self.assertTrue(True)
 
@@ -136,12 +136,13 @@ class TestPlayerAI(unittest.TestCase):
         """Stumble down the stairs"""
         mock_get_action.return_value = DescendAction()
         p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
-        level = Level(80, 25, None)
+        level = Level(1, 80, 25, None)
         level.add_stairs(Pos(10, 10))
         level.add_player(p)
         p.perform()
         mock_get_action.assert_called_once()
         assert p.level == None  # No longer on this level
+        assert p.levelno == 2
         assert p.curr_msg == 'You stumble down the stairs.'
         # TODO: Level number in display
         self.assertTrue(True)
@@ -151,11 +152,12 @@ class TestPlayerAI(unittest.TestCase):
         """Try to stumble down non-existent stairs"""
         mock_get_action.return_value = DescendAction()
         p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
-        level = Level(80, 25, None)
+        level = Level(1, 80, 25, None)
         level.add_player(p)
         p.perform()
         mock_get_action.assert_called_once()
         assert p.level == level  # Haven't moved
+        assert p.levelno == 1
         assert p.curr_msg == 'No stairs here!'
         self.assertTrue(True)
 
