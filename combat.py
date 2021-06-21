@@ -35,6 +35,7 @@ def roll(die_roll: str) -> int:
         count = count - 1
     return total
 
+
 # ===== roll_em ===========================================
 
 def roll_em(attacker, defender) -> int:  # TODO: weapon, 'hurl'
@@ -44,7 +45,6 @@ def roll_em(attacker, defender) -> int:  # TODO: weapon, 'hurl'
     damage = 0
     for attack in at_dmg.split('/'):  # TODO: some monsters have weird strings here
         if swing(at_lvl, ac, STR_PLUS[at_stren]):  # TODO: just roll this into attacker/defender logic
-            something_hit = True
             damage = damage + roll(attack) + ADD_DMG[at_stren]
     return damage
 

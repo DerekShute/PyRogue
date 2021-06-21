@@ -24,6 +24,7 @@ def randint_return_max(*args, **kwargs):
     assert args[0] < args[1]   # Check for stupid mistake
     return args[1]
 
+
 def choice_return_first(*args, **kwargs):
     """If asked to random.choice([things]), return first"""
     return args[0][0]
@@ -67,14 +68,14 @@ class TestCombatBasics(unittest.TestCase):
     def test_swing_miss(self, mock_randint):
         mock_randint.side_effect = randint_return_min
         result = combat.swing(1, 6, 0)  # Level 1 player, Armor 6 orc
-        assert result == False
+        assert result is False
         self.assertTrue(True)
 
     @patch('random.randint')
     def test_swing_hit(self, mock_randint):
         mock_randint.side_effect = randint_return_max
         result = combat.swing(1, 6, 0)  # Level 1 player, Armor 6 orc
-        assert result == True
+        assert result is True
         self.assertTrue(True)
 
     @patch('random.randint')
@@ -136,7 +137,7 @@ class TestCombatBasics(unittest.TestCase):
 
     @patch('random.randint')
     @patch('random.choice')
-    def test_fight_hit(self, mock_choice, mock_randint):
+    def test_fight_kill(self, mock_choice, mock_randint):
         mock_choice.side_effect = choice_return_first
         mock_randint.side_effect = randint_return_max
         p = Player.factory(msg=MessageBuffer())
@@ -149,6 +150,7 @@ class TestCombatBasics(unittest.TestCase):
         assert p.exp == 4  # exp=3 + 1 for 8 hit points
         assert p.curr_msg == 'You killed the hobgoblin!'
         self.assertTrue(True)
+
 
 # ===== Invocation ========================================
 

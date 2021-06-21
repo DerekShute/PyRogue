@@ -52,6 +52,9 @@ MONSTER_MISS = (
     "doesn't hit",
 )
 
+
+# ===== Stats =============================================
+
 @dataclass
 class Stats:  # struct stats
     """
@@ -235,7 +238,7 @@ class Player:
 
     def add_hit_msg(self, entity):
         self.add_msg(f'You {random.choice(HIT_NAMES)} the {entity.name}')
-    
+
     def add_was_hit_msg(self, entity):
         self.add_msg(f'The {entity.name} {random.choice(HIT_NAMES)} you')
 
@@ -266,7 +269,6 @@ class Player:
     @property
     def xp_value(self) -> int:
         return 0  # TODO: how did we get here?
-
 
     # ===== Constructor ===================================
 

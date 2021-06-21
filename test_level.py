@@ -9,6 +9,7 @@ from room import Room
 from item import Gold
 from monster import Monster
 
+
 # ===== Test Level ========================================
 
 class TestLevel(unittest.TestCase):
@@ -58,7 +59,8 @@ class TestLevel(unittest.TestCase):
         assert lvl.monsters_at(Pos(0, 0)) == []
         assert lvl.monsters_at(Pos(3, 3)) == [mon]
         self.assertTrue(True)
-        
+
+
 # ===== Invocation ========================================
 
 if __name__ == '__main__':

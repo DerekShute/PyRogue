@@ -156,7 +156,7 @@ class Monster:  # struct monster
     # TODO: name property must hide self.name
 
     # ===== Combat Interface ==============================
-    
+
     @property
     def ac(self):
         return self.armor

@@ -128,7 +128,7 @@ class TestMonsterMapLevel(unittest.TestCase):
         assert mon.level == lvl  # Test point in neighborhood
         assert lvl.monsters_at(Pos(10, 10)) == [mon]
         mon.detach_level()
-        assert mon.level == None
+        assert mon.level is None
         assert lvl.monsters_at(Pos(10, 10)) == []
         self.assertTrue(True)
 
@@ -137,7 +137,7 @@ class TestMonsterMapLevel(unittest.TestCase):
 
 class TestMonsterCombat(unittest.TestCase):
     """Test monster combat"""
-    
+
     @patch('random.randint')
     def test_xp_value(self, mock_randint):
         """Test xp_value returned for killing the darn thing"""

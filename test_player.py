@@ -90,6 +90,7 @@ class TestPlayerActionCallback(unittest.TestCase):
         assert p.curr_msg == 'Ouch!'
         self.assertTrue(True)
 
+
 # ===== Test AI Callback ==================================
 
 class TestPlayerAI(unittest.TestCase):
