@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import patch
 from monster import Monster
 from position import Pos
+from level import Level
 
 
 # ===== Service Routines ==================================
@@ -98,7 +99,9 @@ class TestMonster(unittest.TestCase):
         assert mon.flags == 'mean haste'
         self.assertTrue(True)
 
-    # Mapping, leveling, Display
+
+class TestMonsterMapLevel(unittest.TestCase):
+    """Monster on maps"""
 
     def test_pos(self):
         """Test positioning and set-positioning"""
@@ -115,6 +118,32 @@ class TestMonster(unittest.TestCase):
         assert pos == Pos(10, 10)
         assert char == ord('G')
         assert color == (63, 127, 63)
+        self.assertTrue(True)
+
+    def test_level(self):
+        """Monster attachment to level"""
+        mon = Monster.factory(Pos(10, 10), 1, ord('G'))
+        lvl = Level(1, 80, 25, None)
+        mon.attach_level(lvl)
+        assert mon.level == lvl  # Test point in neighborhood
+        assert lvl.monsters_at(Pos(10, 10)) == [mon]
+        mon.detach_level()
+        assert mon.level is None
+        assert lvl.monsters_at(Pos(10, 10)) == []
+        self.assertTrue(True)
+
+
+# ===== Combat Interface ==================================
+
+class TestMonsterCombat(unittest.TestCase):
+    """Test monster combat"""
+
+    @patch('random.randint')
+    def test_xp_value(self, mock_randint):
+        """Test xp_value returned for killing the darn thing"""
+        mock_randint.side_effect = randint_return_min
+        mon = Monster.factory(Pos(10, 10), 1, ord('A'))
+        assert mon.xp_value == 20  # 20 in listing plus zero for 5 HP
         self.assertTrue(True)
 
 

@@ -4,7 +4,7 @@
 
 import unittest
 from unittest.mock import patch
-from player import roll, Player, Stats
+from player import Player, Stats
 from position import Pos
 from actions import MovementAction, PickupAction, DescendAction
 from level import Level
@@ -37,13 +37,13 @@ class TestPlayer(unittest.TestCase):
         """Smoke test"""
         p = Player.factory(pos=(10, 10))
         # print(str(p))
-        assert str(p) == 'Player(@(10,10),Stats(Str=16,XP=0(0),AC=10,Dmg=\'1x4\',HP=12/12))'
+        assert str(p) == 'Player(@(10,10),Stats(Str=16,XP=0(1),AC=10,Dmg=\'1x4\',HP=12/12))'
         # print(repr(p))
         assert repr(p) == 'Player(pos=(10, 10),stats=Stats(stren=16, arm=10, dmg=\'1x4\', ' \
-               'maxhp=12, hpt=12, exp=0, level=0), food_left=1300)'
+               'maxhp=12, hpt=12, exp=0, level=1), food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
         assert p.name == 'Player'
-        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:0(0)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
         self.assertTrue(True)
 
     def test_level(self):
@@ -81,6 +81,13 @@ class TestPlayerActionCallback(unittest.TestCase):
         p = Player.factory(pos=Pos(10, 10))
         p.move(-1, -1)
         assert p.pos == Pos(9, 9)
+        self.assertTrue(True)
+
+    def test_bump(self):
+        p = Player.factory(pos=Pos(10, 10), msg=MessageBuffer())
+        p.bump(Pos(10, 9))
+        assert p.pos == Pos(10, 10)
+        assert p.curr_msg == 'Ouch!'
         self.assertTrue(True)
 
 
@@ -127,7 +134,7 @@ class TestPlayerAI(unittest.TestCase):
         p.perform()
         mock_get_action.assert_called_once()
         assert level.items == []  # Gone from map
-        assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: ? Exp:0(0)'
+        assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
         assert p.curr_msg == 'You pick up 10 gold pieces!'
         self.assertTrue(True)
 
@@ -169,59 +176,18 @@ class TestPlayerAI(unittest.TestCase):
 class TestPlayerCombat(unittest.TestCase):
     """Player Combat Interface"""
 
-    def test_melee_dmg_adj(self):
+    def test_melee_attack(self):
         p = Player.factory()
-        # print (p.melee_dmg_adj)
-        assert p.melee_dmg_adj == 1
-        self.assertTrue(True)
-
-    def test_melee_hit_adj(self):
-        p = Player.factory()
-        # print (p.melee_hit_adj)
-        assert p.melee_hit_adj == 0
+        level, stren, dmg = p.melee_attack()
+        assert level == 1
+        assert stren == 16  # TODO: weapon
+        assert dmg == '1x4'  # TODO: weapon
         self.assertTrue(True)
 
     def test_ac(self):
         p = Player.factory()
         # print (p.ac)
         assert p.ac == 10  # TODO: armor
-        self.assertTrue(True)
-
-    @patch('random.randint')
-    def test_melee_dmg(self, mock_randint):
-        mock_randint.side_effect = randint_return_min
-        p = Player.factory()
-        # print (p.melee_dmg())
-        assert p.melee_dmg() == 2  # STR 16 -> +1, TODO: weapon
-        self.assertTrue(True)
-
-
-class TestRoll(unittest.TestCase):
-    """Test damage ('AxB') die rolls"""
-
-    @patch('random.randint')
-    def test_lowest(self, mock_randint):
-        mock_randint.side_effect = randint_return_min
-        dmg = roll('1x4')
-        # print(dmg)
-        assert dmg == 1
-        self.assertTrue(True)
-
-    @patch('random.randint')
-    def test_highest(self, mock_randint):
-        mock_randint.side_effect = randint_return_max
-        dmg = roll('1x4')
-        # print(dmg)
-        assert dmg == 4
-        self.assertTrue(True)
-
-    @patch('random.randint')
-    def test_summation(self, mock_randint):
-        mock_randint.side_effect = randint_return_max
-        dmg = roll('10x4')
-        # print(dmg)
-        assert mock_randint.call_count == 10
-        assert dmg == 40
         self.assertTrue(True)
 
 

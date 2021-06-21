@@ -9,56 +9,51 @@ from position import Pos
 from typing import Tuple
 from player_input import PlayerInputHandler
 from message import MessageBuffer
+from combat import fight
 
 
 HUNGERTIME = 1300
 """Turns before hunger state change, I guess"""
 
 INIT_STATS = {
+    'level': 1,
     'stren': 16,
     'arm': 10,    # Unarmed
     'maxhp': 12,
     'dmg': '1x4'  # Unarmed damage
 }
 
-
-def strike(dmg_str: str) -> bool:
-    """Make X attacks - the damage string denotes the number of attacks"""
-    # TODO: goes elsewhere
-    for attack in dmg_str.split('/'):
-        # TODO make attack type
-        dmg = roll(attack)  # TODO: THIS DOES NOT WORK
-        assert dmg
-    return True
-
-
-def roll(die_roll: str) -> int:
-    """dmg as string in format COUNTxSIDES"""
-    # TODO: goes elsewhere
-    # TODO: there's special rules for one of the dmg descriptors
-    count, _, sides = die_roll.partition('x')
-    total = 0
-    count = int(count)  # No elegant way to do this with _ in the middle
-    sides = int(sides)
-    while count > 0:
-        total = total + random.randint(1, sides)
-        count = count - 1
-    return total
-
-
-ADD_DMG = (-7, -6, -5, -4, -3, -2, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0-15
-           1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6)
-"""adjustments to damage done due to strength (0-31)"""
-
-
-STR_PLUS = (-7, -6, -5, -4, -3, -2, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0,  # 0-15
-            0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3)
-"""adjustments to hit probabilities due to strength"""
-
 PLAYER_CHAR = ord('@')
 
 PLAYER_COLOR = (255, 255, 255)  # White TODO: consolidate definitions
 
+HIT_NAMES = (
+    "scored an excellent hit on",
+    "hit",
+    "have injured",
+    "swing and hit",
+    "scored an excellent hit on",
+    "hit",
+    "has injured",
+    "swings and hits"
+)
+
+PLAYER_MISS = (
+    "miss",
+    "swing and miss",
+    "barely miss",
+    "don't hit"
+)
+
+MONSTER_MISS = (
+    "misses",
+    "swings and misses",
+    "barely misses",
+    "doesn't hit",
+)
+
+
+# ===== Stats =============================================
 
 @dataclass
 class Stats:  # struct stats
@@ -83,20 +78,9 @@ class Stats:  # struct stats
 
     # ===== Combat ========================================
 
-    @property
-    def melee_hit_adj(self):
-        """Attack damage just based on stats"""
-        # TODO: effect of rings
-        return STR_PLUS[self.stren]
-
-    @property
-    def melee_dmg_adj(self):
-        """Attack damage just based on stats"""
-        return ADD_DMG[self.stren]
-
-    def melee_dmg(self):
-        """Attack damage just based on stats"""
-        return roll(self.dmg) + self.melee_dmg_adj
+    def melee_attack(self):
+        """Attack components just based on stats"""
+        return self.level, self.stren, self.dmg
 
     @property
     def ac(self):
@@ -181,7 +165,10 @@ class Player:
 
     # ===== Action callbacks ==============================
 
-    def bump(self, dx: int, dy: int):
+    def fight(self, entity):
+        fight(self, entity)
+
+    def bump(self, pos: Pos):
         self.add_msg('Ouch!')
 
     def descend(self):
@@ -244,27 +231,44 @@ class Player:
     # ===== Combat Interface ==============================
 
     @property
-    def melee_hit_adj(self):
-        """Attack damage just based on stats"""
-        # TODO: effect of rings
-        return self._stats.melee_hit_adj
-
-    @property
-    def melee_dmg_adj(self):
-        """Attack damage just based on stats"""
-        # TODO: effect of rings and weapon
-        return self._stats.melee_dmg_adj
-
-    def melee_dmg(self):
-        """Melee attack damage"""
-        # TODO: effect of weapons
-        return self._stats.melee_dmg()
-
-    @property
     def ac(self):
         """Armor class"""
         # TODO: account for armor, rings, whatever
         return self._stats.ac
+
+    def add_hit_msg(self, entity):
+        self.add_msg(f'You {random.choice(HIT_NAMES)} the {entity.name}')
+
+    def add_was_hit_msg(self, entity):
+        self.add_msg(f'The {entity.name} {random.choice(HIT_NAMES)} you')
+
+    def add_miss_msg(self, entity):
+        self.add_msg(f'You {random.choice(PLAYER_MISS)} the {entity.name}')
+
+    def add_was_missed_msg(self, entity):
+        self.add_msg(f'The {entity.name} {random.choice(MONSTER_MISS)} you')
+
+    def death(self, entity):
+        self.msg(f'You were killed by the {entity.name}!')  # TODO traps?
+        # TODO raise end-of-game
+
+    def kill(self, entity):  # TODO: monster
+        self.add_msg(f'You killed the {entity.name}!')
+        self._stats.exp = self._stats.exp + entity.xp_value
+        # TODO: level gain
+
+    def melee_attack(self):
+        """Melee attack (level, strength, dmg)"""
+        # TODO: effect of weapons and objects.  I think it can add to level instead of an explicit bonus
+        return self._stats.melee_attack()
+
+    def take_damage(self, amount: int):
+        """Took it on the chin"""
+        self._stats.hpt = max(0, self._stats.hpt - amount)
+
+    @property
+    def xp_value(self) -> int:
+        return 0  # TODO: how did we get here?
 
     # ===== Constructor ===================================
 
