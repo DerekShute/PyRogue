@@ -7,7 +7,7 @@ class TestItem:
     def __init__(self, key: int):
         self.key = key
 
-    def __lt__(self, other: 'Item') -> bool:
+    def __lt__(self, other: 'TestItem') -> bool:
         return self.key < other.key
 
     def __str__(self) -> str:
