@@ -14,7 +14,7 @@ class TurnQueue:
     def __init__(self):
         self._queue = []
         self._now = 0
-    
+
     def __str__(self) -> str:
         s = 'TurnQueue('
         for i in self._queue:

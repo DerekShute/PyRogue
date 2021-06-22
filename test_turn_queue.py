@@ -1,6 +1,10 @@
 import unittest
 from turn_queue import TurnQueue
 
+
+# ===== TestItem ==========================================
+# A synthetic class only for testing the TurnQueue
+
 class TestItem:
     key: int = 0
 
@@ -46,8 +50,9 @@ class TestTurnQueue(unittest.TestCase):
 
     def test_empty(self):
         tq = TurnQueue()
-        assert tq.pop() == None
+        assert tq.pop() is None
         self.assertTrue(True)
+
 
 # ===== Invocation ========================================
 
