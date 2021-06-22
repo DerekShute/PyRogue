@@ -12,6 +12,7 @@ from monster import Monster
 from player import Player
 from item import Item
 from typing import Dict, Tuple, Iterator, List
+from turn_queue import TurnQueue
 import tcod
 
 
@@ -54,6 +55,7 @@ class Level:
     items: List[Item]
     monsters: List[Monster]
     player: Player
+    queue: TurnQueue
 
     def __init__(self, levelno: int, width: int, height: int, display: Display):
         """
@@ -67,6 +69,7 @@ class Level:
         self.items = []
         self.monsters = []
         self.player = None
+        self.queue = TurnQueue()
 
     def __str__(self):
         s = 'Level : Rooms('
@@ -133,15 +136,18 @@ class Level:
     def add_monster(self, monster: Monster):
         """Add a monster to the level/map"""
         self.monsters.append(monster)
+        # TODO: append monster to TurnQueue
 
     def remove_monster(self, monster: Monster):
         """Remove monster from the level/map"""
         self.monsters.remove(monster)
+        # TODO: remove monster from TurnQueue
 
     def add_player(self, player: Player):
         """Add the player to the level/map"""
         self.player = player
         player.attach_level(self)
+        self.queue.add(player)
 
     def remove_player(self):
         """Remove the player from the level/map"""
@@ -175,6 +181,21 @@ class Level:
     def is_stairs(self, pos: Pos) -> bool:
         """Is this the stairs?"""
         return any(stair for stair in self.stairs if stair == pos)
+
+    # ===== Timer Run Queue ===============================
+
+    @property
+    def now(self):
+        return self.queue.now
+
+    def run_queue(self):
+        """Run one element from the timer queue"""
+        element = self.queue.pop()
+        if element is not None:
+            # Not keen on this interface, but we'll see
+            reschedule = element.perform()
+            if reschedule:
+                self.queue.add(element)
 
 
 # ===== TESTING ===========================================

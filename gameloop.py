@@ -36,7 +36,7 @@ class MainGameloop (Gameloop):
         self._display.present(player)
         self._display.dispatch_events(player.input_handler)
         # TODO: escape action reverts to _previous (return value?)
-        player.perform()  # TODO: this actually hooks into timer logic
+        player.level.run_queue()
         # TODO: if we're doing a submenu, then override this and return to this.  Capture _prevous
         return self
 
