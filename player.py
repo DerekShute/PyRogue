@@ -11,6 +11,8 @@ from player_input import PlayerInputHandler
 from message import MessageBuffer
 from combat import fight
 
+ACTION_COST = 8
+"""Everything costs 8 ticks"""
 
 HUNGERTIME = 1300
 """Turns before hunger state change, I guess"""
@@ -100,6 +102,7 @@ class Player:
     _msg: MessageBuffer = None
     _purse: int = 0  # Gold collected, an infinitely large pocket
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
+    key: int = 0  # TurnQueue key initialize with random.randint(0, TIMER_COST-1)
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME,
                  msg: MessageBuffer = None):
@@ -117,7 +120,9 @@ class Player:
         # TODO: self._input not reconstructable
         return f'Player(pos={repr(self._pos)},stats={repr(self._stats)}, food_left={self._food_left})'
 
-    # TODO: methods to retrieve effective AC, hit points, etc.
+    def __lt__(self, other) -> bool:
+        """Comparison for TurnQueue bisect operation"""
+        return self.key < other.key
 
     # ===== Display =======================================
 
@@ -203,12 +208,14 @@ class Player:
 
     # ===== Timer / AI / Action Interface ==========================
 
-    def perform(self):
-        # TODO: returns timer tick cost
+    def perform(self) -> bool:
+        """Act.  Return True to indicate reschedule"""
         action = self._input.get_action()
         if action is not None:
             self.add_msg('')
-            action.perform(self)
+            action.perform(self)  # TODO: action cost, haste and slow effects
+            self.key = self.key + ACTION_COST
+        return True
 
     # ===== Stat interface ================================
     # TODO: who cares?
