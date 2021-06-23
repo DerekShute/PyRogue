@@ -56,7 +56,7 @@ class MovementAction(Action):
 
 
 class PickupAction(Action):
-    def perform(self, entity: Player) -> None:
+    def perform(self, entity: Entity) -> None:
         items = entity.level.items_at(entity.pos)
         entity.pick_up(None if items == [] else items[0])
         # TODO: top of stack vs menu to select
