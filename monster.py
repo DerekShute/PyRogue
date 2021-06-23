@@ -121,7 +121,7 @@ class Monster(Entity):  # struct monster
         # TODO: monster carry is % that it has an item, attached to monster.pack
         for key, value in arglist.items():
             setattr(self, key, value)
-        self.hpt = self.maxhp       
+        self.hpt = self.maxhp
         super().__init__(pos=pos, mtype=mtype, name=arglist['name'])
 
     def __str__(self) -> str:

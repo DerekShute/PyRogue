@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 COLOR_WHITE = (255, 255, 255)
 
+
 # ===== Entity ============================================
 
 class Entity:
@@ -21,10 +22,10 @@ class Entity:
     pos: Pos = None
     mtype: int = ord('?')
     _color: Tuple[int, int, int] = COLOR_WHITE
-    
+
     # ===== Private etc ===================================
 
-    def __init__(self, pos: Pos = None, level = None, key: int = 0, name: str = '',
+    def __init__(self, pos: Pos = None, level=None, key: int = 0, name: str = '',
                  mtype: int = ord('?'), color: Tuple[int, int, int] = COLOR_WHITE):
         self.pos = pos
         self.level = level
@@ -36,9 +37,6 @@ class Entity:
     def __lt__(self, other: 'Entity') -> bool:
         """Comparison for TurnQueue bisect operation"""
         return self.key < other.key
-
-    # ===== Base Interface ================================
-
 
     # ===== Display and Maps ==============================
 
@@ -75,7 +73,7 @@ class Entity:
     #   fight
     #   move
     #   pick_up
-    
+
 # ===== Testing ===========================================
 
 # See test_entity.py

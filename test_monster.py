@@ -27,7 +27,7 @@ class TestMonster(unittest.TestCase):
     def test(self, mock_randint):
         """Smoke Test"""
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(Pos(3,2), 1, ord('A'))
+        mon = Monster.factory(Pos(3, 2), 1, ord('A'))
         # print(str(mon))
         assert str(mon) == 'Monster(aquator:@(3,2),HP=5/5,AC=2,dmg=\'0x0/0x0\',flags=\'mean\')'
         assert mon.name == 'aquator'
