@@ -8,8 +8,7 @@ from room import Room
 from game_map import GameMap
 from display import Display
 from position import Pos
-from monster import Monster
-from player import Player
+from entity import Entity
 from item import Item
 from typing import Dict, Tuple, Iterator, List
 from turn_queue import TurnQueue
@@ -53,8 +52,8 @@ class Level:
     stairs: List[Pos]  # TODO (eventually) "features" ?
     doors: List[Pos]
     items: List[Item]
-    monsters: List[Monster]
-    player: Player
+    monsters: List[Entity]
+    player: Entity
     queue: TurnQueue
 
     def __init__(self, levelno: int, width: int, height: int, display: Display):
@@ -133,17 +132,17 @@ class Level:
         self.items.remove(item)
         # TODO: render
 
-    def add_monster(self, monster: Monster):
+    def add_monster(self, monster: Entity):
         """Add a monster to the level/map"""
         self.monsters.append(monster)
         # TODO: append monster to TurnQueue
 
-    def remove_monster(self, monster: Monster):
+    def remove_monster(self, monster: Entity):
         """Remove monster from the level/map"""
         self.monsters.remove(monster)
         # TODO: remove monster from TurnQueue
 
-    def add_player(self, player: Player):
+    def add_player(self, player: Entity):
         """Add the player to the level/map"""
         self.player = player
         player.attach_level(self)
@@ -175,7 +174,7 @@ class Level:
         """A list of items at this location"""
         return [item for item in self.items if item.pos == pos]
 
-    def monsters_at(self, pos: Pos) -> List[Monster]:
+    def monsters_at(self, pos: Pos) -> List[Entity]:
         return [monster for monster in self.monsters if monster.pos == pos]
 
     def is_stairs(self, pos: Pos) -> bool:

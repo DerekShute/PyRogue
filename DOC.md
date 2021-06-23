@@ -21,10 +21,7 @@ Combat
 
 Basic Stuff
 
-    Items, Monsters, and Player must respond to:
-        * pos property
-        * set_pos() method
-        * name
+    We do have the Entity superclass to both Monster and Player that does the basics
 
 Map Display / Level
 

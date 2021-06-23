@@ -3,10 +3,10 @@
 """
 
 import random
-from dataclasses import dataclass
 from typing import Dict, Any, Tuple
 from position import Pos
-
+from entity import Entity
+from level import Level
 
 AMULETLEVEL = 26
 """Per rogue.h : this goes somewhere"""
@@ -95,25 +95,20 @@ def exp_add(mon: Dict[str, Any]) -> int:
 
 # ===== Monster ===========================================
 
-@dataclass
-class Monster:  # struct monster
+class Monster(Entity):  # struct monster
     """
     The fundamentals of 'monster'
     """
-    pos: Pos = None
-    name: str = '<Unknown Monster>'
     carry: int = 0
     flags: str = ''
-    exp: int = 0  # TODO: these are Stats
+    exp: int = 0
     lvl: int = 0
     armor: int = 0
     hpt: int = 0       # Hit points, subject to change
     maxhp: int = 0     # Max hit points
     dmg: str = ''
-    mtype: int = 0
     disguise: int = 0  # For xeroc in disguise
     dest: Pos = None   # AI: where it is going.  Player location, room gold (see room->r_gold)
-    _level = None      # Level
 
     # pack: Item = None   # What the monster is holding and drops
     # TODO: t_room = room it is in (why?)
@@ -121,9 +116,19 @@ class Monster:  # struct monster
     # if player is wearing ring of aggrevation runto(cp)
     #
 
+    def __init__(self, pos: Pos, mtype: int, arglist):
+        # TODO: if code == ord('X') then this is in disguise=random_thing()
+        # TODO: monster carry is % that it has an item, attached to monster.pack
+        for key, value in arglist.items():
+            setattr(self, key, value)
+        self.hpt = self.maxhp       
+        super().__init__(pos=pos, mtype=mtype, name=arglist['name'])
+
     def __str__(self) -> str:
         return f'Monster({self.name}:{Pos(self.pos)},HP={self.hpt}/{self.maxhp},AC={self.armor},' \
                f'dmg=\'{self.dmg}\',flags=\'{self.flags}\')'
+
+    # TODO: representation should be whatever is necessary to reconstruct it from scratch (savegame?)
 
     # ===== Display =======================================
 
@@ -135,25 +140,14 @@ class Monster:  # struct monster
 
     # ===== Base Interface ================================
 
-    def set_pos(self, pos: Pos):
-        self.pos = pos
-
-    @property
-    def level(self):
-        return self._level
-
-    def attach_level(self, level):
+    def attach_level(self, level: Level):
         level.add_monster(self)
-        self._level = level
+        self.level = level
 
     def detach_level(self):
-        if self._level is not None:  # Test cases omit having one
-            self._level.remove_monster(self)
-            self._level = None
-
-    # TODO: pos property must hide self.pos
-
-    # TODO: name property must hide self.name
+        if self.level is not None:  # Test cases omit having one
+            self.level.remove_monster(self)
+            self.level = None
 
     # ===== Combat Interface ==============================
 
@@ -161,9 +155,12 @@ class Monster:  # struct monster
     def ac(self):
         return self.armor
 
-    def death(self, entity):
+    # TODO: kill
+
+    def death(self, entity: Entity):
         # TODO: certain monsters have consequences: Venus Flytrap, Leprechaun
         # TODO: drops everything in pack
+        assert entity
         self.detach_level()
 
     # TODO: wakes up monsters, and need a solution for monster hitting monster
@@ -197,19 +194,18 @@ class Monster:  # struct monster
         index = code - ord('A')
         if index > len(MONSTER_TEMPLATES) or index < 0:
             raise ValueError(f'code {code} ({index}) out of range')
-        kwargs = unpack(MONSTER_TEMPLATES[index])
+        arglist = unpack(MONSTER_TEMPLATES[index])
         # TODO: if code == ord('X') then this is in disguise=random_thing()
         # TODO: monster carry is % that it has an item, attached to monster.pack
 
-        kwargs['armor'] = kwargs['armor'] - lev_add  # Long live AD&D AC
-        kwargs['lvl'] = kwargs['lvl'] + lev_add
-        kwargs['maxhp'] = roll(kwargs['lvl'], 8)  # Long live AD&D hit dice
-        kwargs['hpt'] = kwargs['maxhp']
-        kwargs['exp'] = kwargs['exp'] + lev_add * 10 + exp_add(kwargs)
-
+        arglist['armor'] = arglist['armor'] - lev_add  # Long live AD&D AC
+        arglist['lvl'] = arglist['lvl'] + lev_add
+        arglist['maxhp'] = roll(arglist['lvl'], 8)  # Long live AD&D hit dice
+        arglist['exp'] = arglist['exp'] + lev_add * 10 + exp_add(arglist)
+        arglist['mtype'] = code
         if levelno > 29:
-            kwargs['flags'] = kwargs['flags'] + ' haste'
-        return Monster(pos=pos, mtype=code, **kwargs)
+            arglist['flags'] = arglist['flags'] + ' haste'
+        return Monster(pos=pos, mtype=code, arglist=arglist)
 
 
 # ===== Unit Testing ======================================

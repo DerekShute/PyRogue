@@ -27,12 +27,16 @@ class TestMonster(unittest.TestCase):
     def test(self, mock_randint):
         """Smoke Test"""
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(None, 1, ord('A'))
+        mon = Monster.factory(Pos(3,2), 1, ord('A'))
         # print(str(mon))
-        assert str(mon) == 'Monster(aquator:@(0,0),HP=5/5,AC=2,dmg=\'0x0/0x0\',flags=\'mean\')'
-        # print(repr(mon))
-        assert mon == eval(repr(mon))
+        assert str(mon) == 'Monster(aquator:@(3,2),HP=5/5,AC=2,dmg=\'0x0/0x0\',flags=\'mean\')'
         assert mon.name == 'aquator'
+        assert mon.pos == Pos(3, 2)
+        pos, mtype, color = mon.char
+        assert pos == Pos(3, 2)
+        assert mtype == ord('A')
+        assert color == (63, 127, 63)
+        # TODO : representation sufficient that eval(repr(mon)) == mon
         self.assertTrue(True)
 
     @patch('random.randint')
@@ -40,9 +44,7 @@ class TestMonster(unittest.TestCase):
         mock_randint.side_effect = randint_return_min
         mon = Monster.factory(None, 1, ord('A'))
         # print(mon)
-        assert repr(mon) == 'Monster(pos=None, name=\'aquator\', carry=0, ' \
-               'flags=\'mean\', exp=20, lvl=5, armor=2, hpt=5, maxhp=5, ' \
-               'dmg=\'0x0/0x0\', mtype=65, disguise=0, dest=None)'
+        assert str(mon) == 'Monster(aquator:@(0,0),HP=5/5,AC=2,dmg=\'0x0/0x0\',flags=\'mean\')'
         self.assertTrue(True)
 
     @patch('random.randint')
