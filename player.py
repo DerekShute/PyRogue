@@ -3,13 +3,15 @@
 """
 
 import random
+from entity import Entity
 from dataclasses import dataclass
 from item import Item
 from position import Pos
-from typing import Tuple
 from player_input import PlayerInputHandler
 from message import MessageBuffer
 from combat import fight
+from level import Level
+
 
 ACTION_COST = 8
 """Everything costs 8 ticks"""
@@ -92,45 +94,32 @@ class Stats:  # struct stats
 
 # ===== Player ============================================
 
-class Player:
-    _pos: Pos = None
+class Player(Entity):
     _food_left: int
     _stats: Stats = None
     _cur_armor: Item = None
-    _level = None
     _input: PlayerInputHandler = None
     _msg: MessageBuffer = None
     _purse: int = 0  # Gold collected, an infinitely large pocket
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
-    key: int = 0  # TurnQueue key initialize with random.randint(0, TIMER_COST-1)
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME,
                  msg: MessageBuffer = None):
+        super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
         self._stats = stats
-        self._pos = pos
         self._food_left = food_left
         self._input = PlayerInputHandler()
         self._msg = msg
         self.levelno = 0
 
     def __str__(self):
-        return f'Player({Pos(self._pos)},{self._stats})'
+        return f'Player({Pos(self.pos)},{self._stats})'
 
     def __repr__(self):
         # TODO: self._input not reconstructable
-        return f'Player(pos={repr(self._pos)},stats={repr(self._stats)}, food_left={self._food_left})'
-
-    def __lt__(self, other) -> bool:
-        """Comparison for TurnQueue bisect operation"""
-        return self.key < other.key
+        return f'Player(pos={repr(self.pos)},stats={repr(self._stats)}, food_left={self._food_left})'
 
     # ===== Display =======================================
-
-    @property
-    def char(self) -> Tuple[Pos, str, Tuple[int, int, int]]:
-        """Return map display information"""
-        # TODO: render priority
-        return self._pos, PLAYER_CHAR, PLAYER_COLOR
 
     @property
     def display(self) -> str:
@@ -141,23 +130,8 @@ class Player:
 
     # ===== Base Interface ================================
 
-    def set_pos(self, pos: Pos):
-        self._pos = pos
-
-    @property
-    def pos(self) -> Pos:
-        return self._pos
-
-    @property
-    def name(self) -> str:
-        return 'Player'
-
-    @property
-    def level(self):
-        return self._level
-
-    def attach_level(self, level):
-        self._level = level
+    def attach_level(self, level: Level):
+        self.level = level
         self.levelno = level.levelno if level is not None else self.levelno
 
     def add_msg(self, text: str):
@@ -170,20 +144,21 @@ class Player:
 
     # ===== Action callbacks ==============================
 
-    def fight(self, entity):
+    def fight(self, entity: Entity):
         fight(self, entity)
 
     def bump(self, pos: Pos):
+        assert pos
         self.add_msg('Ouch!')
 
     def descend(self):
         self.add_msg('You stumble down the stairs.')  # TODO: real message?
-        self._level.remove_player()
+        self.level.remove_player()
         self.levelno = self.levelno + 1
         # Once not on the level, the game main loop takes care of it
 
     def move(self, dx: int, dy: int):
-        self._pos = Pos(self._pos.x + dx, self._pos.y + dy)  # TODO: Pos addition
+        self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
         # TODO : returns timer tick cost
 
     def pick_up(self, item: Item):

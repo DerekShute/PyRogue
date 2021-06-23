@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING
 from position import Pos
 
 if TYPE_CHECKING:
-    from player import Player
+    from entity import Entity
 
 
 class Action:
-    def perform(self, entity: Player) -> None:
+    def perform(self, entity: Entity) -> None:
         """Perform this action with the objects needed to determine its scope.
 
         This method must be overridden by Action subclasses.
@@ -22,7 +22,7 @@ class Action:
 
 class DescendAction(Action):
     """Go down"""
-    def perform(self, entity: Player) -> None:
+    def perform(self, entity: Entity) -> None:
         if entity.level.is_stairs(entity.pos):
             entity.descend()
         else:
@@ -30,7 +30,7 @@ class DescendAction(Action):
 
 
 class EscapeAction(Action):
-    def perform(self, entity: Player) -> None:
+    def perform(self, entity: Entity) -> None:
         raise SystemExit()
 
 
@@ -40,7 +40,7 @@ class MovementAction(Action):
         self.dx = dx  # TODO: Pos
         self.dy = dy
 
-    def perform(self, entity: Player) -> None:
+    def perform(self, entity: Entity) -> None:
         dest = Pos(entity.pos.x + self.dx, entity.pos.y + self.dy)
         monsters = entity.level.monsters_at(dest)
         if len(monsters) > 0:
@@ -56,11 +56,9 @@ class MovementAction(Action):
 
 
 class PickupAction(Action):
-    def perform(self, entity: Player) -> None:
+    def perform(self, entity: Entity) -> None:
         items = entity.level.items_at(entity.pos)
-        if items == []:
-            entity.pick_up(None)
-        else:
-            entity.pick_up(items[0])  # TODO: top of stack vs menu to select
+        entity.pick_up(None if items == [] else items[0])
+        # TODO: top of stack vs menu to select
 
 # EOF

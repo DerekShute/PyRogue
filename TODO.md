@@ -24,12 +24,8 @@ Engine
 
     * Everything hangs off of Engine
     
-Maps and Levels
-
-    * Make level a part of GameMap, rather than the reverse
-
 monster.py
-    AMULETLEVEL goes somemplace else
+    AMULETLEVEL goes someplace else
 
     venus flytrap has odd damage declaration
 
@@ -49,13 +45,10 @@ rogue_level
     player.Stats is imported but unused (except by eval()
 
 Display / Map / Level
+    * Make level a part of GameMap, rather than the reverse
     * Consolidate colors into a set of manifest constants
-    * Monster should return a color
     * Safe to place player: no monster at that square, maze wall, etc.
     * Render priority
-
-Basic Stuff
-    * Everyone responds to .pos , .set_pos(), .name
 
 Thing
     * superclass of Item, theoretically superclass of Monster and Player
