@@ -9,6 +9,6 @@ import sys
 
 
 sys.path.insert(0, './pyrogue/')
-pytest.main(["tests", "--omit pipeline.py"])
+pytest.main(["tests", "--omit", "pipeline.py"])
 
 # EOF
