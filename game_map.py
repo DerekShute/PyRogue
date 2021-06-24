@@ -125,6 +125,7 @@ class GameMap:
     def explore_tile(self, p: Pos, known: bool = True):
         self.explored[p.x, p.y] = known
 
+
 # ===== TESTING ===========================================
 
 if __name__ == '__main__':

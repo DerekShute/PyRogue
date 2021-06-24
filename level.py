@@ -202,7 +202,7 @@ class Level:
         results = [room for room in self.rooms.values() if room.inside(pos)]  # TODO: not a gone room
         # Assuming non-overlapping rooms
         return None if results == [] else results[0]
-        
+
     # ===== Timer Run Queue and Activity ==================
 
     @property
