@@ -1,15 +1,3 @@
-Test directory
-
-try this
-
-in test/test_whatnot.py
-
-import sys
-sys.path.insert(0, './peer_directory/')
-(imports)
-
-empty __init__.py
-
 Messages
 
     * Relocated status line to bottom of display (+1 line)
