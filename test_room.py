@@ -31,6 +31,12 @@ class TestRoom(unittest.TestCase):
         assert str(r) == 'Room @(0,0)-@(10,20)'
         assert str(r.max_pos) == '@(10,20)'
         assert str(r.shadow()) == '(slice(0, 10, None), slice(0, 20, None))'
+        assert r.x == 0
+        assert r.max_x == 9
+        assert r.y == 0
+        assert r.max_y == 19
+        assert r.inside(Pos(3, 3))
+        assert not r.inside(Pos(20, 20))
         self.assertTrue(True)
 
     @patch('random.randint')

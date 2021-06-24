@@ -20,10 +20,12 @@ class Room:  # struct room
     # TODO maybe a dataclass
     _pos: Pos = None  # Upper left
     _max: Pos = None  # Size TODO lower right?
+    found: bool = False
 
     def __init__(self, pos=None, size=None):
         self._pos = Pos(pos)
         self._max = Pos(size)
+        self.found = False
 
     def __str__(self):
         return 'Room {}-{}'.format(self._pos, self._max)
@@ -79,6 +81,10 @@ class Room:  # struct room
     def shadow(self):
         """Return the inner area of this room as a 2D array index."""
         return rectangle(self._pos, self.max_pos)
+
+    def inside(self, pos: Pos) -> bool:
+        """Is this position inside the room?"""
+        return pos.x >= self.x and pos.x <= self.max_x and pos.y >= self.y and pos.y <= self.max_y
 
 
 # ===== UNIT TEST =========================================
