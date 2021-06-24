@@ -1,3 +1,7 @@
+"""
+    Unit test of TurnQueue
+"""
+
 import unittest
 from turn_queue import TurnQueue
 
@@ -56,7 +60,6 @@ class TestTurnQueue(unittest.TestCase):
 
 # ===== Invocation ========================================
 
-if __name__ == '__main__':
-    unittest.main()
+# See 'run_tests.py' in parent directory
 
 # EOF

@@ -1,3 +1,7 @@
+"""
+    Unit test of Items
+"""
+
 import unittest
 from item import Gold, Item
 from position import Pos
@@ -38,7 +42,6 @@ class TestGold(unittest.TestCase):
 
 # ===== Invocation ========================================
 
-if __name__ == '__main__':
-    unittest.main()
+# See 'run_tests.py' in parent directory
 
 # EOF
