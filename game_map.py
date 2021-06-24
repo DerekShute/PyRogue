@@ -49,7 +49,7 @@ class GameMap:
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
         self.explored = np.full((width, height), fill_value=False, order="F")  # Tiles the player has seen before
 
-    def render(self) -> None:
+    def render(self, lit: Tuple[slice, slice]) -> None:
         """
         Renders the map.
 
@@ -59,7 +59,10 @@ class GameMap:
         """
 
         # TODO: this needs to hold the topmost and hand the grid to the Display, which figures out colors and shapes
-
+        self.visible[:] = False
+        if lit is not None:
+            self.visible[lit] = True
+            self.explored[lit] = True
         self._display.rgb[0:self.width, 0:self.height] = np.select(
             condlist=[self.visible, self.explored],
             choicelist=[self.tiles["light"], self.tiles["dark"]],
@@ -111,30 +114,16 @@ class GameMap:
     def lit(self, inner: Tuple[slice, slice], lit: bool = True):
         """Set a region to lit / visible"""
         self.visible[inner] = lit
-        if self._display:
-            self._display.rgb[inner] = np.select(
-                condlist=[self.visible[inner], self.explored[inner]],
-                choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
-                default=tile_types.SHROUD
-            )
 
     def lit_tile(self, p: Pos, lit: bool = True):
         self.visible[p.x, p.y] = lit
-        # TODO: is it worth pushing it through?
 
     def explore(self, inner: Tuple[slice, slice], known: bool = True):
         """Mark a region as player-discovered"""
         self.explored[inner] = known
-        if self._display:
-            self._display.rgb[inner] = np.select(
-                condlist=[self.visible[inner], self.explored[inner]],
-                choicelist=[self.tiles[inner]["light"], self.tiles[inner]["dark"]],
-                default=tile_types.SHROUD
-            )
 
     def explore_tile(self, p: Pos, known: bool = True):
         self.explored[p.x, p.y] = known
-        # TODO: is it worth pushing it through?
 
 
 # ===== TESTING ===========================================

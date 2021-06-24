@@ -17,6 +17,21 @@ import tcod
 
 # ===== Service Routines ==================================
 
+def lit_area(player: Entity) -> Tuple[slice, slice]:
+    """The section of the map that is guaranteed to be lit by the player"""
+    # TODO: blindness, complete darkness
+    if player is None:
+        return None
+    room = player.room
+    if room is not None and room.max_pos.x > room.pos.x:  # Not a gone room
+        p1 = room.pos
+        p2 = room.max_pos  # TODO: gone rooms
+    else:
+        p1 = player.pos
+        p2 = Pos(player.pos.x + 1, player.pos.y + 1)  # Slices are weird
+    return slice(p1.x - 1, p2.x + 1), slice(p1.y - 1, p2.y + 1)
+
+
 def tunnel_between(start: Pos, end: Pos, going_south=bool) -> Iterator[Pos]:
     """Return an S-shaped tunnel between these two points."""
     # TODO: goes insane if less than 3 tiles distance.  Raise an exception?
@@ -159,7 +174,7 @@ class Level:
         return False
 
     def render(self):
-        self.map.render()
+        self.map.render(lit_area(self.player))
 
         # TODO: tutorial attaches this to GameMap and adds the clause for visibility
         # TODO: ordering - entity, item, tile
@@ -181,7 +196,14 @@ class Level:
         """Is this the stairs?"""
         return any(stair for stair in self.stairs if stair == pos)
 
-    # ===== Timer Run Queue ===============================
+    def find_room(self, pos: Pos) -> Room:
+        """Is this in a room?"""
+        # There is almost certainly a better way
+        results = [room for room in self.rooms.values() if room.inside(pos)]  # TODO: not a gone room
+        # Assuming non-overlapping rooms
+        return None if results == [] else results[0]
+
+    # ===== Timer Run Queue and Activity ==================
 
     @property
     def now(self):
@@ -195,6 +217,18 @@ class Level:
             reschedule = element.perform()
             if reschedule:
                 self.queue.add(element)
+
+    def new_room(self, pos: Pos, curr_room: Room) -> Room:
+        """Are you in a new room?  Have you left a room?"""
+        if curr_room is None or not curr_room.inside(pos):
+            # New room
+            curr_room = self.find_room(pos)
+            if curr_room is not None and not curr_room.found:
+                curr_room.found = True
+                for monster in [monster for monster in self.monsters if curr_room.inside(monster.pos)]:
+                    print(f'Activating {monster.name} at {monster.pos}')
+                    # self.queue.add(monster.activate(self.queue.now))  TODO something like that
+        return curr_room
 
 
 # ===== TESTING ===========================================

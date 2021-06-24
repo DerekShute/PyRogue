@@ -36,8 +36,8 @@ def main():
                     del lvl
                 level_no = level_no + 1
                 lvl = RogueLevel(level_no, NUMCOLS, NUMLINES, d, player=p)
-                lvl.map.lit(rectangle(0, 0, NUMCOLS, NUMLINES))   # TODO
-                lvl.map.explore(rectangle(0, 0, NUMCOLS, NUMLINES))  # TODO
+                lvl.map.lit(rectangle(0, 0, NUMCOLS, NUMLINES))   # TODO wizard mode
+                lvl.map.explore(rectangle(0, 0, NUMCOLS, NUMLINES))  # TODO wizard mode
             loop = loop.run(p)
             if loop is None:
                 break

@@ -2,23 +2,23 @@ import unittest
 from turn_queue import TurnQueue
 
 
-# ===== TestItem ==========================================
+# ===== QueueItem ==========================================
 # A synthetic class only for testing the TurnQueue
 
-class TestItem:
+class QueueItem:
     key: int = 0
 
     def __init__(self, key: int):
         self.key = key
 
-    def __lt__(self, other: 'TestItem') -> bool:
+    def __lt__(self, other: 'QueueItem') -> bool:
         return self.key < other.key
 
     def __str__(self) -> str:
         return f'({self.key})'
 
 
-# ===== Testing Rooms =====================================
+# ===== Testing TurnQueue =====================================
 
 class TestTurnQueue(unittest.TestCase):
     """Use fabricated things to shake it out"""
@@ -26,7 +26,7 @@ class TestTurnQueue(unittest.TestCase):
     def test_insertion(self):
         tq = TurnQueue()
         assert tq.now == 0
-        tq.add(TestItem(4))
+        tq.add(QueueItem(4))
         assert tq.now == 0
         _ = tq.pop()
         assert tq.now == 4
@@ -36,9 +36,9 @@ class TestTurnQueue(unittest.TestCase):
 
     def test_reordering(self):
         tq = TurnQueue()
-        tq.add(TestItem(4))
-        tq.add(TestItem(0))
-        tq.add(TestItem(2))
+        tq.add(QueueItem(4))
+        tq.add(QueueItem(0))
+        tq.add(QueueItem(2))
         assert tq.now == 0
         assert tq.pop().key == 0
         assert tq.now == 0

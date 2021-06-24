@@ -102,6 +102,7 @@ class Player(Entity):
     _msg: MessageBuffer = None
     _purse: int = 0  # Gold collected, an infinitely large pocket
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
+    room = None  # Room
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME,
                  msg: MessageBuffer = None):
@@ -159,6 +160,7 @@ class Player(Entity):
 
     def move(self, dx: int, dy: int):
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
+        self.room = self.level.new_room(self.pos, self.room)
         # TODO : returns timer tick cost
 
     def pick_up(self, item: Item):

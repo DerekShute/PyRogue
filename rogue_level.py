@@ -294,6 +294,7 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
         player.set_pos(starting_room.rnd_pos)
         # TODO: position has to be safe to be.
         level.add_player(player)
+        player.room = level.new_room(player.pos, None)
 
     return level
 
