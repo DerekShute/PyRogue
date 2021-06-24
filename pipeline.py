@@ -1,5 +1,7 @@
 """
     Unit test master script
+    
+    If you have 'tests' in the name, then pytest will try to do something with it.
 """
 
 import pytest
