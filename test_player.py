@@ -79,6 +79,7 @@ class TestPlayerActionCallback(unittest.TestCase):
     def test_move(self):
         """Move action moves the player"""
         p = Player.factory(pos=Pos(10, 10))
+        p.attach_level(Level(1, 80, 25, None))
         p.move(-1, -1)
         assert p.pos == Pos(9, 9)
         self.assertTrue(True)
