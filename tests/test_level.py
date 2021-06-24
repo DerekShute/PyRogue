@@ -93,7 +93,6 @@ class TestLevel(unittest.TestCase):
 
 # ===== Invocation ========================================
 
-if __name__ == '__main__':
-    unittest.main()
+# See 'run_tests.py' in parent directory
 
 # EOF

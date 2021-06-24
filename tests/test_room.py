@@ -1,3 +1,7 @@
+"""
+    Unit test of Room behavior
+"""
+
 import unittest
 from unittest.mock import patch
 from room import Room
@@ -64,7 +68,6 @@ class TestRoom(unittest.TestCase):
 
 # ===== Invocation ========================================
 
-if __name__ == '__main__':
-    unittest.main()
+# See 'run_tests.py' in parent directory
 
 # EOF
