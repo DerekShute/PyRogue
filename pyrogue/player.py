@@ -7,7 +7,7 @@ from entity import Entity
 from dataclasses import dataclass
 from item import Item
 from position import Pos
-from player_input import PlayerInputHandler
+from input_handler import InputHandler
 from message import MessageBuffer
 from combat import fight
 from level import Level
@@ -95,22 +95,20 @@ class Stats:  # struct stats
 # ===== Player ============================================
 
 class Player(Entity):
+    input_handler: InputHandler = None
     _food_left: int
     _stats: Stats = None
     _cur_armor: Item = None
-    _input: PlayerInputHandler = None
     _msg: MessageBuffer = None
     _purse: int = 0  # Gold collected, an infinitely large pocket
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
     room = None  # Room
 
-    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME,
-                 msg: MessageBuffer = None):
+    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
+        self._msg = MessageBuffer()
         self._stats = stats
         self._food_left = food_left
-        self._input = PlayerInputHandler()
-        self._msg = msg
         self.levelno = 0
 
     def __str__(self):
@@ -178,16 +176,11 @@ class Player(Entity):
             # TODO: remove from level, add to inventory
             # TODO: after verifying you can
 
-    @property
-    def input_handler(self):
-        """Gameloop needs input handler so it can collect actions"""
-        return self._input
-
     # ===== Timer / AI / Action Interface ==========================
 
     def perform(self) -> bool:
         """Act.  Return True to indicate reschedule"""
-        action = self._input.get_action()
+        action = self.input_handler.get_action()
         if action is not None:
             self.add_msg('')
             action.perform(self)  # TODO: action cost, haste and slow effects
@@ -257,8 +250,8 @@ class Player(Entity):
     # ===== Constructor ===================================
 
     @staticmethod
-    def factory(pos: Pos = None, msg: MessageBuffer = None):   # init_player
-        plr = Player(pos=pos, stats=Stats(**INIT_STATS), msg=msg)
+    def factory(pos: Pos = None):   # init_player
+        plr = Player(pos=pos, stats=Stats(**INIT_STATS))
         # cur_armor Armor: ring_mail, known, a_class = RING_MAIL
         # one food
         # cur_weapon Weapon: mace, known, hplus=1 dplus=1
