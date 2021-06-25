@@ -56,6 +56,10 @@ def adjacent(room1: int, room2: int) -> bool:
     return False
 
 
+def rectangle(x1: int, y1: int, x2: int, y2: int) -> Tuple[slice, slice]:
+    return slice(x1, x2), slice(y1, y2)
+
+
 def tunnel_south(r1: int, r2: int) -> bool:
     """Is the tunnel going south between these two rooms?"""
     if r1 < r2:
@@ -296,6 +300,9 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
         level.add_player(player)
         player.room = level.new_room(player.pos, None)
 
+    level.map.lit(rectangle(0, 0, NUMCOLS, NUMLINES))   # TODO wizard mode
+    level.map.explore(rectangle(0, 0, NUMCOLS, NUMLINES))  # TODO wizard mode
+
     return level
 
 
@@ -303,9 +310,6 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
 
 if __name__ == '__main__':
     import time
-
-    def rectangle(x1: int, y1: int, x2: int, y2: int) -> Tuple[slice, slice]:
-        return slice(x1, x2), slice(y1, y2)
 
     # Room numbers on grid
     assert room_xy(0) == (0, 0)
