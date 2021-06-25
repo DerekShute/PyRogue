@@ -13,7 +13,7 @@ NUMLINES = 25
 def main():
     with Display(NUMCOLS, NUMLINES + 1, title='PyRogue') as d:
         loop = MainMenuState(display=d)
-        while True:               
+        while True:
             loop = loop.run()
             if loop is None:
                 break

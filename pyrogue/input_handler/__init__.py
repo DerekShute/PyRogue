@@ -1,5 +1,5 @@
 import tcod
-from typing import Any, Optional, List
+from typing import Any
 
 
 MOVE_KEYS = {
@@ -15,7 +15,7 @@ MOVE_KEYS = {
 
 class InputHandler(tcod.event.EventDispatch[Any]):
     previous: 'InputHandler' = None
-    
+
     def __init__(self, previous: 'InputHandler' = None):
         super().__init__()
         self.previous = previous

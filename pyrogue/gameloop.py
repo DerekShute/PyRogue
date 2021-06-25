@@ -11,9 +11,6 @@ from input_handler.player_input import PlayerInputHandler
 from input_handler.mainmenu_input import MainMenuInputHandler
 from rogue_level import RogueLevel
 
-# TODO: These are everywhere
-NUMCOLS = 80
-NUMLINES = 25
 
 # ===== Game Loop Superclass ==============================
 
@@ -35,7 +32,7 @@ class Gameloop:
 
 class MainGameloop(Gameloop):
     """Main gameplay loop: moving around and doing things"""
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.input_handler = PlayerInputHandler()
@@ -70,7 +67,7 @@ class MainGameloop(Gameloop):
 
 class MainMenuState(Gameloop):
     """Main gameplay loop: moving around and doing things"""
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.input_handler = MainMenuInputHandler()

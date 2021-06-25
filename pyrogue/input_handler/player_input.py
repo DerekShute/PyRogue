@@ -1,6 +1,6 @@
 import tcod
-from typing import Any, Optional, List
-from actions import *
+from typing import List
+from actions import Action, DescendAction, MovementAction, PickupAction
 from input_handler import InputHandler, CancelHandler, MOVE_KEYS
 
 

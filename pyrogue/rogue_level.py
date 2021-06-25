@@ -311,9 +311,6 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
 if __name__ == '__main__':
     import time
 
-    def rectangle(x1: int, y1: int, x2: int, y2: int) -> Tuple[slice, slice]:
-        return slice(x1, x2), slice(y1, y2)
-
     # Room numbers on grid
     assert room_xy(0) == (0, 0)
     assert room_xy(1) == (1, 0)

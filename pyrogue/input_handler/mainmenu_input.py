@@ -1,5 +1,4 @@
 import tcod
-from typing import Any, Optional, List
 from input_handler import InputHandler
 
 
@@ -7,7 +6,7 @@ from input_handler import InputHandler
 
 class MainMenuInputHandler(InputHandler):
     """Input management for Main Menu: returns strings for Main Menu to juggle"""
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
