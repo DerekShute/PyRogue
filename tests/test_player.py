@@ -137,7 +137,7 @@ class TestPlayerAI(unittest.TestCase):
         input_handler = Mock(return_value=PickupAction())
         p.input_handler = Mock(get_action=input_handler)
         level = Level(1, 80, 25, None)
-        _ = Gold(val=10, pos=Pos(10, 10), level=level)
+        _ = Gold(quantity=10, pos=Pos(10, 10), parent=level)
         p.attach_level(level)
         p.perform()
         assert level.items == []  # Gone from map

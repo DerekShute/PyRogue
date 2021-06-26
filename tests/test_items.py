@@ -11,6 +11,8 @@ from position import Pos
 class TestItem(unittest.TestCase):
     """Test general item behavior"""
 
+    # TODO: test force keyword arguments
+
     def test_basics(self):
         COLOR_YELLOW = (255, 255, 0)
         i = Item(pos=Pos(3, 4), name='frotz', char='?', color=COLOR_YELLOW)
@@ -20,7 +22,7 @@ class TestItem(unittest.TestCase):
         i.set_pos(Pos(1, 1))
         assert i.pos == Pos(1, 1)
         i.set_pos(None)
-        assert i.pos == Pos(0, 0)  # TODO: probably a questionable decision
+        assert i.pos == None
         self.assertTrue(True)
 
 
@@ -30,9 +32,9 @@ class TestGold(unittest.TestCase):
 
     def test_gold(self):
         """Test Elementary stuff"""
-        g = Gold(val=10)
-        assert str(g) == 'Gold(@(0,0),10)'
-        g = Gold(val=20, pos=Pos((20, 20)))
+        g = Gold(quantity=10)
+        assert str(g) == 'Gold(None,10)'
+        g = Gold(quantity=20, pos=Pos((20, 20)))
         assert str(g) == 'Gold(@(20,20),20)'
         assert g.name == 'gold'
         assert g.quantity == 20

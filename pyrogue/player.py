@@ -169,7 +169,7 @@ class Player(Entity):
             # AD&D would award XP for treasure, but not Rogue apparently
             self.add_msg(f'You pick up {item.quantity} gold pieces!')
             self._purse = self._purse + item.quantity
-            item.set_level(None)
+            item.set_parent(None)
             del item  # Poof
         else:
             self.add_msg(f'You pick up the {item.name}')
