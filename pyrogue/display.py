@@ -52,7 +52,7 @@ class Display:
         self._console.fg[x, y, 1] = fg[1]
         self._console.fg[x, y, 2] = fg[2]
 
-    def centered_msg(self, *args, **kwargs):
+    def centered_msg(self, **kwargs):
         """Print something centered horizontally"""
         pos = self._xsize // 2 - len(kwargs['string']) // 2
         self._console.print_box(x=pos, width=len(kwargs['string']), height=1, **kwargs)

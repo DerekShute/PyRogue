@@ -3,8 +3,9 @@
 """
 from __future__ import annotations
 
-from typing import Tuple, TYPE_CHECKING
+from typing import List, Tuple, TYPE_CHECKING
 from position import Pos
+from item import Item
 
 if TYPE_CHECKING:
     from level import Level
@@ -22,6 +23,7 @@ class Entity:
     pos: Pos = None
     mtype: int = ord('?')
     _color: Tuple[int, int, int] = COLOR_WHITE
+    pack: List[Item] = None
 
     # ===== Private etc ===================================
 
@@ -33,6 +35,7 @@ class Entity:
         self.name = name
         self.mtype = mtype
         self._color = color
+        self.pack = []
 
     def __lt__(self, other: 'Entity') -> bool:
         """Comparison for TurnQueue bisect operation"""
@@ -50,6 +53,18 @@ class Entity:
 
     def set_pos(self, pos: Pos):  # TODO: side effect, or just do the assignment?
         self.pos = pos
+
+    # ===== Items =========================================
+    
+    def add_item(self, item: Item):
+        """Add item to inventory"""
+        # TODO: pos
+        self.pack.append(item)
+        # item.set_parent(self)  # TODO: weight and capacity
+
+    def remove_item(self, item: Item):
+        """Remove item from inventory"""
+        self.pack.remove(item)
 
     # ===== Combat ========================================
 

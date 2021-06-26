@@ -4,11 +4,12 @@
 
 from typing import Tuple
 from position import Pos
+# TODO: can't import Entity because recursion
 
 # TODO: colors go somewhere
 COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
-
+COLOR_BURNTSIENNA = (138,54,15)  # AKA "brown"
 
 # ===== Item =============================================
 class Item:  # union thing
@@ -51,26 +52,61 @@ class Item:  # union thing
 
     def set_parent(self, parent):
         """Move Item between map and some inventory"""
-        if parent is None and self.parent is not None:
-            self.parent.remove_item(self)
         self.parent = parent
-        if parent is not None:
-            self.parent.add_item(self)
 
     @property
     def quantity(self):
         return None
         # TODO: 'collective' objects with _quantity
 
+    # ===== Item callbacks from Entity ====================
+
+    def use(self, entity) -> bool:
+        entity.add_msg('Can\'t do that with a {self.name}!')
+        return False
+
 
 # ===== Items with Quantity ===============================
 
 class QuantityItem(Item):
-   quantity: int = 0
+   quantity: int = 0  # o_count
 
    def __init__(self, quantity: int = 0, **kwargs):
        self.quantity = quantity
        super().__init__(**kwargs)
+
+
+# ===== Food ==============================================
+
+class Food(Item):
+    OKAY_FOOD = 1
+    INTERESTING_FOOD = 0
+
+    def __init__(self, which: int = -1, **kwargs):
+        if which == -1:
+            which = self.OKAY_FOOD
+        self.which = which
+        super().__init__(name='food', char=':', color=COLOR_BURNTSIENNA, **kwargs)
+
+    def __str__(self) -> str:
+        which = 'Okay' if self.which == Food.OKAY_FOOD else 'Interesting'
+        return f'Food({self.pos},{which})'
+
+    def __repr__(self) -> str:
+        # TODO: does not handle parent
+        return f'Food(pos={repr(self.pos)},which={self.which})'
+
+    # ===== Item callbacks ================================
+
+    def use(self, entity) -> bool:
+        """Eat it.  You know you want to."""
+        # Peculiar logic here: at level creation 'which' has a one in ten of being boring OKAY
+        if self.which == self.OKAY_FOOD:
+            entity.add_msg('Yum yum!')  # TODO: real messages
+        else:
+            entity.add_msg('BLECCCH!')  # TODO: 70% chance of +1 exp
+        # TODO hunger appeasement
+        return True
 
 
 # ===== Gold ==============================================
@@ -83,6 +119,7 @@ class Gold(QuantityItem):
         return f'Gold({self.pos},{self.quantity})'
 
     def __repr__(self) -> str:
+        # TODO: does not handle parent
         return f'Gold(pos={repr(self.pos)},quantity={self.quantity})'
 
 

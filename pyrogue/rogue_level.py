@@ -8,7 +8,7 @@ from position import Pos
 from room import Room
 from level import Level
 from monster import Monster
-from item import Gold
+from item import Item, Food, Gold
 from display import Display
 from typing import Tuple
 from player import Player
@@ -17,6 +17,7 @@ from player import Player
 # ===== Constants =========================================
 
 MAXROOMS = 9  # Magic number due to sqrt
+MAXOBJ = 9    # Number of items to try to place per level
 NUMCOLS = 80
 NUMLINES = 25
 ROOM_DIVISOR = int(math.sqrt(MAXROOMS))
@@ -139,6 +140,35 @@ def randmonster(levelno: int, wander: bool) -> int:
 
 
 # ==== Manufactury ========================================
+
+def new_thing(level: Level) -> Item:  # new_thing
+    """Return a new thing (item)"""
+    
+    # Decide what kind of object it will be
+    # If we haven't had food for a while, let it be food
+
+    # TODO anything other than food
+    # TODO: putting down food resets 'no_food' count
+    which = Food.OKAY_FOOD if random.randint(0, 9) == 0 else Food.INTERESTING_FOOD
+    return Food(which=which)
+
+
+def put_things(level: Level):  # put_things
+    """Put potions and scrolls on this level"""
+    
+    # TODO if amulet and going up, no new items
+
+    # TODO Treasure room
+
+    for i in range(0, MAXOBJ):  # Range stop is NOT inclusive
+        if rand(0, 100) < 36:  # That's weirdly specific
+            item = new_thing(level)
+            room = random.choice([x for _, x in level.rooms.items() if x.max_y != x.y])  # random not-gone
+            item.set_pos(room.rnd_pos)
+            level.add_item(item)
+            item.set_parent(level)
+    # TODO: if level >= AMULETLEVEL and amulet not found (picked up) yet, then put it somewhere
+
 
 def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  # do_rooms()
     """
@@ -283,8 +313,7 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
     do_passages(level)
 
     # TODO: no_food++
-    # TODO: put_things()
-
+    put_things(level)
     # TODO: place the traps --- this is in passages?
 
     # Place the staircase down
@@ -300,8 +329,7 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
         level.add_player(player)
         player.room = level.new_room(player.pos, None)
 
-    level.map.lit(rectangle(0, 0, NUMCOLS, NUMLINES))   # TODO wizard mode
-    level.map.explore(rectangle(0, 0, NUMCOLS, NUMLINES))  # TODO wizard mode
+    level.map.explore(rectangle(0, 0, width, height - 1))  # TODO wizard mode
 
     return level
 
@@ -315,8 +343,8 @@ if __name__ == '__main__':
         p = Player.factory()
         lvl = RogueLevel(1, NUMCOLS, NUMLINES, d, player=p)
         print(str(lvl))
-        lvl.map.lit(rectangle(0, 0, 80, 25))   # TODO
-        lvl.map.explore(rectangle(0, 0, 80, 25))  # TODO
+        lvl.map.lit(rectangle(0, 0, 80, 25))
+        lvl.map.explore(rectangle(0, 0, 80, 25))
         lvl.render()
         d.present()
         time.sleep(10)

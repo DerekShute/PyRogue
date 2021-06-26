@@ -6,9 +6,9 @@ import unittest
 from unittest.mock import patch, Mock
 from player import Player, Stats
 from position import Pos
-from actions import MovementAction, PickupAction, DescendAction
+from actions import MovementAction, PickupAction, DescendAction, DropAction, UseAction
 from level import Level
-from item import Gold
+from item import Gold, Food
 
 
 # ===== Service Routines ==================================
@@ -156,6 +156,27 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == 'No item there to pick up!'
         self.assertTrue(True)
 
+    def test_perform_pickup_food(self):
+        """Pick up an Item"""
+        level = Level(1, 80, 25, None)
+        p = Player(pos=Pos(10, 10))
+        input_handler = Mock(return_value=PickupAction())
+        p.input_handler = Mock(get_action=input_handler)
+        p.attach_level(level)
+        food = Food(pos=Pos(10, 10), parent=level)
+        # Smoke test: is where we think
+        assert level.items == [food]
+        assert food.parent == level
+        p.perform()
+        # Action occurred
+        assert p.curr_msg == 'You pick up the food'
+        # Gone from level
+        assert level.items == []  # Gone from map
+        # Into player inventory
+        assert food.parent == p
+        assert food in p.pack
+        self.assertTrue(True)
+
     def test_perform_descend(self):
         """Stumble down the stairs"""
         p = Player.factory(pos=Pos(10, 10))
@@ -184,7 +205,63 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == 'No stairs here!'
         self.assertTrue(True)
 
-    # TODO: bump actions, take actions, etc.
+    def test_perform_drop_food(self):
+        """Drop the thing in your inventory"""
+        p = Player.factory(pos=Pos(10, 10))
+        # Factory creates a food in player inventory
+        assert p.pack != []
+        food = p.pack[0]
+        assert food.parent == p
+        assert food.pos == None
+        input_handler = Mock(return_value=DropAction())
+        p.input_handler = Mock(get_action=input_handler)
+        level = Level(1, 80, 25, None)
+        level.add_player(p)
+        p.perform()
+        assert food.parent == level
+        assert food.pos == p.pos
+        assert food in level.items
+        self.assertTrue(True)
+
+    def test_perform_drop_denied(self):
+        """Drop the nonexistent food in your inventory"""
+        p = Player(pos=Pos(10, 10))
+        assert p.pack == []
+        input_handler = Mock(return_value=DropAction())
+        p.input_handler = Mock(get_action=input_handler)
+        p.perform()
+        assert p.pack == []
+        assert p.curr_msg == 'No item to drop!'
+        self.assertTrue(True)
+
+    def test_perform_use_food(self):
+        """Use the nonexistent food in your inventory"""
+        p = Player.factory(pos=Pos(10, 10))
+        # Factory creates a food in player inventory
+        assert p.pack != []
+        input_handler = Mock(return_value=UseAction())
+        p.input_handler = Mock(get_action=input_handler)
+        p.perform()
+        assert p.pack == []
+        # TODO: can't test existence of food
+        # TODO: there was a message and effects
+        assert p.curr_msg != ''
+        self.assertTrue(True)
+
+    def test_perform_use_denied(self):
+        """Use the nonexistent food in your inventory"""
+        p = Player(pos=Pos(10, 10))
+        assert p.pack == []
+        input_handler = Mock(return_value=UseAction())
+        p.input_handler = Mock(get_action=input_handler)
+        p.perform()
+        assert p.pack == []
+        assert p.curr_msg == 'No item to use!'
+        self.assertTrue(True)
+
+    # TODO: use action that doesn't destroy item
+
+    # TODO: bump actions, etc.
 
 
 # ===== Test Combat Interface =============================

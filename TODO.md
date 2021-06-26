@@ -1,3 +1,32 @@
+IN PROGRESS: FOOD
+
+    at eat, if o_which == 1, then yummy
+    else if random 100 > 70 then gain a point of experience and 'yuk/bummer this food tastes awful'
+          else 'oh wow/yum that tasted good
+    
+    o_which is 0 at food creation if rnd(10) != 0, else 1
+
+    Food isn't actually stackable
+
+    player repr() for inventory
+
+    INVENTORY <<<<<<<<<<<<<<<<
+
+    Food effects, hunger, hunger appeasement, real messages
+        * Testing of effects
+
+    UseAction testing <<<<<<<<<<<<<<<<<<<<<<
+
+Items in general
+
+    o_which = RING_MAIL as general typing
+
+    o_count == quantity
+
+    There's a name a type and an inventory description
+
+    Treasure rooms
+
 Messages
 
     * Relocated status line to bottom of display (+1 line)

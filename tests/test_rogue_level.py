@@ -143,6 +143,9 @@ class TestGeneration(unittest.TestCase):
         _ = rogue_level.room_factory(lvl, 1, 1, False)  # Not a gone room
         self.assertTrue(True)
 
+# TODO: new_thing() return
+
+# TODO: put_things()
 
 # ===== Invocation ========================================
 

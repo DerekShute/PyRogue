@@ -3,7 +3,7 @@
 """
 
 import unittest
-from item import Gold, Item
+from item import Gold, Food, Item
 from position import Pos
 
 
@@ -41,6 +41,24 @@ class TestGold(unittest.TestCase):
         assert repr(g) == repr(eval(repr(g)))
         self.assertTrue(True)
 
+
+# ===== Test Food =========================================
+
+class TestFood(unittest.TestCase):
+    """Test food"""
+
+    def test_food(self):
+        """Test Elementary stuff"""
+        g = Food(which=Food.OKAY_FOOD)
+        assert str(g) == 'Food(None,Okay)'
+        g = Food(which=Food.INTERESTING_FOOD)
+        assert str(g) == 'Food(None,Interesting)'
+        g = Food(pos=Pos(20, 20), which=Food.OKAY_FOOD)
+        assert str(g) == 'Food(@(20,20),Okay)'
+        assert g.name == 'food'
+        assert g.quantity == None
+        assert repr(g) == repr(eval(repr(g)))
+        self.assertTrue(True)
 
 # ===== Invocation ========================================
 
