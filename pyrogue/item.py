@@ -15,27 +15,50 @@ FRUIT_NAME = 'slime-mold'
 """Traditional fruit name.  Settable in the original, but I can't be bothered"""
 
 
-# ===== Item =============================================
+# ===== Service Routines ===================================
+
+def unpack(template):
+    """
+    Convert from the string descriptor into a list of values and
+    a dict of key-value pairs.
+    
+    Caller then ships the resulting tuple as *args, **kwargs to a factory
+    
+    Key value pairs will replace underbar with a space
+    Returns:
+        args (list of strings)
+        kwargs (dict of strings)
+    """
+    kwargs = {}
+    args = []
+    for x in template.split(' '):
+        p = x.partition('=')
+        if p[1] == '':   # just a string.  Add it to the argument list
+            args.append(p[2])
+        else:
+            kwargs[p[0]] = p[2].replace('_',' ')  # XXX=yyy format
+    return args, kwargs
+
+
+# ===== Item ==============================================
+
 class Item:  # union thing
     """
     Superclass for all items
     Thing (originally): Superclass structure for monsters / player / items
     """
-    pos: Pos
-    name: str
-    _char: int  # Note: No good default
-    _color: Tuple[int, int, int]  # No good default
-    parent = None  # Level or Monster or Player (inventories)
+    pos: Pos = None
+    name: str = '<unknown>'
+    _char: int = ord('&')  # No good default
+    _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
+    parent = None  # Inventory or floor
 
-    def __init__(self, name: str = '<unknown>', char: str = '&', color: Tuple[int, int, int] = COLOR_WHITE,
-                 pos: Pos = None, parent=None):
-        self.pos = pos
-        self.name = name
+    def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, parent=None):
+        self._pos = Pos(pos)
+        self._name = name
         self._char = ord(char)
         self._color = color
-        self.parent = parent
-        if parent is not None:
-            parent.add_item(self)
+        self.set_parent(parent)
 
     # ===== Display =======================================
 
@@ -61,7 +84,6 @@ class Item:  # union thing
     @property
     def quantity(self):
         return None
-        # TODO: 'collective' objects with _quantity
 
     # ===== Item callbacks from Entity ====================
 
@@ -152,6 +174,25 @@ class Gold(QuantityItem):
         # TODO: does not handle parent
         return f'Gold(pos={repr(self.pos)},quantity={self.quantity})'
 
+
+# ===== Equipment =========================================
+
+class Equipment(Item):
+    """
+    NOTE: 'worth' is used in the endgame for calculation of score, and 'prob' is probability for object appearance
+    and only a thing during level/room generation
+    """
+    value: int = 0  # thing for equipment type (Armor class or something)
+    worth: int = 0  # Borderline value but what the hey, this is a 64-bit processor
+    etype: int = 0  # TODO: 'armor' vs 'weapon' vs...
+    
+    def __init__(self, *args, **kwargs):
+        
+    @staticmethod
+    def factory(template: str):
+        """Convert from the readable format into an ObjInfo"""
+        args, kwargs = unpack(template)
+        return Equipment(*args, **kwargs)
 
 # ===== TESTING ===========================================
 
