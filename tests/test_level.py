@@ -39,14 +39,21 @@ class TestLevel(unittest.TestCase):
         lvl = Level(1, 10, 10, None)
         lvl.add_room(0, Room(Pos(0, 0), Pos(7, 7)))
         assert lvl.items_at(Pos(5, 5)) == []
-        gold = Gold(val=10, pos=Pos(5, 5), level=lvl)
+        gold = Gold(quantity=10, pos=Pos(5, 5), parent=lvl)
+        # Gold is present at level at (5, 5)
         assert lvl.items_at(Pos(5, 5)) == [gold]
+        assert gold.parent == lvl
+        # Gold no longer present when removed
         lvl.remove_item(gold)
+        gold.set_parent(None)
         assert lvl.items_at(Pos(5, 5)) == []
-        gold.set_level(lvl)
+        assert gold.parent is None
+        # Gold back again
+        lvl.add_item(gold)
+        gold.set_parent(lvl)
         assert lvl.items_at(Pos(5, 5)) == [gold]
-        gold.set_level(None)
-        assert lvl.items_at(Pos(5, 5)) == []
+        assert gold.parent == lvl
+        # Not confused about other positions
         assert lvl.items_at(Pos(3, 3)) == []
         self.assertTrue(True)
 

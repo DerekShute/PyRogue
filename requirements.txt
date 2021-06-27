@@ -1,4 +1,6 @@
 tcod
+parameterized
+pytest
 pytest-cov
 
 # EOF

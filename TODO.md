@@ -1,3 +1,26 @@
+
+
+BIG TODO:
+
+    Inventory --> need question response, menus, new InputHandlers, split Action
+
+    Food effects, hunger,
+        * Testing of effects, add to display, fainting, weakness, death -- see stomach()
+
+    Level gain
+
+Items in general
+
+    o_which = RING_MAIL as general typing
+
+    o_count == quantity
+
+    There's a name a type and an inventory description
+
+    Treasure rooms
+
+    player repr() for inventory
+
 Messages
 
     * Relocated status line to bottom of display (+1 line)

@@ -1,6 +1,6 @@
 import tcod
 from typing import List
-from actions import Action, DescendAction, MovementAction, PickupAction
+from actions import Action, DescendAction, MovementAction, PickupAction, UseAction, DropAction
 from input_handler import InputHandler, CancelHandler, MOVE_KEYS
 
 
@@ -26,8 +26,12 @@ class PlayerInputHandler(InputHandler):
             self._inputq.append(DescendAction())
         elif key == tcod.event.K_ESCAPE:
             return CancelHandler()
+        elif key == tcod.event.K_d:
+            self._inputq.append(DropAction())  # TODO: query involved
         elif key == tcod.event.K_g:
             self._inputq.append(PickupAction())
+        elif key == tcod.event.K_u:
+            self._inputq.append(UseAction())  # TODO: query involved, submenu, etc.
         elif key in MOVE_KEYS:
             self._inputq.append(MovementAction(*MOVE_KEYS[key]))
         return self

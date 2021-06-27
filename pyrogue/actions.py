@@ -29,6 +29,15 @@ class DescendAction(Action):
             entity.add_msg('No stairs here!')  # TODO real message
 
 
+class DropAction(Action):
+    """Drop an item in entity inventory"""
+    def perform(self, entity: Entity) -> None:
+        if entity.pack == []:
+            entity.add_msg('No item to drop!')
+            return
+        entity.drop(entity.pack[0])  # TODO: would be handed by inventory submenu etc.
+
+
 class EscapeAction(Action):
     def perform(self, entity: Entity) -> None:
         raise SystemExit()
@@ -56,9 +65,19 @@ class MovementAction(Action):
 
 
 class PickupAction(Action):
+    """Pick up item at feet (or at other location if that makes sense)"""
     def perform(self, entity: Entity) -> None:
         items = entity.level.items_at(entity.pos)
         entity.pick_up(None if items == [] else items[0])
         # TODO: top of stack vs menu to select
+
+
+class UseAction(Action):
+    """Use an item in entity inventory"""
+    def perform(self, entity: Entity) -> None:
+        if entity.pack == []:
+            entity.add_msg('No item to use!')
+            return
+        entity.use(entity.pack[0])  # TODO: would be handed by inventory submenu, etc.
 
 # EOF

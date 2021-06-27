@@ -5,7 +5,7 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
-from item import Item
+from item import Item, Food
 from position import Pos
 from input_handler import InputHandler
 from message import MessageBuffer
@@ -18,6 +18,9 @@ ACTION_COST = 8
 
 HUNGERTIME = 1300
 """Turns before hunger state change, I guess"""
+
+STOMACHSIZE = 2000
+"""Limit on food intake.  No amusing consequences for going over."""
 
 INIT_STATS = {
     'level': 1,
@@ -115,8 +118,9 @@ class Player(Entity):
         return f'Player({Pos(self.pos)},{self._stats})'
 
     def __repr__(self):
-        # TODO: self._input not reconstructable
-        return f'Player(pos={repr(self.pos)},stats={repr(self._stats)}, food_left={self._food_left})'
+        # TODO: self.input_handler not reconstructable
+        # TODO: inventory
+        return f'Player(pos={repr(self.pos)},stats={repr(self._stats)},food_left={self._food_left})'
 
     # ===== Display =======================================
 
@@ -156,6 +160,14 @@ class Player(Entity):
         self.levelno = self.levelno + 1
         # Once not on the level, the game main loop takes care of it
 
+    def drop(self, item: Item):
+        self.add_msg(f'You drop the {item.name}')
+        self.remove_item(item)  # Remove it from inventory
+        item.set_parent(None)
+        item.pos = self.pos
+        self.level.add_item(item)
+        item.set_parent(self.level)
+
     def move(self, dx: int, dy: int):
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
         self.room = self.level.new_room(self.pos, self.room)
@@ -165,16 +177,27 @@ class Player(Entity):
         if item is None:
             self.add_msg('No item there to pick up!')
             return
+        item.parent.remove_item(item)  # Remove it from the level
+        item.set_parent(None)
+        item.pos = None
         if item.name == 'gold':
             # AD&D would award XP for treasure, but not Rogue apparently
             self.add_msg(f'You pick up {item.quantity} gold pieces!')
             self._purse = self._purse + item.quantity
-            item.set_level(None)
             del item  # Poof
         else:
             self.add_msg(f'You pick up the {item.name}')
-            # TODO: remove from level, add to inventory
+            self.add_item(item)
+            item.set_parent(self)
             # TODO: after verifying you can
+
+    def use(self, item: Item):
+        """Use an item"""
+        destroy = item.use(self)
+        if destroy:
+            item.set_parent(None)
+            self.remove_item(item)
+            del item
 
     # ===== Timer / AI / Action Interface ==========================
 
@@ -201,9 +224,27 @@ class Player(Entity):
     def exp(self) -> int:
         return self._stats.exp
 
+    def add_exp(self, amount: int):
+        self._stats.exp = self._stats.exp + amount
+        # TODO: level gain
+
     @property
     def stren(self) -> int:
         return self._stats.stren
+
+    @property
+    def food_left(self) -> int:
+        return self._food_left
+
+    def add_food(self):
+        """Eat a piece of food.  Fruit or ration does not matter"""
+        if self._food_left < 0:
+            self._food_left = 0
+            return
+        self._food_left = self._food_left + HUNGERTIME - 200 + random.randint(0, 400)
+        if self._food_left > STOMACHSIZE:
+            # I thought there was some vomit case but maybe in a different game
+            self._food_left = STOMACHSIZE
 
     # ===== Combat Interface ==============================
 
@@ -231,8 +272,7 @@ class Player(Entity):
 
     def kill(self, entity):  # TODO: monster
         self.add_msg(f'You killed the {entity.name}!')
-        self._stats.exp = self._stats.exp + entity.xp_value
-        # TODO: level gain
+        self.add_exp(entity.xp_value)
 
     def melee_attack(self):
         """Melee attack (level, strength, dmg)"""
@@ -253,7 +293,12 @@ class Player(Entity):
     def factory(pos: Pos = None):   # init_player
         plr = Player(pos=pos, stats=Stats(**INIT_STATS))
         # cur_armor Armor: ring_mail, known, a_class = RING_MAIL
-        # one food
+
+        # one food.  I think a ration, if I'm reading correctly
+        food = Food(which=Food.GOOD_RATION)
+        food.set_parent(plr)
+        plr.add_item(food)
+
         # cur_weapon Weapon: mace, known, hplus=1 dplus=1
         # weapon: BOW, hplus=1, known
         # to pack: 25 + rnd(15) arrows, known
