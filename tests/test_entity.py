@@ -3,7 +3,6 @@
 """
 
 import unittest
-from unittest.mock import patch, Mock
 from entity import Entity
 
 

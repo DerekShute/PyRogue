@@ -51,6 +51,7 @@ class TestRoom(unittest.TestCase):
         assert r.max_x == 5
         assert r.max_y == 5
         self.assertTrue(True)
+
     @patch('random.randint')
     def test_rnd_pos_min(self, mock_randint):
         """Test boundaries of room random position: top left corner"""

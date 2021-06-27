@@ -29,7 +29,7 @@ def randint_return_max(*args, **kwargs):
 
 class TestBasics(unittest.TestCase):
     """Service routines and whatnot"""
-    
+
     def test_roomxy(self):
         """Room numbers on 3x3 grid"""
         assert rogue_level.room_xy(0) == (0, 0)
@@ -113,7 +113,7 @@ class TestGeneration(unittest.TestCase):
         self.assertTrue(True)
 
     # TODO: random.choice
-    @patch('random.shuffle') # Room number
+    @patch('random.shuffle')  # Room number
     @patch('random.randint')
     def test_mingen(self, mock_randint, random_shuffle):
         assert random_shuffle
@@ -125,7 +125,7 @@ class TestGeneration(unittest.TestCase):
         self.assertTrue(True)
 
     # TODO: random.choice
-    @patch('random.shuffle') # Room number
+    @patch('random.shuffle')  # Room number
     @patch('random.randint')
     def test_maxgen(self, mock_randint, random_shuffle):
         assert random_shuffle
@@ -139,8 +139,8 @@ class TestGeneration(unittest.TestCase):
     def test_room_factory(self):
         """Basic room factory splatting"""
         lvl = Level(1, 20, 20, None)
-        _ = rogue_level.room_factory(lvl, 1, 0, True)  # Gone room
-        _ = rogue_level.room_factory(lvl, 1, 1, False) # Not a gone room
+        _ = rogue_level.room_factory(lvl, 1, 0, True)   # Gone room
+        _ = rogue_level.room_factory(lvl, 1, 1, False)  # Not a gone room
         self.assertTrue(True)
 
 
