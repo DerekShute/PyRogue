@@ -9,10 +9,11 @@ from position import Pos
 # TODO: colors go somewhere
 COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
-COLOR_BURNTSIENNA = (138,54,15)  # AKA "brown"
+COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
 
 FRUIT_NAME = 'slime-mold'
 """Traditional fruit name.  Settable in the original, but I can't be bothered"""
+
 
 # ===== Item =============================================
 class Item:  # union thing
@@ -72,11 +73,11 @@ class Item:  # union thing
 # ===== Items with Quantity ===============================
 
 class QuantityItem(Item):
-   quantity: int = 0  # o_count
+    quantity: int = 0  # o_count
 
-   def __init__(self, quantity: int = 0, **kwargs):
-       self.quantity = quantity
-       super().__init__(**kwargs)
+    def __init__(self, quantity: int = 0, **kwargs):
+        self.quantity = quantity
+        super().__init__(**kwargs)
 
 
 # ===== Food ==============================================

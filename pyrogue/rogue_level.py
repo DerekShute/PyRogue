@@ -143,7 +143,7 @@ def randmonster(levelno: int, wander: bool) -> int:
 
 def new_thing(level: Level) -> Item:  # new_thing
     """Return a new thing (item)"""
-    
+
     # Decide what kind of object it will be
     # If we haven't had food for a while, let it be food
 
@@ -160,7 +160,7 @@ def new_thing(level: Level) -> Item:  # new_thing
 
 def put_things(level: Level):  # put_things
     """Put potions and scrolls on this level"""
-    
+
     # TODO if amulet and going up, no new items
 
     # TODO Treasure room

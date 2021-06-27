@@ -55,7 +55,7 @@ class Entity:
         self.pos = pos
 
     # ===== Items =========================================
-    
+
     def add_item(self, item: Item):
         """Add item to inventory"""
         # TODO: pos

@@ -10,6 +10,7 @@ from player import Player
 
 COLOR_YELLOW = (255, 255, 0)
 
+
 # ===== Testing Items =====================================
 class TestItem(unittest.TestCase):
     """Test general item behavior"""
@@ -25,7 +26,7 @@ class TestItem(unittest.TestCase):
         i.set_pos(Pos(1, 1))
         assert i.pos == Pos(1, 1)
         i.set_pos(None)
-        assert i.pos == None
+        assert i.pos is None
         self.assertTrue(True)
 
     def test_failure_cases(self):
@@ -62,7 +63,7 @@ class TestFood(unittest.TestCase):
         f = Food(pos=Pos(20, 20), which=Food.FRUIT)
         assert str(f) == 'Food(@(20,20),fruit)'
         assert f.name == 'food'
-        assert f.quantity == None
+        assert f.quantity is None
         assert repr(f) == repr(eval(repr(f)))
         self.assertTrue(True)
 

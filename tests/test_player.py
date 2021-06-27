@@ -82,6 +82,7 @@ class TestPlayer(unittest.TestCase):
         p.add_food()
         assert p.food_left == expected
 
+
 # ===== Test Action =======================================
 
 class TestPlayerActionCallback(unittest.TestCase):
@@ -223,7 +224,7 @@ class TestPlayerAI(unittest.TestCase):
         assert p.pack != []
         food = p.pack[0]
         assert food.parent == p
-        assert food.pos == None
+        assert food.pos is None
         input_handler = Mock(return_value=DropAction())
         p.input_handler = Mock(get_action=input_handler)
         level = Level(1, 80, 25, None)

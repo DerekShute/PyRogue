@@ -293,12 +293,12 @@ class Player(Entity):
     def factory(pos: Pos = None):   # init_player
         plr = Player(pos=pos, stats=Stats(**INIT_STATS))
         # cur_armor Armor: ring_mail, known, a_class = RING_MAIL
-        
+
         # one food.  I think a ration, if I'm reading correctly
         food = Food(which=Food.GOOD_RATION)
         food.set_parent(plr)
         plr.add_item(food)
-        
+
         # cur_weapon Weapon: mace, known, hplus=1 dplus=1
         # weapon: BOW, hplus=1, known
         # to pack: 25 + rnd(15) arrows, known
