@@ -35,6 +35,9 @@ class TestRoom(unittest.TestCase):
         assert str(r) == 'Room @(0,0)-@(10,20)'
         assert str(r.max_pos) == '@(10,20)'
         assert str(r.shadow()) == '(slice(0, 10, None), slice(0, 20, None))'
+        x, y = r.xy
+        assert x == r.x
+        assert y == r.y
         assert r.x == 0
         assert r.max_x == 9
         assert r.y == 0
@@ -43,6 +46,11 @@ class TestRoom(unittest.TestCase):
         assert not r.inside(Pos(20, 20))
         self.assertTrue(True)
 
+    def test_gone_room(self):
+        r = Room(Pos(5, 5), Pos(0, 0))
+        assert r.max_x == 5
+        assert r.max_y == 5
+        self.assertTrue(True)
     @patch('random.randint')
     def test_rnd_pos_min(self, mock_randint):
         """Test boundaries of room random position: top left corner"""

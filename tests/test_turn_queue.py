@@ -31,6 +31,7 @@ class TestTurnQueue(unittest.TestCase):
         tq = TurnQueue()
         assert tq.now == 0
         tq.add(QueueItem(4))
+        print(str(tq))
         assert tq.now == 0
         _ = tq.pop()
         assert tq.now == 4

@@ -3,16 +3,24 @@
 """
 
 import unittest
-from level import Level
+from level import Level, lit_area
 from position import Pos
 from room import Room
 from item import Gold
 from monster import Monster
+from player import Player
 
 
 # ===== Test Level ========================================
 
 class TestLevel(unittest.TestCase):
+
+    def test_smoke(self):
+        """Smoke test"""
+        lvl = Level(1, 20, 20, None)
+        _ = str(lvl)
+        assert lvl.now == 0
+        self.assertTrue(True)
 
     def test_can_enter(self):
         """Exercise 'can enter position' conditions"""
@@ -79,6 +87,8 @@ class TestLevel(unittest.TestCase):
         lvl.add_room(0, room1)
         room2 = Room(Pos(20, 20), Pos(30, 30))
         lvl.add_room(1, room2)
+        room = lvl.new_room(Pos(25, 25), room2)  # No change
+        assert room == room2
         room = lvl.new_room(Pos(50, 50), None)
         assert room is None
         room = lvl.new_room(Pos(5, 5), None)
@@ -87,9 +97,23 @@ class TestLevel(unittest.TestCase):
         assert room2.found is False
         room = lvl.new_room(Pos(25, 25), room)
         assert room == room2
+        self.assertTrue(True)
+
+    def test_fov_area(self):
+        lvl = Level(1, 50, 50, None)
+        room1 = Room(Pos(1, 1), Pos(10, 10))
+        lvl.add_room(0, room1)
+        entity = Player(pos=Pos(4, 4))
+        entity.room = room1
+        assert lit_area(entity) == (slice(0, 12, None), slice(0, 12, None))
+        entity.pos = Pos(20, 25)
+        entity.room = None
+        assert lit_area(entity) == (slice(19, 22, None), slice(24, 27, None))
+        self.assertTrue(True)
 
 # TODO: activation of monsters
 
+# TODO: run queue
 
 # ===== Invocation ========================================
 

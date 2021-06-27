@@ -1,7 +1,5 @@
 """
-Item basics
-
-Derives from Thing
+    Items
 """
 
 from typing import Tuple

@@ -88,11 +88,7 @@ class Room:  # struct room
 
 
 # ===== UNIT TEST =========================================
-if __name__ == '__main__':
-    r = Room(Pos(0, 0), Pos(10, 20))
-    assert str(r) == 'Room @(0,0)-@(10,20)'
-    assert str(r.max_pos) == '@(10,20)'
-    assert str(r.shadow()) == '(slice(0, 10, None), slice(0, 20, None))'
 
-    print('*** Tests passed ***')
+# See test_player.py
+
 # EOF

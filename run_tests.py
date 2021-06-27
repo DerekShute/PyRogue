@@ -9,6 +9,10 @@ import sys
 
 if __name__ == '__main__':
     sys.path.insert(0, './pyrogue/')
-    pytest.main(["tests"])
+    pytest.main(["--cov=pyrogue",
+                 "--cov-branch",
+                 "--no-cov-on-fail",
+                 "--cov-report=term-missing",
+                 "tests"])
 
 # EOF

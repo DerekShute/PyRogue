@@ -311,25 +311,6 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
 if __name__ == '__main__':
     import time
 
-    # Room numbers on grid
-    assert room_xy(0) == (0, 0)
-    assert room_xy(1) == (1, 0)
-    assert room_xy(2) == (2, 0)
-    assert room_xy(3) == (0, 1)
-    assert room_xy(4) == (1, 1)
-    assert room_xy(8) == (2, 2)
-
-    # Adjacency test of room numbers
-    assert adjacent(0, 1)
-    assert not adjacent(0, 2)
-    assert adjacent(1, 2)
-    assert adjacent(2, 1)
-    assert adjacent(0, 3)
-    assert not adjacent(0, 4)
-    assert not adjacent(0, 8)
-
-    random.seed()
-
     with Display(NUMCOLS, NUMLINES, title='unit test rogue_level') as d:
         p = Player.factory()
         lvl = RogueLevel(1, NUMCOLS, NUMLINES, d, player=p)

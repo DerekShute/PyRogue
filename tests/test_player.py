@@ -95,6 +95,14 @@ class TestPlayerActionCallback(unittest.TestCase):
 
 class TestPlayerAI(unittest.TestCase):
 
+    def test_perform_no_action(self):
+        """No action in perform"""
+        p = Player.factory(pos=Pos(10, 10))
+        input_handler = Mock(return_value=None)
+        p.input_handler = Mock(get_action=input_handler)
+        p.perform()
+        self.assertTrue(True)
+
     def test_perform_move_allowed(self):
         """Player was allowed to move"""
         p = Player.factory(pos=Pos(10, 10))
@@ -135,6 +143,17 @@ class TestPlayerAI(unittest.TestCase):
         assert level.items == []  # Gone from map
         assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
         assert p.curr_msg == 'You pick up 10 gold pieces!'
+        self.assertTrue(True)
+
+    def test_perform_pickup_denied(self):
+        """Pick up an Item"""
+        p = Player.factory(pos=Pos(10, 10))
+        input_handler = Mock(return_value=PickupAction())
+        p.input_handler = Mock(get_action=input_handler)
+        level = Level(1, 80, 25, None)
+        p.attach_level(level)
+        p.perform()
+        assert p.curr_msg == 'No item there to pick up!'
         self.assertTrue(True)
 
     def test_perform_descend(self):

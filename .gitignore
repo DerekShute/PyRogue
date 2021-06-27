@@ -1,0 +1,4 @@
+.coverage
+*,cover
+.pytest_cache/
+# EOF
