@@ -18,6 +18,7 @@ class TestPosition(unittest.TestCase):
         assert p.xy == (10, 20)
 
         p = Pos(15, 25)
+        _ = hash(p)
         assert str(p) == '@(15,25)'
         assert eval(repr(p)) == p
 
@@ -25,6 +26,9 @@ class TestPosition(unittest.TestCase):
 
         assert not Pos(1, 1) == Pos(2, 2)
         assert Pos(1, 2) == Pos(x=1, y=2)
+
+        p = Pos(15)  # Oddball case: fill in y
+        assert str(p) == '@(15,0)'
 
         self.assertTrue(True)
 
