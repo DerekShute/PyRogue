@@ -10,7 +10,7 @@ from input_handler import InputHandler, CancelHandler
 from input_handler.player_input import PlayerInputHandler
 from input_handler.mainmenu_input import MainMenuInputHandler
 from rogue_level import RogueLevel
-
+from actions import QuitAction
 
 # ===== Game Loop Superclass ==============================
 
@@ -35,7 +35,6 @@ class MainGameloop(Gameloop):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.input_handler = PlayerInputHandler()
         self.level = None
         self.level_no = 0
         self.player = None
@@ -43,6 +42,7 @@ class MainGameloop(Gameloop):
     def run(self) -> Gameloop:
         if self.player is None:
             self.player = Player.factory()
+            self.input_handler = PlayerInputHandler(self.player)
             self.player.add_msg('Welcome to the dungeon!')
         if self.player.level is None:
             del self.level
@@ -51,13 +51,13 @@ class MainGameloop(Gameloop):
 
         self.player.level.render()
         self._display.present(self.player)
-        if self.player.input_handler is None:  # New to here
-            self.player.input_handler = self.input_handler
-        self.player.input_handler = self._display.dispatch_event(self.player.input_handler)
-        if isinstance(self.player.input_handler, CancelHandler):
+        self.input_handler, action = self._display.dispatch_event(self.input_handler)
+        # TODO: QuitAction needs confirmation message
+        if isinstance(action, QuitAction):
             del self.player
             del self.level
             return self._previous
+        self.player.queue_action(action)
         self.player.level.run_queue()
         # TODO: if we're doing a submenu, then override this and return to this.  Capture _prevous
         return self

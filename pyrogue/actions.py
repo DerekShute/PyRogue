@@ -19,6 +19,16 @@ class Action:
         """
         raise NotImplementedError()
 
+    def incorporate(self, key: int) -> None:
+        raise NotImplementedError()
+
+
+class QuitAction(Action):
+    def incorporate(self, key: int) -> Action:
+        if chr(key) == 'Y' or chr(key) == 'y':
+            return self
+        return None
+
 
 class DescendAction(Action):
     """Go down"""

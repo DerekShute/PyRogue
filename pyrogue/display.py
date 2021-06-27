@@ -69,12 +69,12 @@ class Display:
             self.msg(x=0, y=self._ysize - 1, string=player.curr_msg.ljust(self._xsize))
         self._context.present(self._console)
 
-    def dispatch_event(self, input_handler: InputHandler) -> InputHandler:
+    def dispatch_event(self, input_handler: InputHandler) -> (InputHandler, Any):
         """Burying the TCOD details somewhere"""
         ret = None
         for event in tcod.event.wait():  # TODO: use get() for no-wait operation
             ret = input_handler.dispatch(event)
-            return ret if ret is not None else input_handler
+            return ret if ret is not None else (input_handler, None)
 
     @property
     def rgb(self):
