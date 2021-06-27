@@ -19,6 +19,9 @@ ACTION_COST = 8
 HUNGERTIME = 1300
 """Turns before hunger state change, I guess"""
 
+STOMACHSIZE = 2000
+"""Limit on food intake.  No amusing consequences for going over."""
+
 INIT_STATS = {
     'level': 1,
     'stren': 16,
@@ -117,7 +120,7 @@ class Player(Entity):
     def __repr__(self):
         # TODO: self.input_handler not reconstructable
         # TODO: inventory
-        return f'Player(pos={repr(self.pos)},stats={repr(self._stats)}, food_left={self._food_left})'
+        return f'Player(pos={repr(self.pos)},stats={repr(self._stats)},food_left={self._food_left})'
 
     # ===== Display =======================================
 
@@ -221,9 +224,27 @@ class Player(Entity):
     def exp(self) -> int:
         return self._stats.exp
 
+    def add_exp(self, amount: int):
+        self._stats.exp = self._stats.exp + amount
+        # TODO: level gain
+
     @property
     def stren(self) -> int:
         return self._stats.stren
+
+    @property
+    def food_left(self) -> int:
+        return self._food_left
+
+    def add_food(self):
+        """Eat a piece of food.  Fruit or ration does not matter"""
+        if self._food_left < 0:
+            self._food_left = 0
+            return
+        self._food_left = self._food_left + HUNGERTIME - 200 + random.randint(0, 400)
+        if self._food_left > STOMACHSIZE:
+            # I thought there was some vomit case but maybe in a different game
+            self._food_left = STOMACHSIZE
 
     # ===== Combat Interface ==============================
 
@@ -251,8 +272,7 @@ class Player(Entity):
 
     def kill(self, entity):  # TODO: monster
         self.add_msg(f'You killed the {entity.name}!')
-        self._stats.exp = self._stats.exp + entity.xp_value
-        # TODO: level gain
+        self.add_exp(entity.xp_value)
 
     def melee_attack(self):
         """Melee attack (level, strength, dmg)"""
@@ -274,9 +294,8 @@ class Player(Entity):
         plr = Player(pos=pos, stats=Stats(**INIT_STATS))
         # cur_armor Armor: ring_mail, known, a_class = RING_MAIL
         
-        # one food
-
-        food = Food(which=Food.OKAY_FOOD)
+        # one food.  I think a ration, if I'm reading correctly
+        food = Food(which=Food.GOOD_RATION)
         food.set_parent(plr)
         plr.add_item(food)
         

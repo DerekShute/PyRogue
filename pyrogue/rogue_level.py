@@ -149,7 +149,12 @@ def new_thing(level: Level) -> Item:  # new_thing
 
     # TODO anything other than food
     # TODO: putting down food resets 'no_food' count
-    which = Food.OKAY_FOOD if random.randint(0, 9) == 0 else Food.INTERESTING_FOOD
+    if random.randint(0, 9) == 0:
+        which = Food.FRUIT
+    elif random.randint(0, 100) > 70:
+        which = Food.BAD_RATION
+    else:
+        which = Food.GOOD_RATION
     return Food(which=which)
 
 

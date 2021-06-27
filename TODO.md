@@ -1,21 +1,13 @@
-IN PROGRESS: FOOD
 
-    at eat, if o_which == 1, then yummy
-    else if random 100 > 70 then gain a point of experience and 'yuk/bummer this food tastes awful'
-          else 'oh wow/yum that tasted good
-    
-    o_which is 0 at food creation if rnd(10) != 0, else 1
 
-    Food isn't actually stackable
+BIG TODO:
 
-    player repr() for inventory
+    Inventory --> need question response, menus, new InputHandlers, split Action
 
-    INVENTORY <<<<<<<<<<<<<<<<
+    Food effects, hunger,
+        * Testing of effects, add to display, fainting, weakness, death -- see stomach()
 
-    Food effects, hunger, hunger appeasement, real messages
-        * Testing of effects
-
-    UseAction testing <<<<<<<<<<<<<<<<<<<<<<
+    Level gain
 
 Items in general
 
@@ -26,6 +18,8 @@ Items in general
     There's a name a type and an inventory description
 
     Treasure rooms
+
+    player repr() for inventory
 
 Messages
 

@@ -21,8 +21,12 @@ Combat
 
 FOOD
 
-    Weird logic around what it does: 1 in 10 chance of being boring, else (9 in 10) has an additional 70% chance of giving a point of experience due to awfulness.
-    would it really be too hard to figure out the whole business ahead of time?
+    Weird logic around what it does: 1 in 10 chance of being fruit, else (9 in 10) a ration with a 30% chance of giving a point of experience due to awfulness.
+        * This is buried in the item creation instead because that's more predictable
+
+    Food ingestion is limited by STOMACHSIZE, and the kind of food doesn't matter; it is a partially random effect.
+
+    Not actually stackable
 
 Oh Holy Crap
 

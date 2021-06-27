@@ -2,6 +2,7 @@
     Test of things in player module
 """
 
+from parameterized import parameterized
 import unittest
 from unittest.mock import patch, Mock
 from player import Player, Stats
@@ -39,7 +40,7 @@ class TestPlayer(unittest.TestCase):
         assert str(p) == 'Player(@(10,10),Stats(Str=16,XP=0(1),AC=10,Dmg=\'1x4\',HP=12/12))'
         # print(repr(p))
         assert repr(p) == 'Player(pos=(10, 10),stats=Stats(stren=16, arm=10, dmg=\'1x4\', ' \
-               'maxhp=12, hpt=12, exp=0, level=1), food_left=1300)'
+               'maxhp=12, hpt=12, exp=0, level=1),food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
         assert p.name == 'Player'
         assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
@@ -70,6 +71,16 @@ class TestPlayer(unittest.TestCase):
         assert color == (255, 255, 255)
         self.assertTrue(True)
 
+    @parameterized.expand([(-1, 0),    # If <0 then 0
+                           (0, 1100),  # If >0 and <STOMACHSIZE, then calculation
+                           (1700, 2000)])  # If >STOMACHSIZE, then STOMACHSIZE
+    @patch('random.randint')
+    def test_eat(self, input, expected, mock_randint):
+        """Test effect of eating something"""
+        mock_randint.side_effect = randint_return_min
+        p = Player(food_left=input)
+        p.add_food()
+        assert p.food_left == expected
 
 # ===== Test Action =======================================
 
@@ -163,7 +174,7 @@ class TestPlayerAI(unittest.TestCase):
         input_handler = Mock(return_value=PickupAction())
         p.input_handler = Mock(get_action=input_handler)
         p.attach_level(level)
-        food = Food(pos=Pos(10, 10), parent=level)
+        food = Food(which=Food.FRUIT, pos=Pos(10, 10), parent=level)
         # Smoke test: is where we think
         assert level.items == [food]
         assert food.parent == level

@@ -11,6 +11,9 @@ COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_BURNTSIENNA = (138,54,15)  # AKA "brown"
 
+FRUIT_NAME = 'slime-mold'
+"""Traditional fruit name.  Settable in the original, but I can't be bothered"""
+
 # ===== Item =============================================
 class Item:  # union thing
     """
@@ -62,7 +65,7 @@ class Item:  # union thing
     # ===== Item callbacks from Entity ====================
 
     def use(self, entity) -> bool:
-        entity.add_msg('Can\'t do that with a {self.name}!')
+        entity.add_msg(f'Can\'t do that with a {self.name}!')
         return False
 
 
@@ -79,17 +82,29 @@ class QuantityItem(Item):
 # ===== Food ==============================================
 
 class Food(Item):
-    OKAY_FOOD = 1
-    INTERESTING_FOOD = 0
+    """Found food, because that's what one does in a dungeon."""
+    # Originally, at 'new_thing': 1:10 of being 'which 1' -> fruit and 9:10 of being rations
+    # Rations at eat have a 30% chance of being awful and giving you +1 exp, else being okay.
+    #
+    # I'm not going to give you the choose_str business for exclamations, and am working out the
+    # odds elsewhere
+    #
+    which: int
+    FRUIT = 0
+    GOOD_RATION = 1
+    BAD_RATION = 2
 
-    def __init__(self, which: int = -1, **kwargs):
-        if which == -1:
-            which = self.OKAY_FOOD
+    def __init__(self, which: int, **kwargs):
         self.which = which
         super().__init__(name='food', char=':', color=COLOR_BURNTSIENNA, **kwargs)
 
     def __str__(self) -> str:
-        which = 'Okay' if self.which == Food.OKAY_FOOD else 'Interesting'
+        if self.which == Food.FRUIT:
+            which = 'fruit'
+        elif self.which == Food.GOOD_RATION:
+            which = 'good-ration'
+        else:
+            which = 'bad-ration'
         return f'Food({self.pos},{which})'
 
     def __repr__(self) -> str:
@@ -100,12 +115,14 @@ class Food(Item):
 
     def use(self, entity) -> bool:
         """Eat it.  You know you want to."""
-        # Peculiar logic here: at level creation 'which' has a one in ten of being boring OKAY
-        if self.which == self.OKAY_FOOD:
-            entity.add_msg('Yum yum!')  # TODO: real messages
+        if self.which == self.FRUIT:
+            entity.add_msg(f'my, that was a yummy {FRUIT_NAME}')
+        elif self.which == self.BAD_RATION:
+            entity.add_msg('yuk, this food tastes awful')
+            entity.add_exp(1)
         else:
-            entity.add_msg('BLECCCH!')  # TODO: 70% chance of +1 exp
-        # TODO hunger appeasement
+            entity.add_msg('yum, that tasted good')
+        entity.add_food()
         return True
 
 
