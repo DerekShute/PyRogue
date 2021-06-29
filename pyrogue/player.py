@@ -137,13 +137,22 @@ class Player(Entity):
         self.level = level
         self.levelno = level.levelno if level is not None else self.levelno
 
+    # ===== Messaging and message buffer ==================
+    
     def add_msg(self, text: str):
-        if self._msg is not None:
-            self._msg.add(text)  # TODO: censor message for visibility of source, etc.
+        self._msg.add(text)  # TODO: censor message for visibility of source, etc.
+
+    def advance_msg(self):
+        self._msg.advance()
 
     @property
     def curr_msg(self):
-        return self._msg.msg if self._msg.msg else f'{self.display}'
+        if self._msg.count == 0:
+            return self.display
+        if self._msg.count > 1:
+            return f'{self._msg.msg} --MORE--'
+        else:
+            return self._msg.msg
 
     # ===== Action callbacks ==============================
 
@@ -205,7 +214,7 @@ class Player(Entity):
         """Act.  Return True to indicate reschedule"""
         action = self.input_handler.get_action()
         if action is not None:
-            self.add_msg('')
+            self.advance_msg()
             action.perform(self)  # TODO: action cost, haste and slow effects
             self.key = self.key + ACTION_COST
         return True

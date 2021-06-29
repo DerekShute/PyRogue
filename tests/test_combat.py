@@ -146,8 +146,12 @@ class TestCombatBasics(unittest.TestCase):
         assert m.hpt == 8
         combat.fight(p, m)
         assert m.hpt == 3  # 5 points - max(1, 4) + 1
+        assert p.curr_msg == 'You scored an excellent hit on the hobgoblin'
+        p.advance_msg()
         combat.fight(p, m)
         assert p.exp == 4  # exp=3 + 1 for 8 hit points
+        assert p.curr_msg == 'You scored an excellent hit on the hobgoblin --MORE--'
+        p.advance_msg()
         assert p.curr_msg == 'You killed the hobgoblin!'
         self.assertTrue(True)
 

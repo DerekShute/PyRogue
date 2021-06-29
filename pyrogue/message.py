@@ -1,20 +1,31 @@
 """
     Messages to the player at the top of the screen
 """
+from typing import List
 
+# TODO: buffering and history
+
+
+# ===== MessageBuffer =====================================
 
 class MessageBuffer:
-    _message: str = None  # TODO: buffering and view
+    _message: List[str] = None
 
     def __init__(self):
-        self._message = ''
+        self._message = []
 
     def add(self, text: str):
-        self._message = text
-        # TODO: multiline output (includes "--MORE--"), and buffering
+        self._message.append(text)
 
     @property
     def msg(self) -> str:
-        return self._message if self._message is not None else ''
+        return self._message[0] if self.count > 0 else ''
 
+    @property
+    def count(self) -> int:
+        return len(self._message)
+    
+    def advance(self):
+        if self.count > 0:
+            self._message.pop(0)
 # EOF
