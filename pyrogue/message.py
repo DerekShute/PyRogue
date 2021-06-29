@@ -9,7 +9,7 @@ from typing import List
 # ===== MessageBuffer =====================================
 
 class MessageBuffer:
-    _message: List[str] = None
+    _message: List[str] = None  # TODO: buffering and view
 
     def __init__(self):
         self._message = []

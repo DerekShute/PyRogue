@@ -6,7 +6,7 @@
 
 from display import Display
 from player import Player
-from input_handler import InputHandler, CancelHandler
+from input_handler import InputHandler
 from input_handler.player_input import PlayerInputHandler
 from input_handler.mainmenu_input import MainMenuInputHandler
 from rogue_level import RogueLevel
@@ -50,16 +50,13 @@ class MainGameloop(Gameloop):
             self.level = RogueLevel(self.level_no, *self._display.size, self._display, player=self.player)
 
         self.player.level.render()
-        self._display.present(self.player)
-        self.input_handler, action = self._display.dispatch_event(self.input_handler)
-        # TODO: QuitAction needs confirmation message
+        self.input_handler, action = self._display.display(self.input_handler, self.player)
         if isinstance(action, QuitAction):
             del self.player
             del self.level
             return self._previous
         self.player.queue_action(action)
         self.player.level.run_queue()
-        # TODO: if we're doing a submenu, then override this and return to this.  Capture _prevous
         return self
 
 

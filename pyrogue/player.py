@@ -153,6 +153,10 @@ class Player(Entity):
         else:
             return self._msg.msg
 
+    @property
+    def msg_count(self) -> int:
+        return self._msg.count
+
     # ===== Action ========================================
 
     def queue_action(self, action):

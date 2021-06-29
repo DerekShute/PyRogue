@@ -62,9 +62,8 @@ class Display:
         self._console.print_box(height=1, width=self._xsize, *args, **kwargs)
 
     def present(self, player=None):
-        """Perform update"""
+        """Perform update.  Note: original uses line 0, this uses last line"""
         # Contextual to the player (the human)
-        # TODO: convention is last line, but original game uses line 0
         if player is not None:
             self.msg(x=0, y=self._ysize - 1, string=player.curr_msg.ljust(self._xsize))
         self._context.present(self._console)
@@ -75,6 +74,17 @@ class Display:
         for event in tcod.event.wait():  # TODO: use get() for no-wait operation
             ret = input_handler.dispatch(event)
             return ret if ret is not None else (input_handler, None)
+
+    def display(self, input_handler: InputHandler, player) -> (InputHandler, Any):
+        """Burying the TCOD details somewhere"""
+        ret = None
+        self.present(player)
+        if player.msg_count > 1:
+            for event in tcod.event.wait():
+                if event.type == 'KEYDOWN':
+                    player.advance_msg()
+            return (input_handler, None)
+        return self.dispatch_event(input_handler)
 
     @property
     def rgb(self):

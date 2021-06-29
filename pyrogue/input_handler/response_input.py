@@ -8,7 +8,7 @@ import tcod
 from typing import List
 from actions import Action
 from input_handler import InputHandler
-
+from player import Player
 
 # ===== ResponseInputHandler ================================
 
@@ -17,7 +17,7 @@ class ResponseInputHandler(InputHandler):
     responses: str
     action: Action  # Action to modify
 
-    def __init__(self, responses: str, action: Action = None, **kwargs):
+    def __init__(self, responses: str = None, action: Action = None, **kwargs):
         super().__init__(**kwargs)
         self.responses = responses
         self.action = action
