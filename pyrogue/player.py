@@ -138,7 +138,7 @@ class Player(Entity):
         self.levelno = level.levelno if level is not None else self.levelno
 
     # ===== Messaging and message buffer ==================
-    
+
     def add_msg(self, text: str):
         self._msg.add(text)  # TODO: censor message for visibility of source, etc.
 

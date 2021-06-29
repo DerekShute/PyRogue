@@ -24,7 +24,7 @@ class MessageBuffer:
     @property
     def count(self) -> int:
         return len(self._message)
-    
+
     def advance(self):
         if self.count > 0:
             self._message.pop(0)

@@ -2,7 +2,6 @@
     Test of things in messages module
 """
 import unittest
-from unittest.mock import patch, Mock
 from message import MessageBuffer
 
 
