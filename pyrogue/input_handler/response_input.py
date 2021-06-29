@@ -5,10 +5,9 @@
 """
 
 import tcod
-from typing import List
 from actions import Action
 from input_handler import InputHandler
-from player import Player
+
 
 # ===== ResponseInputHandler ================================
 
@@ -27,7 +26,7 @@ class ResponseInputHandler(InputHandler):
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> (InputHandler, Action):
         key = event.sym
-        
+
         # TODO: special meaning escape key
         if chr(key) in self.responses:  # Condition met
             action = self.action.incorporate(key)

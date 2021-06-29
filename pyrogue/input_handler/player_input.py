@@ -1,6 +1,5 @@
 import tcod
-from typing import List
-from actions import Action, QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction
+from actions import QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction
 from input_handler import InputHandler, CancelHandler, MOVE_KEYS
 from input_handler.response_input import ResponseInputHandler
 from entity import Entity

@@ -12,6 +12,7 @@ from input_handler.mainmenu_input import MainMenuInputHandler
 from rogue_level import RogueLevel
 from actions import QuitAction
 
+
 # ===== Game Loop Superclass ==============================
 
 class Gameloop:

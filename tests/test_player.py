@@ -4,7 +4,7 @@
 
 from parameterized import parameterized
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from player import Player, Stats
 from position import Pos
 from actions import MovementAction, PickupAction, DescendAction, DropAction, UseAction

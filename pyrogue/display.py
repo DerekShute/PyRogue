@@ -77,7 +77,6 @@ class Display:
 
     def display(self, input_handler: InputHandler, player) -> (InputHandler, Any):
         """Burying the TCOD details somewhere"""
-        ret = None
         self.present(player)
         if player.msg_count > 1:
             for event in tcod.event.wait():
