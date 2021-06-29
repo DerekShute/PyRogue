@@ -7,7 +7,6 @@ from entity import Entity
 from dataclasses import dataclass
 from item import Item, Food
 from position import Pos
-from input_handler import InputHandler
 from message import MessageBuffer
 from combat import fight
 from level import Level
@@ -98,7 +97,6 @@ class Stats:  # struct stats
 # ===== Player ============================================
 
 class Player(Entity):
-    input_handler: InputHandler = None
     _food_left: int
     _stats: Stats = None
     _cur_armor: Item = None
@@ -106,6 +104,7 @@ class Player(Entity):
     _purse: int = 0  # Gold collected, an infinitely large pocket
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
     room = None  # Room
+    actionq = []
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -113,12 +112,12 @@ class Player(Entity):
         self._stats = stats
         self._food_left = food_left
         self.levelno = 0
+        self.actionq = []
 
     def __str__(self):
         return f'Player({Pos(self.pos)},{self._stats})'
 
     def __repr__(self):
-        # TODO: self.input_handler not reconstructable
         # TODO: inventory
         return f'Player(pos={repr(self.pos)},stats={repr(self._stats)},food_left={self._food_left})'
 
@@ -154,7 +153,17 @@ class Player(Entity):
         else:
             return self._msg.msg
 
-    # ===== Action callbacks ==============================
+    @property
+    def msg_count(self) -> int:
+        return self._msg.count
+
+    # ===== Action ========================================
+
+    def queue_action(self, action):
+        self.actionq.append(action)
+
+    def get_action(self):
+        return self.actionq.pop(0) if len(self.actionq) > 0 else None
 
     def fight(self, entity: Entity):
         fight(self, entity)
@@ -212,7 +221,7 @@ class Player(Entity):
 
     def perform(self) -> bool:
         """Act.  Return True to indicate reschedule"""
-        action = self.input_handler.get_action()
+        action = self.get_action()
         if action is not None:
             self.advance_msg()
             action.perform(self)  # TODO: action cost, haste and slow effects

@@ -4,7 +4,7 @@
 
 from parameterized import parameterized
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from player import Player, Stats
 from position import Pos
 from actions import MovementAction, PickupAction, DescendAction, DropAction, UseAction
@@ -107,21 +107,19 @@ class TestPlayerActionCallback(unittest.TestCase):
 
 class TestPlayerAI(unittest.TestCase):
 
-    def test_perform_no_action(self):
+    @patch('player.Player.get_action')
+    def test_perform_no_action(self, get_action_mock):
         """No action in perform"""
+        get_action_mock.return_value = None
         p = Player.factory(pos=Pos(10, 10))
-        input_handler = Mock(return_value=None)
-        p.input_handler = Mock(get_action=input_handler)
         p.perform()
         self.assertTrue(True)
 
-    def test_perform_move_allowed(self):
+    @patch('player.Player.get_action')
+    def test_perform_move_allowed(self, get_action_mock):
         """Player was allowed to move"""
+        get_action_mock.return_value = MovementAction(-1, -1)
         p = Player.factory(pos=Pos(10, 10))
-        # Got all this?  input_handler is a mock that only returns MovementAction() if poked, and
-        # p.input_handler becomes a mock with one method get_action() that returns the input_handler mock
-        input_handler = Mock(return_value=MovementAction(-1, -1))
-        p.input_handler = Mock(get_action=input_handler)
         with patch.object(Level, 'can_enter', return_value=True) as patched_level:
             p.attach_level(Level(1, 80, 25, None))
             p.perform()
@@ -130,11 +128,11 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == p.display
         self.assertTrue(True)
 
-    def test_perform_move_denied(self):
+    @patch('player.Player.get_action')
+    def test_perform_move_denied(self, get_action_mock):
         """Player was not allowed to move"""
+        get_action_mock.return_value = MovementAction(-1, -1)
         p = Player.factory(pos=Pos(10, 10))
-        input_handler = Mock(return_value=MovementAction(-1, -1))
-        p.input_handler = Mock(get_action=input_handler)
         with patch.object(Level, 'can_enter', return_value=False) as patched_level:
             p.attach_level(Level(1, 80, 25, None))
             p.perform()
@@ -143,11 +141,11 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == 'Ouch!'
         self.assertTrue(True)
 
-    def test_perform_pickup_gold(self):
+    @patch('player.Player.get_action')
+    def test_perform_pickup_gold(self, get_action_mock):
         """Pick up an Item"""
+        get_action_mock.return_value = PickupAction()
         p = Player.factory(pos=Pos(10, 10))
-        input_handler = Mock(return_value=PickupAction())
-        p.input_handler = Mock(get_action=input_handler)
         level = Level(1, 80, 25, None)
         _ = Gold(quantity=10, pos=Pos(10, 10), parent=level)
         p.attach_level(level)
@@ -157,23 +155,23 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == 'You pick up 10 gold pieces!'
         self.assertTrue(True)
 
-    def test_perform_pickup_denied(self):
+    @patch('player.Player.get_action')
+    def test_perform_pickup_denied(self, get_action_mock):
         """Pick up an Item"""
+        get_action_mock.return_value = PickupAction()
         p = Player.factory(pos=Pos(10, 10))
-        input_handler = Mock(return_value=PickupAction())
-        p.input_handler = Mock(get_action=input_handler)
         level = Level(1, 80, 25, None)
         p.attach_level(level)
         p.perform()
         assert p.curr_msg == 'No item there to pick up!'
         self.assertTrue(True)
 
-    def test_perform_pickup_food(self):
+    @patch('player.Player.get_action')
+    def test_perform_pickup_food(self, get_action_mock):
         """Pick up an Item"""
+        get_action_mock.return_value = PickupAction()
         level = Level(1, 80, 25, None)
         p = Player(pos=Pos(10, 10))
-        input_handler = Mock(return_value=PickupAction())
-        p.input_handler = Mock(get_action=input_handler)
         p.attach_level(level)
         food = Food(which=Food.FRUIT, pos=Pos(10, 10), parent=level)
         # Smoke test: is where we think
@@ -189,11 +187,11 @@ class TestPlayerAI(unittest.TestCase):
         assert food in p.pack
         self.assertTrue(True)
 
-    def test_perform_descend(self):
+    @patch('player.Player.get_action')
+    def test_perform_descend(self, get_action_mock):
         """Stumble down the stairs"""
+        get_action_mock.return_value = DescendAction()
         p = Player.factory(pos=Pos(10, 10))
-        input_handler = Mock(return_value=DescendAction())
-        p.input_handler = Mock(get_action=input_handler)
         level = Level(1, 80, 25, None)
         level.add_stairs(Pos(10, 10))
         level.add_player(p)
@@ -204,11 +202,11 @@ class TestPlayerAI(unittest.TestCase):
         # TODO: Level number in display
         self.assertTrue(True)
 
-    def test_perform_descend_denied(self):
+    @patch('player.Player.get_action')
+    def test_perform_descend_denied(self, get_action_mock):
         """Try to stumble down non-existent stairs"""
+        get_action_mock.return_value = DescendAction()
         p = Player.factory(pos=Pos(10, 10))
-        input_handler = Mock(return_value=DescendAction())
-        p.input_handler = Mock(get_action=input_handler)
         level = Level(1, 80, 25, None)
         level.add_player(p)
         p.perform()
@@ -217,16 +215,16 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == 'No stairs here!'
         self.assertTrue(True)
 
-    def test_perform_drop_food(self):
+    @patch('player.Player.get_action')
+    def test_perform_drop_food(self, get_action_mock):
         """Drop the thing in your inventory"""
+        get_action_mock.return_value = DropAction()
         p = Player.factory(pos=Pos(10, 10))
         # Factory creates a food in player inventory
         assert p.pack != []
         food = p.pack[0]
         assert food.parent == p
         assert food.pos is None
-        input_handler = Mock(return_value=DropAction())
-        p.input_handler = Mock(get_action=input_handler)
         level = Level(1, 80, 25, None)
         level.add_player(p)
         p.perform()
@@ -235,37 +233,38 @@ class TestPlayerAI(unittest.TestCase):
         assert food in level.items
         self.assertTrue(True)
 
-    def test_perform_drop_denied(self):
+    @patch('player.Player.get_action')
+    def test_perform_drop_denied(self, get_action_mock):
         """Drop the nonexistent food in your inventory"""
+        get_action_mock.return_value = DropAction()
         p = Player(pos=Pos(10, 10))
         assert p.pack == []
-        input_handler = Mock(return_value=DropAction())
-        p.input_handler = Mock(get_action=input_handler)
         p.perform()
         assert p.pack == []
         assert p.curr_msg == 'No item to drop!'
         self.assertTrue(True)
 
-    def test_perform_use_food(self):
+    @patch('player.Player.get_action')
+    def test_perform_use_food(self, get_action_mock):
         """Use the nonexistent food in your inventory"""
+        get_action_mock.return_value = UseAction()
         p = Player.factory(pos=Pos(10, 10))
         # Factory creates a food in player inventory
         assert p.pack != []
-        input_handler = Mock(return_value=UseAction())
-        p.input_handler = Mock(get_action=input_handler)
         p.perform()
+        print(p.curr_msg)
         assert p.pack == []
         # TODO: can't test existence of food
         # TODO: there was a message and effects
         assert p.curr_msg != ''
         self.assertTrue(True)
 
-    def test_perform_use_denied(self):
+    @patch('player.Player.get_action')
+    def test_perform_use_denied(self, get_action_mock):
         """Use the nonexistent food in your inventory"""
+        get_action_mock.return_value = UseAction()
         p = Player(pos=Pos(10, 10))
         assert p.pack == []
-        input_handler = Mock(return_value=UseAction())
-        p.input_handler = Mock(get_action=input_handler)
         p.perform()
         assert p.pack == []
         assert p.curr_msg == 'No item to use!'
