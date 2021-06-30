@@ -58,6 +58,41 @@ MONSTER_MISS = (
     "doesn't hit",
 )
 
+E_LEVELS = (
+    0,   # No level 0 but need to do index magic
+    0,   # 0 XP at level 1
+    10,  # 10 XP at level 2
+    20,
+    40,
+    80,
+    160,
+    320,
+    1300,
+    2600,
+    5200,
+    13000,
+    26000,
+    50000,
+    100000,
+    200000,
+    400000,
+    800000,
+    2000000,
+    4000000,
+    8000000
+    )
+
+
+# ===== Service Routines ==================================
+
+def die_roll(number: int, sides: int) -> int:
+    total = 0
+    count = 0
+    while count < number:
+        total += random.randint(1, sides)
+        count += 1
+    return total
+
 
 # ===== Stats =============================================
 
@@ -229,7 +264,7 @@ class Player(Entity):
         return True
 
     # ===== Stat interface ================================
-    # TODO: who cares?
+
     @property
     def lvl(self) -> int:
         return self._stats.level
@@ -244,7 +279,18 @@ class Player(Entity):
 
     def add_exp(self, amount: int):
         self._stats.exp = self._stats.exp + amount
-        # TODO: level gain
+        # see check_level()
+        new_lvl = 0
+        for lvl in range(self._stats.level, len(E_LEVELS)):
+            if self._stats.exp < E_LEVELS[lvl]:
+                break
+            new_lvl = lvl
+        if new_lvl > self._stats.level:
+            add = die_roll(new_lvl - self._stats.level, 10)
+            self._stats.level = new_lvl
+            self._stats.maxhp += add
+            self._stats.hpt += add
+            self.add_msg(f'Welcome to level {new_lvl}')
 
     @property
     def stren(self) -> int:
