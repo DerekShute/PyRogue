@@ -46,6 +46,27 @@ class TestPlayer(unittest.TestCase):
         assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
         self.assertTrue(True)
 
+    @patch('random.randint')
+    def test_exp(self, mock_randint):
+        """Player level gain at exp gain"""
+        mock_randint.side_effect = randint_return_min
+        p = Player.factory(pos=Pos(10, 10))
+        assert p.lvl == 1
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
+        p.add_exp(5)
+        assert p.lvl == 1
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(5)'
+        p.add_exp(5)
+        assert p.lvl == 2
+        assert p.display == 'Level: 0 Gold: 0 Hp:13/13 Str:16(16) Arm: ? Exp:2(10)'
+        assert p.curr_msg == 'Welcome to level 2'
+        p.advance_msg()
+        p.add_exp(1000)
+        assert p.lvl == 7
+        assert p.display == 'Level: 0 Gold: 0 Hp:18/18 Str:16(16) Arm: ? Exp:7(1010)'
+        assert p.curr_msg == 'Welcome to level 7'
+        self.assertTrue(True)
+        
     def test_level(self):
         """Player attachment to level"""
         p = Player.factory(pos=Pos(10, 10))
