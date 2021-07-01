@@ -1,13 +1,19 @@
-
-
-BIG TODO:
+IN PROGRESS
 
     Inventory --> need question response, menus, new InputHandlers, split Action
 
+BIG TODO:
+
+    Items and equipment
+
+    Monster AI
+
+    Monster special powers
+
+Gameplay
+
     Food effects, hunger,
         * Testing of effects, add to display, fainting, weakness, death -- see stomach()
-
-    Level gain
 
 Items in general
 
@@ -31,12 +37,12 @@ Messages
 
     * TODO: history and display of history
 
-    * TODO: Multiline and --more--
-
 Main state machine -> Main menu, gameplay, menus, endgame
 
     * Need a generalization of InputHandler distinguishing player game input versus menu input
         * Then can create MainMenu and submenus
+
+    * Test InputHandler and Gameloop logic: this isn't easy
 
 AI
     * subsection and generalization.  Player AI is player input, and is a stack of handlers
