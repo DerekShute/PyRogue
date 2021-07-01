@@ -24,11 +24,11 @@ class InputHandler(tcod.event.EventDispatch[Any]):
 
     def get_action(self):
         """Pull out an action for the Player"""
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def render_layer(self, display):
         """Display extra stuff needed for this InputHandler"""
-        raise NotImplemented()
+        raise NotImplementedError()
 
 
 # ===== CancelHandler derived class =======================

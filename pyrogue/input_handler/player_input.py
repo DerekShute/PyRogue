@@ -2,7 +2,6 @@ import tcod
 from actions import Action, QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction
 from input_handler import InputHandler, CancelHandler, MOVE_KEYS
 from input_handler.response_input import ResponseInputHandler
-from entity import Entity
 
 
 # ===== PlayerInputHandler ================================
@@ -16,7 +15,7 @@ class PlayerInputHandler(InputHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> (InputHandler, Action):
         key = event.sym
         modifier = event.mod
-        
+
         if self.entity.msg_count > 1:
             self.entity.advance_msg()
             return self, None
@@ -44,5 +43,5 @@ class PlayerInputHandler(InputHandler):
         if self.entity is not None:
             xsize, ysize = display.size
             display.msg(x=0, y=ysize - 1, string=self.entity.curr_msg.ljust(xsize))
- 
+
 # EOF
