@@ -9,6 +9,7 @@ from menu import Menu
 
 class InventoryInputHandler(InputHandler):
     """Base input handler for ordinary game input"""
+    inventory: Menu = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -23,5 +24,5 @@ class InventoryInputHandler(InputHandler):
     def render_layer(self, display):
         self.inventory = self.entity.render_inventory()
         display.draw_menu(self.entity.pos.x, self.inventory)
- 
+
 # EOF

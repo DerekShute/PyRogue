@@ -89,7 +89,8 @@ class Display:
         y = 1
         width = 30
         height = len(menu.text) + 2
-        self._console.draw_frame(x=x, y=0, width=width, height=height, title=menu.title, clear=True, fg=(255, 255, 255), bg=(0, 0, 0))
+        self._console.draw_frame(x=x, y=0, width=width, height=height, title=menu.title, clear=True,
+                                 fg=(255, 255, 255), bg=(50, 50, 50))
         for line in menu.text:
             self._console.print(x=x + 1, y=y, string=line)
             y = y + 1
