@@ -1,7 +1,6 @@
 import tcod
 from actions import Action
 from input_handler import InputHandler, CancelHandler
-from entity import Entity
 from menu import Menu
 
 
