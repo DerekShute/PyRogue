@@ -61,11 +61,8 @@ class Display:
         """Print something to display, wrapper around tcod.console print"""
         self._console.print_box(height=1, width=self._xsize, *args, **kwargs)
 
-    def present(self, player=None):
-        """Perform update.  Note: original uses line 0, this uses last line"""
-        # Contextual to the player (the human)
-        if player is not None:
-            self.msg(x=0, y=self._ysize - 1, string=player.curr_msg.ljust(self._xsize))
+    def present(self):
+        """Perform update"""
         self._context.present(self._console)
 
     def dispatch_event(self, input_handler: InputHandler) -> (InputHandler, Any):
@@ -77,7 +74,8 @@ class Display:
 
     def display(self, input_handler: InputHandler, player) -> (InputHandler, Any):
         """Burying the TCOD details somewhere"""
-        self.present(player)
+        input_handler.render_layer(self)
+        self.present()
         if player.msg_count > 1:
             for event in tcod.event.wait():
                 if event.type == 'KEYDOWN':

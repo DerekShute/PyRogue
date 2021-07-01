@@ -1,32 +1,33 @@
 import tcod
-from actions import QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction
+from actions import Action, QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction
 from input_handler import InputHandler, CancelHandler, MOVE_KEYS
 from input_handler.response_input import ResponseInputHandler
-from entity import Entity
 
 
 # ===== PlayerInputHandler ================================
 
 class PlayerInputHandler(InputHandler):
     """Base input handler for ordinary game input"""
-    entity: Entity = None
 
-    def __init__(self, entity: Entity = None, **kwargs):
-        self.entity = entity
-        super().__init__(**kwargs)
-
-    def ev_quit(self, event: tcod.event.Quit) -> InputHandler:
+    def ev_quit(self, event: tcod.event.Quit) -> (InputHandler, Action):
         return CancelHandler()  # Out the door immediately
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> InputHandler:
+    def ev_keydown(self, event: tcod.event.KeyDown) -> (InputHandler, Action):
         key = event.sym
         modifier = event.mod
+
+        if self.entity.msg_count > 1:
+            self.entity.advance_msg()
+            return self, None
+
         if key == tcod.event.K_PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
             return self, DescendAction()
         elif key == tcod.event.K_ESCAPE:
-            self.entity.advance_msg()
-            self.entity.add_msg('Really quit? (Y/N)')
-            return ResponseInputHandler('YyNn', QuitAction()), None
+            return (ResponseInputHandler(previous=self,
+                                         responses='YyNn',
+                                         string='Really quit? (y/N)',
+                                         action=QuitAction()),
+                    None)
         elif key == tcod.event.K_d:
             return self, DropAction()  # TODO: query involved
         elif key == tcod.event.K_g:
@@ -36,5 +37,11 @@ class PlayerInputHandler(InputHandler):
         elif key in MOVE_KEYS:
             return self, MovementAction(*MOVE_KEYS[key])
         return self, None
+
+    def render_layer(self, display):
+        # Note: original uses line 0, this uses last line
+        if self.entity is not None:
+            xsize, ysize = display.size
+            display.msg(x=0, y=ysize - 1, string=self.entity.curr_msg.ljust(xsize))
 
 # EOF

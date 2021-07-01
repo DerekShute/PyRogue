@@ -1,5 +1,6 @@
 import tcod
 from typing import Any
+from entity import Entity
 
 
 MOVE_KEYS = {
@@ -16,12 +17,18 @@ MOVE_KEYS = {
 class InputHandler(tcod.event.EventDispatch[Any]):
     previous: 'InputHandler' = None
 
-    def __init__(self, previous: 'InputHandler' = None):
+    def __init__(self, entity: Entity = None, previous: 'InputHandler' = None):
         super().__init__()
         self.previous = previous
+        self.entity = entity
 
     def get_action(self):
-        return None
+        """Pull out an action for the Player"""
+        raise NotImplementedError()
+
+    def render_layer(self, display):
+        """Display extra stuff needed for this InputHandler"""
+        raise NotImplementedError()
 
 
 # ===== CancelHandler derived class =======================

@@ -66,7 +66,7 @@ class TestPlayer(unittest.TestCase):
         assert p.display == 'Level: 0 Gold: 0 Hp:18/18 Str:16(16) Arm: ? Exp:7(1010)'
         assert p.curr_msg == 'Welcome to level 7'
         self.assertTrue(True)
-        
+
     def test_level(self):
         """Player attachment to level"""
         p = Player.factory(pos=Pos(10, 10))

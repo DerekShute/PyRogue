@@ -15,11 +15,13 @@ class ResponseInputHandler(InputHandler):
     """Need a one-character response from player"""
     responses: str
     action: Action  # Action to modify
+    string: str
 
-    def __init__(self, responses: str = None, action: Action = None, **kwargs):
+    def __init__(self, responses: str = None, string: str = '', action: Action = None, **kwargs):
         super().__init__(**kwargs)
         self.responses = responses
         self.action = action
+        self.string = string
 
     def ev_quit(self, event: tcod.event.Quit) -> (InputHandler, None):
         return self.previous, None  # TODO this is not easy
@@ -29,8 +31,12 @@ class ResponseInputHandler(InputHandler):
 
         # TODO: special meaning escape key
         if chr(key) in self.responses:  # Condition met
-            action = self.action.incorporate(key)
-            return self.previous, action
+            return self.previous, self.action.incorporate(key)
         return self, None
+
+    def render_layer(self, display):
+        if len(self.string) > 0:
+            xsize, ysize = display.size
+            display.msg(x=0, y=ysize - 1, string=self.string.ljust(xsize))
 
 # EOF

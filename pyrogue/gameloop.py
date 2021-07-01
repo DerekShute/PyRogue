@@ -43,7 +43,7 @@ class MainGameloop(Gameloop):
     def run(self) -> Gameloop:
         if self.player is None:
             self.player = Player.factory()
-            self.input_handler = PlayerInputHandler(self.player)
+            self.input_handler = PlayerInputHandler(entity=self.player)
             self.player.add_msg('Welcome to the dungeon!')
         if self.player.level is None:
             del self.level
