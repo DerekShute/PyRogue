@@ -18,7 +18,7 @@ class PlayerInputHandler(InputHandler):
         modifier = event.mod
         
         if self.entity.msg_count > 1:
-            player.advance_msg()
+            self.entity.advance_msg()
             return self, None
 
         if key == tcod.event.K_PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
