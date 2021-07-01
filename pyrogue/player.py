@@ -10,6 +10,7 @@ from position import Pos
 from message import MessageBuffer
 from combat import fight
 from level import Level
+from menu import Menu
 
 
 ACTION_COST = 8
@@ -164,6 +165,12 @@ class Player(Entity):
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
         return f'Level: {self.levelno} Gold: {self._purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
                f'Str:{self._stats.stren}({self._stats.stren}) Arm: ? Exp:{self._stats.level}({self._stats.exp})'
+
+    def render_inventory(self) -> Menu:
+        inventory = []
+        for item in self.pack:
+            inventory.append(item.name)  # TODO: inventory description/name
+        return Menu(title='inventory', text=inventory)
 
     # ===== Base Interface ================================
 

@@ -7,6 +7,7 @@ Stolen liberally from tcod_tutorial_v2
 from typing import Any, Tuple
 import tcod
 from input_handler import InputHandler
+from menu import Menu
 
 
 class Display:
@@ -82,6 +83,16 @@ class Display:
                     player.advance_msg()
             return (input_handler, None)
         return self.dispatch_event(input_handler)
+
+    def draw_menu(self, x: int, menu: Menu):
+        x = 42 if x <= 40 else 0
+        y = 1
+        width = 30
+        height = len(menu.text) + 2
+        self._console.draw_frame(x=x, y=0, width=width, height=height, title=menu.title, clear=True, fg=(255, 255, 255), bg=(0, 0, 0))
+        for line in menu.text:
+            self._console.print(x=x + 1, y=y, string=line)
+            y = y + 1
 
     @property
     def rgb(self):
