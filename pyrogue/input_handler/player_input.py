@@ -2,6 +2,7 @@ import tcod
 from actions import Action, QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction
 from input_handler import InputHandler, CancelHandler, MOVE_KEYS
 from input_handler.response_input import ResponseInputHandler
+from input_handler.inventory_input import InventoryInputHandler
 
 
 # ===== PlayerInputHandler ================================
@@ -32,6 +33,8 @@ class PlayerInputHandler(InputHandler):
             return self, DropAction()  # TODO: query involved
         elif key == tcod.event.K_g:
             return self, PickupAction()
+        elif key == tcod.event.K_i:
+            return InventoryInputHandler(previous=self, entity=self.entity), None
         elif key == tcod.event.K_u:
             return self, UseAction()  # TODO: query involved, submenu, etc.
         elif key in MOVE_KEYS:
