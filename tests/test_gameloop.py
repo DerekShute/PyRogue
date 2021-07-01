@@ -2,12 +2,10 @@
     Test of things in player module
 """
 
-from parameterized import parameterized
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import Mock
 from gameloop import MainMenuState, MainGameloop
-from actions import QuitAction
-from display import Display
+
 
 # ===== Test Main Menu ====================================
 
@@ -18,7 +16,7 @@ class TestMainMenuState(unittest.TestCase):
         event_return = Mock(return_value='quit')
         display_mock = Mock(dispatch_event=event_return)
         loop = MainMenuState(display=display_mock).run()
-        assert loop == None
+        assert loop is None
         self.assertTrue(True)
 
     def test_start_game(self):
