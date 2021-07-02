@@ -69,6 +69,11 @@ class Item:  # union thing
         entity.add_msg(f'Can\'t do that with a {self.name}!')
         return False
 
+    @property
+    def description(self) -> str:
+        """Inventory description"""
+        return self.name
+
 
 # ===== Items with Quantity ===============================
 
@@ -125,6 +130,13 @@ class Food(Item):
             entity.add_msg('yum, that tasted good')
         entity.add_food()
         return True
+
+    @property
+    def description(self) -> str:
+        # TODO: pluralization
+        if self.which == self.FRUIT:
+            return f'a {FRUIT_NAME}'
+        return 'a food ration'
 
 
 # ===== Gold ==============================================

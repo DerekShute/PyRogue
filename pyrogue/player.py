@@ -166,11 +166,25 @@ class Player(Entity):
         return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
                f'Str:{self._stats.stren}({self._stats.stren}) Arm: ? Exp:{self._stats.level}({self._stats.exp})'
 
-    def render_inventory(self) -> Menu:
+    def render_inventory(self, usage: str) -> Menu:
         inventory = []
+        if usage == '':
+            title = 'inventory'
+        elif usage == 'use':
+            title = 'use'
+        else:
+            title = '<unknown>'
+        listing = ord('a')
         for item in self.pack:
-            inventory.append(item.name)  # TODO: inventory description/name
-        return Menu(title='inventory', text=inventory)
+            add_it = False
+            if usage == '':
+                inventory.append(item.description)  # TODO: consolidate similar objects
+            elif usage == 'use' and item.name == 'food':  # TODO: types
+                add_it = True
+            if add_it:
+                inventory.append(f'{chr(listing)}: {item.description}')  # TODO: consolidate
+            listing = listing + 1
+        return Menu(title=title, text=inventory)
 
     # ===== Base Interface ================================
 
@@ -234,6 +248,7 @@ class Player(Entity):
         # TODO : returns timer tick cost
 
     def pick_up(self, item: Item):
+        # TODO: limit to inventory
         if item is None:
             self.add_msg('No item there to pick up!')
             return

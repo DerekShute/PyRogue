@@ -85,10 +85,16 @@ class PickupAction(Action):
 
 class UseAction(Action):
     """Use an item in entity inventory"""
+    index: int = 0
+
     def perform(self, entity: Entity) -> None:
         if entity.pack == []:
             entity.add_msg('No item to use!')
             return
-        entity.use(entity.pack[0])  # TODO: would be handed by inventory submenu, etc.
+        entity.use(entity.pack[self.index])
+
+    def incorporate(self, index: int = 0):
+        self.index = index
+        return self
 
 # EOF

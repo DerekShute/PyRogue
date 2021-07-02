@@ -30,7 +30,7 @@ class ResponseInputHandler(InputHandler):
         key = event.sym
 
         # TODO: special meaning escape key
-        if chr(key) in self.responses:  # Condition met
+        if key < 257 and chr(key) in self.responses:  # Condition met.  Don't feed large numbers into chr()
             return self.previous, self.action.incorporate(key)
         return self, None
 
