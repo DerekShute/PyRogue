@@ -92,6 +92,28 @@ class TestPlayer(unittest.TestCase):
         assert color == (255, 255, 255)
         self.assertTrue(True)
 
+    def test_inventory(self):
+        p = Player.factory(pos=Pos(1, 1))
+        f = Food(which=Food.FRUIT)
+        f.set_parent(p)
+        p.add_item(f)
+        menu = p.render_inventory('')
+        assert menu.title == 'inventory'
+        assert menu.text[0] == 'a food ration'
+        assert menu.text[1] == 'a slime-mold'
+        self.assertTrue(True)
+
+    def test_use_inventory(self):
+        p = Player.factory(pos=Pos(1, 1))
+        f = Food(which=Food.FRUIT)
+        f.set_parent(p)
+        p.add_item(f)
+        menu = p.render_inventory('use')
+        assert menu.title == 'use'
+        assert menu.text[0] == 'a: a food ration'
+        assert menu.text[1] == 'b: a slime-mold'
+        self.assertTrue(True)
+
     @parameterized.expand([(-1, 0),    # If <0 then 0
                            (0, 1100),  # If >0 and <STOMACHSIZE, then calculation
                            (1700, 2000)])  # If >STOMACHSIZE, then STOMACHSIZE

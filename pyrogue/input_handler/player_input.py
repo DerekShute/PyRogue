@@ -11,7 +11,7 @@ class PlayerInputHandler(InputHandler):
     """Base input handler for ordinary game input"""
 
     def ev_quit(self, event: tcod.event.Quit) -> (InputHandler, Action):
-        return CancelHandler()  # Out the door immediately
+        return CancelHandler(), None  # Out the door immediately
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> (InputHandler, Action):
         key = event.sym
@@ -36,7 +36,12 @@ class PlayerInputHandler(InputHandler):
         elif key == tcod.event.K_i:
             return InventoryInputHandler(previous=self, entity=self.entity), None
         elif key == tcod.event.K_u:
-            return self, UseAction()  # TODO: query involved, submenu, etc.
+            return (InventoryInputHandler(usage='use',
+                                          previous=self,
+                                          entity=self.entity,
+                                          action=UseAction(),
+                                          msg='Use which item?'),
+                    None)
         elif key in MOVE_KEYS:
             return self, MovementAction(*MOVE_KEYS[key])
         return self, None
