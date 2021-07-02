@@ -137,7 +137,7 @@ class Player(Entity):
     _stats: Stats = None
     _cur_armor: Item = None
     _msg: MessageBuffer = None
-    _purse: int = 0  # Gold collected, an infinitely large pocket
+    purse: int = 0  # Gold collected, an infinitely large pocket
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
     room = None  # Room
     actionq = []
@@ -163,7 +163,7 @@ class Player(Entity):
     def display(self) -> str:
         """Status-line"""
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
-        return f'Level: {self.levelno} Gold: {self._purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
+        return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
                f'Str:{self._stats.stren}({self._stats.stren}) Arm: ? Exp:{self._stats.level}({self._stats.exp})'
 
     def render_inventory(self) -> Menu:
@@ -243,7 +243,7 @@ class Player(Entity):
         if item.name == 'gold':
             # AD&D would award XP for treasure, but not Rogue apparently
             self.add_msg(f'You pick up {item.quantity} gold pieces!')
-            self._purse = self._purse + item.quantity
+            self.purse = self.purse + item.quantity
             del item  # Poof
         else:
             self.add_msg(f'You pick up the {item.name}')
