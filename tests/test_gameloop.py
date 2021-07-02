@@ -7,6 +7,7 @@ from unittest.mock import Mock
 from gameloop import MainMenuState, MainGameloop, RIPGameState
 from player import Player
 
+
 # ===== Test Main Menu ====================================
 
 class TestMainMenuState(unittest.TestCase):
@@ -34,6 +35,9 @@ class TestMainMenuState(unittest.TestCase):
         assert loop == prev_loop
         self.assertTrue(True)
 
+
+# ===== Test RIP Screen ===================================
+
 class TestRIPState(unittest.TestCase):
     """Test Main Menu"""
 
@@ -54,7 +58,7 @@ class TestRIPState(unittest.TestCase):
                     'Clutching 500 gold pieces')
         i = 0
         for string in expected:
-            _, kwargs = msg_mock.call_args_list[i] # call_args_list[x][0] is args, [1] is kwargs when unpacked
+            _, kwargs = msg_mock.call_args_list[i]  # call_args_list[x][0] is args, [1] is kwargs when unpacked
             print(kwargs['string'])
             assert kwargs['string'] == string
             i += 1

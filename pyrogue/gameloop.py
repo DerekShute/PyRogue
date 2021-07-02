@@ -17,6 +17,7 @@ from actions import QuitAction
 TEXT_COLOR = {'fg': (255, 255, 255), 'bg': (75, 75, 75)}
 """White on gray"""
 
+
 # ===== Game Loop Superclass ==============================
 
 class Gameloop:
@@ -47,7 +48,6 @@ class RIPGameState(Gameloop):
 
     def run(self) -> Gameloop:
         """I don't feel like drawing out a tombstone"""
-        color = {'fg': (255, 255, 255), 'bg': (100, 100, 100)}
         self._display.clear()
         # Killed by
         if self.situation == 'quit':
