@@ -103,6 +103,17 @@ class TestPlayer(unittest.TestCase):
         assert menu.text[1] == 'a slime-mold'
         self.assertTrue(True)
 
+    def test_drop_inventory(self):
+        p = Player.factory(pos=Pos(1, 1))
+        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        p.add_item(e)
+        p.armor = e
+        menu = p.render_inventory('drop')
+        assert menu.title == 'drop'
+        assert menu.text[0] == 'a: a food ration'
+        assert menu.text[1] == 'b: fake armor (being worn)'
+        self.assertTrue(True)
+
     def test_use_inventory(self):
         p = Player.factory(pos=Pos(1, 1))
         f = Food(which=Food.FRUIT)
@@ -174,6 +185,20 @@ class TestPlayerActionCallback(unittest.TestCase):
         assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 6 Exp:1(0)'
         self.assertTrue(True)
 
+    def test_replace_armor(self):
+        p = Player.factory(pos=Pos(10, 10))
+        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        p.add_item(e)
+        p.armor = e
+        f = Equipment(etype=Equipment.ARMOR, name='fake armor2', value=6, worth=10, char=')', color=(0, 0, 0))
+        p.add_item(f)
+        p.equip(f)
+        assert p.armor == f
+        assert p.curr_msg == 'You take off the fake armor --MORE--'
+        p.advance_msg()
+        assert p.curr_msg == 'You put on the fake armor2'
+        assert p.armor == f
+        self.assertTrue(True)
 
 # ===== Test AI Callback ==================================
 

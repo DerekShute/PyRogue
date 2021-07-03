@@ -171,6 +171,8 @@ class Player(Entity):
         inventory = []
         if usage == '':
             title = 'inventory'
+        elif usage == 'drop':
+            title = 'drop'
         elif usage == 'equip':
             title = 'equip'
         elif usage == 'use':
@@ -183,9 +185,14 @@ class Player(Entity):
                 desc = f'{item.description} (being worn)'
             else:
                 desc = f'{item.description}'
-            add_it = False
+
             if usage == '':
                 inventory.append(desc)  # TODO: consolidate similar objects
+                continue
+
+            add_it = False
+            if usage == 'drop':
+                add_it = True
             elif usage == 'use' and item.name == 'food':
                 add_it = True
             elif usage == 'equip' and isinstance(item, Equipment):
@@ -339,6 +346,7 @@ class Player(Entity):
 
     @property
     def stren(self) -> int:
+        # TODO: effects of equipment
         return self._stats.stren
 
     @property

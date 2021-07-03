@@ -30,7 +30,12 @@ class PlayerInputHandler(InputHandler):
                                          action=QuitAction()),
                     None)
         elif key == tcod.event.K_d:
-            return self, DropAction()  # TODO: query involved
+            return (InventoryInputHandler(usage='drop',
+                                          previous=self,
+                                          entity=self.entity,
+                                          action=DropAction(),
+                                          msg='Drop which item?'),
+                    None)
         elif key == tcod.event.K_e:
             return (InventoryInputHandler(usage='equip',
                                           previous=self,
