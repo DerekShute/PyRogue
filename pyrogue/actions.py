@@ -54,6 +54,7 @@ class DropAction(Action):
         self.index = index
         return self
 
+
 class EscapeAction(Action):
     def perform(self, entity: Entity) -> None:
         raise SystemExit()

@@ -165,7 +165,7 @@ class TestPlayerActionCallback(unittest.TestCase):
 
     def test_equip_armor(self):
         p = Player.factory(pos=Pos(10, 10))
-        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0)) 
+        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
         p.add_item(e)
         p.equip(e)
         assert p.armor == e
@@ -302,8 +302,8 @@ class TestPlayerAI(unittest.TestCase):
         """Drop the nonexistent food in your inventory"""
         p = Player(pos=Pos(10, 10))
         p.queue_action(EquipAction().incorporate(0))
-        assert p.armor == None
-        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0)) 
+        assert p.armor is None
+        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
         p.add_item(armor)
         assert p.pack == [armor]
         p.perform()
@@ -318,7 +318,7 @@ class TestPlayerAI(unittest.TestCase):
         level = Level(1, 80, 25, None)
         level.add_player(p)
         p.queue_action(DropAction().incorporate(1))  # Factory gives one food
-        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0)) 
+        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
         p.add_item(armor)
         p.armor = armor
         p.perform()
@@ -326,19 +326,6 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == 'You take off the fake armor --MORE--'
         p.advance_msg()
         assert p.curr_msg == 'You drop the fake armor'
-        self.assertTrue(True)
-
-    def test_perform_use_food(self):
-        """Equip the armor in your inventory"""
-        p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(UseAction().incorporate(0))
-        # Factory creates a food in player inventory
-        assert p.pack != []
-        p.perform()
-        assert p.pack == []
-        # TODO: can't test existence of food
-        # TODO: there was a message and effects
-        assert p.curr_msg != ''
         self.assertTrue(True)
 
     def test_perform_use_food(self):
