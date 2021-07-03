@@ -171,21 +171,23 @@ class Player(Entity):
         inventory = []
         if usage == '':
             title = 'inventory'
-        elif usage == 'equip':
-            title = 'equip'
-        elif usage == 'use':
-            title = 'use'
         else:
-            title = '<unknown>'
+            title = usage
+
         listing = ord('a')
         for item in self.pack:
             if self.armor == item:
                 desc = f'{item.description} (being worn)'
             else:
                 desc = f'{item.description}'
-            add_it = False
+
             if usage == '':
                 inventory.append(desc)  # TODO: consolidate similar objects
+                continue
+
+            add_it = False
+            if usage == 'drop':
+                add_it = True
             elif usage == 'use' and item.name == 'food':
                 add_it = True
             elif usage == 'equip' and isinstance(item, Equipment):
@@ -245,8 +247,7 @@ class Player(Entity):
 
     def drop(self, item: Item):
         if self.armor == item:
-            self.add_msg(f'You take off the {item.name}')
-            self.armor = None
+            self.equip(item)
         self.add_msg(f'You drop the {item.name}')
         self.remove_item(item)  # Remove it from inventory
         item.set_parent(None)
@@ -256,9 +257,15 @@ class Player(Entity):
 
     def equip(self, item: Equipment):
         if item.etype == Equipment.ARMOR:
-            self.add_msg(f'You put on the {item.name}')
-            self.armor = item
-            return
+            if self.armor is None:
+                self.add_msg(f'You put on the {item.name}')
+                self.armor = item
+            elif self.armor == item:
+                self.add_msg(f'You take off the {item.name}')
+                self.armor = None
+            else:
+                self.equip(self.armor)
+                self.equip(item)
 
     def move(self, dx: int, dy: int):
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
@@ -334,6 +341,7 @@ class Player(Entity):
 
     @property
     def stren(self) -> int:
+        # TODO: effects of equipment
         return self._stats.stren
 
     @property

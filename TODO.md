@@ -17,11 +17,9 @@ Gameplay
 
 Items in general
 
-    o_which = RING_MAIL as general typing
+    Equip and un-equip : if replacing, this is technically two actions.  Requeue as such?
 
     o_count == quantity
-
-    There's a name a type and an inventory description
 
     Treasure rooms
 
