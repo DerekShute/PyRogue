@@ -7,8 +7,6 @@ import unittest
 from unittest.mock import patch
 from procgen import new_food, new_armor, ITEM_PROBABILITIES, ARMOR_PROBABILITIES
 
-from item import Gold, Food, Item
-
 
 # TODO: new_thing()
 

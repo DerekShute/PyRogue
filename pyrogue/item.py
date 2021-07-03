@@ -168,7 +168,7 @@ class Equipment(Item):
         self.value = value
         self.worth = worth
         super().__init__(**kwargs)
-        
+
     @staticmethod
     def factory(etype: int, template: str) -> 'Equipment':
         """Convert from the readable format"""
