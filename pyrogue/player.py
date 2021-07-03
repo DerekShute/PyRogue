@@ -171,14 +171,9 @@ class Player(Entity):
         inventory = []
         if usage == '':
             title = 'inventory'
-        elif usage == 'drop':
-            title = 'drop'
-        elif usage == 'equip':
-            title = 'equip'
-        elif usage == 'use':
-            title = 'use'
         else:
-            title = '<unknown>'
+            title = usage
+
         listing = ord('a')
         for item in self.pack:
             if self.armor == item:

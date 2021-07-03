@@ -200,6 +200,7 @@ class TestPlayerActionCallback(unittest.TestCase):
         assert p.armor == f
         self.assertTrue(True)
 
+
 # ===== Test AI Callback ==================================
 
 class TestPlayerAI(unittest.TestCase):
