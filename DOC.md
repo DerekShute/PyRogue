@@ -19,6 +19,11 @@ Combat
     
     Likewise Monster.melee_attack()
 
+Commands
+
+    u : use (includes food)
+    e : equip (includes 'wear' and 'take off')
+
 Procedural Generation
 
     Item placement is ruled by two weighted probabilities: First for the type of object (potion, food, etc.) and next 
