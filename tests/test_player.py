@@ -190,7 +190,7 @@ class TestPlayerAI(unittest.TestCase):
         get_action_mock.return_value = PickupAction()
         p = Player.factory(pos=Pos(10, 10))
         level = Level(1, 80, 25, None)
-        _ = Gold(quantity=10, pos=Pos(10, 10), parent=level)
+        level.add_item(Gold(quantity=10, pos=Pos(10, 10), parent=level))
         p.attach_level(level)
         p.perform()
         assert level.items == []  # Gone from map
@@ -217,6 +217,7 @@ class TestPlayerAI(unittest.TestCase):
         p = Player(pos=Pos(10, 10))
         p.attach_level(level)
         food = Food(which=Food.FRUIT, pos=Pos(10, 10), parent=level)
+        level.add_item(food)
         # Smoke test: is where we think
         assert level.items == [food]
         assert food.parent == level

@@ -4,38 +4,38 @@
 
 from typing import Tuple
 from position import Pos
+from factories import unpack_template
 # TODO: can't import Entity because recursion
 
 # TODO: colors go somewhere
 COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
+COLOR_CHOCOLATE4 = (139, 69, 19)   # AKA "brown"
 
 FRUIT_NAME = 'slime-mold'
 """Traditional fruit name.  Settable in the original, but I can't be bothered"""
 
 
-# ===== Item =============================================
+# ===== Item ==============================================
+
 class Item:  # union thing
     """
     Superclass for all items
     Thing (originally): Superclass structure for monsters / player / items
     """
-    pos: Pos
-    name: str
-    _char: int  # Note: No good default
-    _color: Tuple[int, int, int]  # No good default
-    parent = None  # Level or Monster or Player (inventories)
+    pos: Pos = None
+    name: str = '<unknown>'
+    _char: int = ord('&')  # No good default
+    _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
+    parent = None  # Inventory or floor
 
-    def __init__(self, name: str = '<unknown>', char: str = '&', color: Tuple[int, int, int] = COLOR_WHITE,
-                 pos: Pos = None, parent=None):
+    def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, parent=None):
         self.pos = pos
         self.name = name
         self._char = ord(char)
         self._color = color
         self.parent = parent
-        if parent is not None:
-            parent.add_item(self)
 
     # ===== Display =======================================
 
@@ -61,7 +61,6 @@ class Item:  # union thing
     @property
     def quantity(self):
         return None
-        # TODO: 'collective' objects with _quantity
 
     # ===== Item callbacks from Entity ====================
 
@@ -152,6 +151,39 @@ class Gold(QuantityItem):
         # TODO: does not handle parent
         return f'Gold(pos={repr(self.pos)},quantity={self.quantity})'
 
+
+# ===== Equipment =========================================
+
+class Equipment(Item):
+    """
+    Equippable object (Armor, Weapon, Ring, Shield, etc.)
+    """
+    etype: int = 0  # ARMOR / WEAPON / etc
+    worth: int = 0  # Score calculation at player demise
+
+    ARMOR = 0
+
+    def __init__(self, etype: int, value: int, worth: int, **kwargs):
+        self.etype = etype
+        self.value = value
+        self.worth = worth
+        super().__init__(**kwargs)
+
+    @staticmethod
+    def factory(etype: int, template: str) -> 'Equipment':
+        """Convert from the readable format"""
+        kwargs = unpack_template(template, ('prob'))
+        if etype == Equipment.ARMOR:
+            kwargs['char'] = ')'
+            kwargs['color'] = COLOR_CHOCOLATE4
+        return Equipment(etype, **kwargs)
+
+
+# ===== Level Generation ==================================
+
+# Randomly pick an item ('new_thing'?) during level generation
+
+# Sum the probabilities per types so they start at '5' for a particular item type but becomes a range for a d100 roll
 
 # ===== TESTING ===========================================
 

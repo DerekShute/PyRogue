@@ -19,6 +19,11 @@ Combat
     
     Likewise Monster.melee_attack()
 
+Procedural Generation
+
+    Item placement is ruled by two weighted probabilities: First for the type of object (potion, food, etc.) and next 
+    the type within that type (potion of strength, etc.)
+
 Actions and Sub-Menus
 
     The Gameloop processes InputHandlers, which fetch and process input events from the console.  Ultimately the goal is to queue Actions that

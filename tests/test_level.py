@@ -40,7 +40,12 @@ class TestLevel(unittest.TestCase):
         lvl.add_room(0, Room(Pos(0, 0), Pos(7, 7)))
         assert lvl.items_at(Pos(5, 5)) == []
         gold = Gold(quantity=10, pos=Pos(5, 5), parent=lvl)
+        lvl.add_item(gold)
         # Gold is present at level at (5, 5)
+        assert gold.pos == Pos(5, 5)
+        assert gold.parent == lvl
+        print(lvl.items)
+        assert lvl.items != []
         assert lvl.items_at(Pos(5, 5)) == [gold]
         assert gold.parent == lvl
         # Gold no longer present when removed
