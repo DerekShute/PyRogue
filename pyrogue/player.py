@@ -5,7 +5,7 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
-from item import Item, Food
+from item import Item, Food, Equipment
 from position import Pos
 from message import MessageBuffer
 from combat import fight
@@ -141,6 +141,7 @@ class Player(Entity):
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
     room = None  # Room
     actionq = []
+    armor: Equipment = None
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -164,7 +165,7 @@ class Player(Entity):
         """Status-line"""
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
         return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
-               f'Str:{self._stats.stren}({self._stats.stren}) Arm: ? Exp:{self._stats.level}({self._stats.exp})'
+               f'Str:{self._stats.stren}({self._stats.stren}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
 
     def render_inventory(self, usage: str) -> Menu:
         inventory = []
@@ -241,6 +242,12 @@ class Player(Entity):
         item.pos = self.pos
         self.level.add_item(item)
         item.set_parent(self.level)
+
+    def equip(self, item: Equipment):
+        if item.etype == Equipment.ARMOR:
+            self.add_msg(f'You put on the {item.name}')
+            self.armor = item
+            return
 
     def move(self, dx: int, dy: int):
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
@@ -338,6 +345,8 @@ class Player(Entity):
     def ac(self):
         """Armor class"""
         # TODO: account for armor, rings, whatever
+        if self.armor is not None:
+            return self.armor.value
         return self._stats.ac
 
     def add_hit_msg(self, entity):

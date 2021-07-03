@@ -9,7 +9,7 @@ from player import Player, Stats
 from position import Pos
 from actions import MovementAction, PickupAction, DescendAction, DropAction, UseAction
 from level import Level
-from item import Gold, Food
+from item import Gold, Food, Equipment
 
 
 # ===== Service Routines ==================================
@@ -43,7 +43,7 @@ class TestPlayer(unittest.TestCase):
                'maxhp=12, hpt=12, exp=0, level=1),food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
         assert p.name == 'Player'
-        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 10 Exp:1(0)'
         self.assertTrue(True)
 
     @patch('random.randint')
@@ -52,18 +52,18 @@ class TestPlayer(unittest.TestCase):
         mock_randint.side_effect = randint_return_min
         p = Player.factory(pos=Pos(10, 10))
         assert p.lvl == 1
-        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 10 Exp:1(0)'
         p.add_exp(5)
         assert p.lvl == 1
-        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(5)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 10 Exp:1(5)'
         p.add_exp(5)
         assert p.lvl == 2
-        assert p.display == 'Level: 0 Gold: 0 Hp:13/13 Str:16(16) Arm: ? Exp:2(10)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:13/13 Str:16(16) Arm: 10 Exp:2(10)'
         assert p.curr_msg == 'Welcome to level 2'
         p.advance_msg()
         p.add_exp(1000)
         assert p.lvl == 7
-        assert p.display == 'Level: 0 Gold: 0 Hp:18/18 Str:16(16) Arm: ? Exp:7(1010)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:18/18 Str:16(16) Arm: 10 Exp:7(1010)'
         assert p.curr_msg == 'Welcome to level 7'
         self.assertTrue(True)
 
@@ -145,6 +145,17 @@ class TestPlayerActionCallback(unittest.TestCase):
         assert p.curr_msg == 'Ouch!'
         self.assertTrue(True)
 
+    def test_equip_armor(self):
+        p = Player.factory(pos=Pos(10, 10))
+        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0)) 
+        p.add_item(e)
+        p.equip(e)
+        assert p.armor == e
+        assert p.ac == 6
+        assert p.curr_msg == 'You put on the fake armor'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 6 Exp:1(0)'
+        self.assertTrue(True)
+
 
 # ===== Test AI Callback ==================================
 
@@ -194,7 +205,7 @@ class TestPlayerAI(unittest.TestCase):
         p.attach_level(level)
         p.perform()
         assert level.items == []  # Gone from map
-        assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
+        assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: 10 Exp:1(0)'
         assert p.curr_msg == 'You pick up 10 gold pieces!'
         self.assertTrue(True)
 
