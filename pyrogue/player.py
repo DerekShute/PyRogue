@@ -171,19 +171,27 @@ class Player(Entity):
         inventory = []
         if usage == '':
             title = 'inventory'
+        elif usage == 'equip':
+            title = 'equip'
         elif usage == 'use':
             title = 'use'
         else:
             title = '<unknown>'
         listing = ord('a')
         for item in self.pack:
+            if self.armor == item:
+                desc = f'{item.description} (being worn)'
+            else:
+                desc = f'{item.description}'
             add_it = False
             if usage == '':
-                inventory.append(item.description)  # TODO: consolidate similar objects
-            elif usage == 'use' and item.name == 'food':  # TODO: types
+                inventory.append(desc)  # TODO: consolidate similar objects
+            elif usage == 'use' and item.name == 'food':
+                add_it = True
+            elif usage == 'equip' and isinstance(item, Equipment):
                 add_it = True
             if add_it:
-                inventory.append(f'{chr(listing)}: {item.description}')  # TODO: consolidate
+                inventory.append(f'{chr(listing)}: {desc}')  # TODO: consolidate
             listing = listing + 1
         return Menu(title=title, text=inventory)
 
@@ -236,6 +244,9 @@ class Player(Entity):
         # Once not on the level, the game main loop takes care of it
 
     def drop(self, item: Item):
+        if self.armor == item:
+            self.add_msg(f'You take off the {item.name}')
+            self.armor = None
         self.add_msg(f'You drop the {item.name}')
         self.remove_item(item)  # Remove it from inventory
         item.set_parent(None)
