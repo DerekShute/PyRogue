@@ -64,6 +64,6 @@ def calc_probability(factory: Tuple[str]) -> List[int]:
     for entry in factory:
         dict_of = unpack_template(entry, (''))
         probs.append(dict_of['prob'])
-    return probs  
+    return probs
 
 # EOF
