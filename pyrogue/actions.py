@@ -42,11 +42,17 @@ class DescendAction(Action):
 
 class DropAction(Action):
     """Drop an item in entity inventory"""
+    index: int = 0
+
     def perform(self, entity: Entity) -> None:
         if entity.pack == []:
             entity.add_msg('No item to drop!')
             return
-        entity.drop(entity.pack[0])  # TODO: would be handed by inventory submenu etc.
+        entity.drop(entity.pack[self.index])
+
+    def incorporate(self, index: int = 0):
+        self.index = index
+        return self
 
 
 class EscapeAction(Action):
@@ -92,6 +98,21 @@ class UseAction(Action):
             entity.add_msg('No item to use!')
             return
         entity.use(entity.pack[self.index])
+
+    def incorporate(self, index: int = 0):
+        self.index = index
+        return self
+
+
+class EquipAction(Action):
+    """Equip an item in entity inventory"""
+    index: int = 0
+
+    def perform(self, entity: Entity) -> None:
+        if entity.pack == []:
+            entity.add_msg('No item to equip!')
+            return
+        entity.equip(entity.pack[self.index])
 
     def incorporate(self, index: int = 0):
         self.index = index

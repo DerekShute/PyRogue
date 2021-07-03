@@ -25,7 +25,7 @@ class InventoryInputHandler(InputHandler):
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> (InputHandler, Action):
         key = event.sym
-        if self.usage == 'use':
+        if self.usage != '':
             if key >= ord('a') and key <= ord('z'):
                 return self.previous, self.action.incorporate(key - ord('a'))
         return self.previous, None

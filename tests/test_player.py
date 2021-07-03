@@ -7,9 +7,9 @@ import unittest
 from unittest.mock import patch
 from player import Player, Stats
 from position import Pos
-from actions import MovementAction, PickupAction, DescendAction, DropAction, UseAction
+from actions import MovementAction, PickupAction, DescendAction, DropAction, UseAction, EquipAction
 from level import Level
-from item import Gold, Food
+from item import Gold, Food, Equipment
 
 
 # ===== Service Routines ==================================
@@ -43,7 +43,7 @@ class TestPlayer(unittest.TestCase):
                'maxhp=12, hpt=12, exp=0, level=1),food_left=1300)'
         assert repr(eval(repr(p))) == repr(p)
         assert p.name == 'Player'
-        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 10 Exp:1(0)'
         self.assertTrue(True)
 
     @patch('random.randint')
@@ -52,18 +52,18 @@ class TestPlayer(unittest.TestCase):
         mock_randint.side_effect = randint_return_min
         p = Player.factory(pos=Pos(10, 10))
         assert p.lvl == 1
-        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 10 Exp:1(0)'
         p.add_exp(5)
         assert p.lvl == 1
-        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: ? Exp:1(5)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 10 Exp:1(5)'
         p.add_exp(5)
         assert p.lvl == 2
-        assert p.display == 'Level: 0 Gold: 0 Hp:13/13 Str:16(16) Arm: ? Exp:2(10)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:13/13 Str:16(16) Arm: 10 Exp:2(10)'
         assert p.curr_msg == 'Welcome to level 2'
         p.advance_msg()
         p.add_exp(1000)
         assert p.lvl == 7
-        assert p.display == 'Level: 0 Gold: 0 Hp:18/18 Str:16(16) Arm: ? Exp:7(1010)'
+        assert p.display == 'Level: 0 Gold: 0 Hp:18/18 Str:16(16) Arm: 10 Exp:7(1010)'
         assert p.curr_msg == 'Welcome to level 7'
         self.assertTrue(True)
 
@@ -114,6 +114,24 @@ class TestPlayer(unittest.TestCase):
         assert menu.text[1] == 'b: a slime-mold'
         self.assertTrue(True)
 
+    def test_equip_empty_inventory(self):
+        p = Player.factory(pos=Pos(1, 1))
+        menu = p.render_inventory('equip')
+        assert menu.title == 'equip'
+        assert len(menu.text) == 0
+        self.assertTrue(True)
+
+    def test_equip_inventory(self):
+        p = Player.factory(pos=Pos(1, 1))
+        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        p.add_item(e)
+        menu = p.render_inventory('equip')
+        assert menu.text[0] == 'b: fake armor'  # 'a' is a food ration
+        p.armor = e
+        menu = p.render_inventory('equip')
+        assert menu.text[0] == 'b: fake armor (being worn)'  # 'a' is a food ration
+        self.assertTrue(True)
+
     @parameterized.expand([(-1, 0),    # If <0 then 0
                            (0, 1100),  # If >0 and <STOMACHSIZE, then calculation
                            (1700, 2000)])  # If >STOMACHSIZE, then STOMACHSIZE
@@ -145,6 +163,17 @@ class TestPlayerActionCallback(unittest.TestCase):
         assert p.curr_msg == 'Ouch!'
         self.assertTrue(True)
 
+    def test_equip_armor(self):
+        p = Player.factory(pos=Pos(10, 10))
+        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        p.add_item(e)
+        p.equip(e)
+        assert p.armor == e
+        assert p.ac == 6
+        assert p.curr_msg == 'You put on the fake armor'
+        assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 6 Exp:1(0)'
+        self.assertTrue(True)
+
 
 # ===== Test AI Callback ==================================
 
@@ -158,11 +187,10 @@ class TestPlayerAI(unittest.TestCase):
         p.perform()
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_move_allowed(self, get_action_mock):
+    def test_perform_move_allowed(self):
         """Player was allowed to move"""
-        get_action_mock.return_value = MovementAction(-1, -1)
         p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(MovementAction(-1, -1))
         with patch.object(Level, 'can_enter', return_value=True) as patched_level:
             p.attach_level(Level(1, 80, 25, None))
             p.perform()
@@ -171,11 +199,10 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == p.display
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_move_denied(self, get_action_mock):
+    def test_perform_move_denied(self):
         """Player was not allowed to move"""
-        get_action_mock.return_value = MovementAction(-1, -1)
         p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(MovementAction(-1, -1))
         with patch.object(Level, 'can_enter', return_value=False) as patched_level:
             p.attach_level(Level(1, 80, 25, None))
             p.perform()
@@ -184,37 +211,34 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == 'Ouch!'
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_pickup_gold(self, get_action_mock):
+    def test_perform_pickup_gold(self):
         """Pick up an Item"""
-        get_action_mock.return_value = PickupAction()
         p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(PickupAction())
         level = Level(1, 80, 25, None)
         level.add_item(Gold(quantity=10, pos=Pos(10, 10), parent=level))
         p.attach_level(level)
         p.perform()
         assert level.items == []  # Gone from map
-        assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: ? Exp:1(0)'
+        assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: 10 Exp:1(0)'
         assert p.curr_msg == 'You pick up 10 gold pieces!'
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_pickup_denied(self, get_action_mock):
+    def test_perform_pickup_denied(self):
         """Pick up an Item"""
-        get_action_mock.return_value = PickupAction()
         p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(PickupAction())
         level = Level(1, 80, 25, None)
         p.attach_level(level)
         p.perform()
         assert p.curr_msg == 'No item there to pick up!'
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_pickup_food(self, get_action_mock):
+    def test_perform_pickup_food(self):
         """Pick up an Item"""
-        get_action_mock.return_value = PickupAction()
         level = Level(1, 80, 25, None)
         p = Player(pos=Pos(10, 10))
+        p.queue_action(PickupAction())
         p.attach_level(level)
         food = Food(which=Food.FRUIT, pos=Pos(10, 10), parent=level)
         level.add_item(food)
@@ -231,11 +255,10 @@ class TestPlayerAI(unittest.TestCase):
         assert food in p.pack
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_descend(self, get_action_mock):
+    def test_perform_descend(self):
         """Stumble down the stairs"""
-        get_action_mock.return_value = DescendAction()
         p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(DescendAction())
         level = Level(1, 80, 25, None)
         level.add_stairs(Pos(10, 10))
         level.add_player(p)
@@ -246,11 +269,10 @@ class TestPlayerAI(unittest.TestCase):
         # TODO: Level number in display
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_descend_denied(self, get_action_mock):
+    def test_perform_descend_denied(self):
         """Try to stumble down non-existent stairs"""
-        get_action_mock.return_value = DescendAction()
         p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(DescendAction())
         level = Level(1, 80, 25, None)
         level.add_player(p)
         p.perform()
@@ -259,11 +281,10 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg == 'No stairs here!'
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_drop_food(self, get_action_mock):
+    def test_perform_drop_food(self):
         """Drop the thing in your inventory"""
-        get_action_mock.return_value = DropAction()
         p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(DropAction().incorporate(0))
         # Factory creates a food in player inventory
         assert p.pack != []
         food = p.pack[0]
@@ -277,22 +298,40 @@ class TestPlayerAI(unittest.TestCase):
         assert food in level.items
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_drop_denied(self, get_action_mock):
+    def test_perform_equip_armor(self):
         """Drop the nonexistent food in your inventory"""
-        get_action_mock.return_value = DropAction()
         p = Player(pos=Pos(10, 10))
-        assert p.pack == []
+        p.queue_action(EquipAction().incorporate(0))
+        assert p.armor is None
+        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        p.add_item(armor)
+        assert p.pack == [armor]
         p.perform()
-        assert p.pack == []
-        assert p.curr_msg == 'No item to drop!'
+        assert p.pack == [armor]
+        assert p.armor == armor
+        assert p.curr_msg == 'You put on the fake armor'
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_use_food(self, get_action_mock):
-        """Use the nonexistent food in your inventory"""
-        get_action_mock.return_value = UseAction()
+    def test_perform_drop_equipped_armor(self):
+        """Drop the thing in your inventory"""
         p = Player.factory(pos=Pos(10, 10))
+        level = Level(1, 80, 25, None)
+        level.add_player(p)
+        p.queue_action(DropAction().incorporate(1))  # Factory gives one food
+        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        p.add_item(armor)
+        p.armor = armor
+        p.perform()
+        assert armor not in p.pack
+        assert p.curr_msg == 'You take off the fake armor --MORE--'
+        p.advance_msg()
+        assert p.curr_msg == 'You drop the fake armor'
+        self.assertTrue(True)
+
+    def test_perform_use_food(self):
+        """Use the nonexistent food in your inventory"""
+        p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(UseAction().incorporate(0))
         # Factory creates a food in player inventory
         assert p.pack != []
         p.perform()
@@ -303,11 +342,10 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg != ''
         self.assertTrue(True)
 
-    @patch('player.Player.get_action')
-    def test_perform_use_denied(self, get_action_mock):
+    def test_perform_use_denied(self):
         """Use the nonexistent food in your inventory"""
-        get_action_mock.return_value = UseAction()
         p = Player(pos=Pos(10, 10))
+        p.queue_action(UseAction().incorporate(0))
         assert p.pack == []
         p.perform()
         assert p.pack == []

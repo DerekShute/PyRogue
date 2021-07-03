@@ -5,7 +5,7 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
-from item import Item, Food
+from item import Item, Food, Equipment
 from position import Pos
 from message import MessageBuffer
 from combat import fight
@@ -141,6 +141,7 @@ class Player(Entity):
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
     room = None  # Room
     actionq = []
+    armor: Equipment = None
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -164,25 +165,33 @@ class Player(Entity):
         """Status-line"""
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
         return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
-               f'Str:{self._stats.stren}({self._stats.stren}) Arm: ? Exp:{self._stats.level}({self._stats.exp})'
+               f'Str:{self._stats.stren}({self._stats.stren}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
 
     def render_inventory(self, usage: str) -> Menu:
         inventory = []
         if usage == '':
             title = 'inventory'
+        elif usage == 'equip':
+            title = 'equip'
         elif usage == 'use':
             title = 'use'
         else:
             title = '<unknown>'
         listing = ord('a')
         for item in self.pack:
+            if self.armor == item:
+                desc = f'{item.description} (being worn)'
+            else:
+                desc = f'{item.description}'
             add_it = False
             if usage == '':
-                inventory.append(item.description)  # TODO: consolidate similar objects
-            elif usage == 'use' and item.name == 'food':  # TODO: types
+                inventory.append(desc)  # TODO: consolidate similar objects
+            elif usage == 'use' and item.name == 'food':
+                add_it = True
+            elif usage == 'equip' and isinstance(item, Equipment):
                 add_it = True
             if add_it:
-                inventory.append(f'{chr(listing)}: {item.description}')  # TODO: consolidate
+                inventory.append(f'{chr(listing)}: {desc}')  # TODO: consolidate
             listing = listing + 1
         return Menu(title=title, text=inventory)
 
@@ -235,12 +244,21 @@ class Player(Entity):
         # Once not on the level, the game main loop takes care of it
 
     def drop(self, item: Item):
+        if self.armor == item:
+            self.add_msg(f'You take off the {item.name}')
+            self.armor = None
         self.add_msg(f'You drop the {item.name}')
         self.remove_item(item)  # Remove it from inventory
         item.set_parent(None)
         item.pos = self.pos
         self.level.add_item(item)
         item.set_parent(self.level)
+
+    def equip(self, item: Equipment):
+        if item.etype == Equipment.ARMOR:
+            self.add_msg(f'You put on the {item.name}')
+            self.armor = item
+            return
 
     def move(self, dx: int, dy: int):
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
@@ -338,6 +356,8 @@ class Player(Entity):
     def ac(self):
         """Armor class"""
         # TODO: account for armor, rings, whatever
+        if self.armor is not None:
+            return self.armor.value
         return self._stats.ac
 
     def add_hit_msg(self, entity):

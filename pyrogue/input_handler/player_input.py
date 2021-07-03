@@ -1,5 +1,5 @@
 import tcod
-from actions import Action, QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction
+from actions import Action, QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction, EquipAction
 from input_handler import InputHandler, CancelHandler, MOVE_KEYS
 from input_handler.response_input import ResponseInputHandler
 from input_handler.inventory_input import InventoryInputHandler
@@ -31,6 +31,13 @@ class PlayerInputHandler(InputHandler):
                     None)
         elif key == tcod.event.K_d:
             return self, DropAction()  # TODO: query involved
+        elif key == tcod.event.K_e:
+            return (InventoryInputHandler(usage='equip',
+                                          previous=self,
+                                          entity=self.entity,
+                                          action=EquipAction(),
+                                          msg='Equip which item?'),
+                    None)
         elif key == tcod.event.K_g:
             return self, PickupAction()
         elif key == tcod.event.K_i:
