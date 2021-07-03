@@ -2,8 +2,9 @@
     Items
 """
 
-from typing import Dict, Any, Tuple
+from typing import Tuple
 from position import Pos
+from factories import unpack_template
 # TODO: can't import Entity because recursion
 
 # TODO: colors go somewhere
@@ -14,30 +15,6 @@ COLOR_CHOCOLATE4 = (139, 69, 19)   # AKA "brown"
 
 FRUIT_NAME = 'slime-mold'
 """Traditional fruit name.  Settable in the original, but I can't be bothered"""
-
-
-# ===== Service Routines ===================================
-
-def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:
-    """
-    Convert from the string descriptor into a list of values and
-    a dict of key-value pairs.
-    
-    Caller then ships the resulting Dict as **kwargs to a factory
-    
-    Key value pairs will replace underbar with a space
-    
-    omit:
-        Remove these keys from the resulting dict ('worth' and 'prob' are disinteresting for factory-ing items)
-    Returns:
-        kwargs (dict of strings)
-    """
-    kwargs = {}
-    for x in template.split(' '):
-        if x[0] not in omit:
-            p = x.partition('=')
-            kwargs[p[0]] = p[2].replace('_',' ')  # XXX=yyy format
-    return kwargs
 
 
 # ===== Item ==============================================
@@ -182,19 +159,21 @@ class Equipment(Item):
     Equippable object (Armor, Weapon, Ring, Shield, etc.)
     """
     etype: int = 0  # ARMOR / WEAPON / etc
+    worth: int = 0  # Score calculation at player demise
 
     ARMOR = 0
 
-    def __init__(self, etype: int, value: int, **kwargs):
+    def __init__(self, etype: int, value: int, worth: int, **kwargs):
         self.etype = etype
         self.value = value
+        self.worth = worth
         super().__init__(**kwargs)
-
+        
     @staticmethod
-    def factory(etype: int, template: str):
+    def factory(etype: int, template: str) -> 'Equipment':
         """Convert from the readable format"""
-        kwargs = unpack_template(template, ('worth', 'prob'))
-        if etype == self.ARMOR:
+        kwargs = unpack_template(template, ('prob'))
+        if etype == Equipment.ARMOR:
             kwargs['char'] = ')'
             kwargs['color'] = COLOR_CHOCOLATE4
         return Equipment(etype, **kwargs)

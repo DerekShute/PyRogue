@@ -12,6 +12,7 @@ from item import Item, Food, Gold
 from display import Display
 from typing import Tuple
 from player import Player
+from procgen import new_thing
 
 
 # ===== Constants =========================================
@@ -141,23 +142,6 @@ def randmonster(levelno: int, wander: bool) -> int:
 
 # ==== Manufactury ========================================
 
-def new_thing(level: Level) -> Item:  # new_thing
-    """Return a new thing (item)"""
-
-    # Decide what kind of object it will be
-    # If we haven't had food for a while, let it be food
-
-    # TODO anything other than food
-    # TODO: putting down food resets 'no_food' count
-    if random.randint(0, 9) == 0:
-        which = Food.FRUIT
-    elif random.randint(0, 100) > 70:
-        which = Food.BAD_RATION
-    else:
-        which = Food.GOOD_RATION
-    return Food(which=which)
-
-
 def put_things(level: Level):  # put_things
     """Put potions and scrolls on this level"""
 
@@ -167,7 +151,7 @@ def put_things(level: Level):  # put_things
 
     for i in range(0, MAXOBJ):  # Range stop is NOT inclusive
         if rand(0, 100) < 36:  # That's weirdly specific
-            item = new_thing(level)
+            item = new_thing()  # TODO: how long since we put down food?
             room = random.choice([x for _, x in level.rooms.items() if x.max_y != x.y])  # random not-gone
             item.set_pos(room.rnd_pos)
             level.add_item(item)

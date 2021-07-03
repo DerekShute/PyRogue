@@ -35,8 +35,6 @@ ARMOR_TEMPLATES = (
     'name=plate_mail prob=5 worth=150 value=3',   # AC 3
 )
 
-# TODO: - Need three generators here: value calculation at RIP/END, probability for level generation, and the
-# factory for items.
 
 # ===== Probability calculations and whatnot ==============
 
@@ -60,22 +58,12 @@ def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:
     return as_dict
 
 
-
-def calc_probability(factory: Tuple[str]) -> (List[str], List[int]):
+def calc_probability(factory: Tuple[str]) -> List[int]:
     """pulls out the 'name' and 'prob' fields and readies it for the weighted probability tuples"""
-    names = []
     probs = []
     for entry in factory:
-        dict_of = unpack_template(entry, [])
-        names.append(dict_of['name'])
+        dict_of = unpack_template(entry, (''))
         probs.append(dict_of['prob'])
-    return (names, probs)        
+    return probs        
 
-
-# ===== Module Initialization =============================
-
-# TODO: random.choices(names, weights=probs, k=1)
-
-ITEM_PROBABILITIES: Tuple[List[str], List[int]] = calc_probability(ITEM_PROB_TEMPLATES)
-
-ARMOR_PROBABILITIES: Tuple[List[str], List[int]] = calc_probability(ARMOR_TEMPLATES)
+# EOF
