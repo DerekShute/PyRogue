@@ -2,7 +2,7 @@
     Items
 """
 
-from typing import Tuple
+from typing import Dict, Any, Tuple
 from position import Pos
 # TODO: can't import Entity because recursion
 
@@ -10,6 +10,7 @@ from position import Pos
 COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
+COLOR_CHOCOLATE4 = (139, 69, 19)   # AKA "brown"
 
 FRUIT_NAME = 'slime-mold'
 """Traditional fruit name.  Settable in the original, but I can't be bothered"""
@@ -17,27 +18,26 @@ FRUIT_NAME = 'slime-mold'
 
 # ===== Service Routines ===================================
 
-def unpack(template):
+def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:
     """
     Convert from the string descriptor into a list of values and
     a dict of key-value pairs.
     
-    Caller then ships the resulting tuple as *args, **kwargs to a factory
+    Caller then ships the resulting Dict as **kwargs to a factory
     
     Key value pairs will replace underbar with a space
+    
+    omit:
+        Remove these keys from the resulting dict ('worth' and 'prob' are disinteresting for factory-ing items)
     Returns:
-        args (list of strings)
         kwargs (dict of strings)
     """
     kwargs = {}
-    args = []
     for x in template.split(' '):
-        p = x.partition('=')
-        if p[1] == '':   # just a string.  Add it to the argument list
-            args.append(p[2])
-        else:
+        if x[0] not in omit:
+            p = x.partition('=')
             kwargs[p[0]] = p[2].replace('_',' ')  # XXX=yyy format
-    return args, kwargs
+    return kwargs
 
 
 # ===== Item ==============================================
@@ -54,11 +54,11 @@ class Item:  # union thing
     parent = None  # Inventory or floor
 
     def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, parent=None):
-        self._pos = Pos(pos)
-        self._name = name
+        self.pos = pos
+        self.name = name
         self._char = ord(char)
         self._color = color
-        self.set_parent(parent)
+        self.parent = parent
 
     # ===== Display =======================================
 
@@ -179,20 +179,32 @@ class Gold(QuantityItem):
 
 class Equipment(Item):
     """
-    NOTE: 'worth' is used in the endgame for calculation of score, and 'prob' is probability for object appearance
-    and only a thing during level/room generation
+    Equippable object (Armor, Weapon, Ring, Shield, etc.)
     """
-    value: int = 0  # thing for equipment type (Armor class or something)
-    worth: int = 0  # Borderline value but what the hey, this is a 64-bit processor
-    etype: int = 0  # TODO: 'armor' vs 'weapon' vs...
-    
-    def __init__(self, *args, **kwargs):
-        
+    etype: int = 0  # ARMOR / WEAPON / etc
+
+    ARMOR = 0
+
+    def __init__(self, etype: int, value: int, **kwargs):
+        self.etype = etype
+        self.value = value
+        super().__init__(**kwargs)
+
     @staticmethod
-    def factory(template: str):
-        """Convert from the readable format into an ObjInfo"""
-        args, kwargs = unpack(template)
-        return Equipment(*args, **kwargs)
+    def factory(etype: int, template: str):
+        """Convert from the readable format"""
+        kwargs = unpack_template(template, ('worth', 'prob'))
+        if etype == self.ARMOR:
+            kwargs['char'] = ')'
+            kwargs['color'] = COLOR_CHOCOLATE4
+        return Equipment(etype, **kwargs)
+
+
+# ===== Level Generation ==================================
+
+# Randomly pick an item ('new_thing'?) during level generation
+
+# Sum the probabilities per types so they start at '5' for a particular item type but becomes a range for a d100 roll
 
 # ===== TESTING ===========================================
 
