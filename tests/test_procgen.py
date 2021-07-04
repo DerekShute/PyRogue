@@ -5,10 +5,11 @@
 from parameterized import parameterized
 import unittest
 from unittest.mock import patch
-from procgen import new_food, new_armor, ITEM_PROBABILITIES, ARMOR_PROBABILITIES
+from procgen import new_food, new_armor, new_weapon, ITEM_PROBABILITIES, ARMOR_PROBABILITIES
 
 
 # TODO: new_thing()
+
 
 # ==== Test Item Probabilities ============================
 
@@ -43,15 +44,46 @@ class TestProcgenItem(unittest.TestCase):
         assert food.description == expected
         self.assertTrue(True)
 
+    @parameterized.expand([(0, 5),  # cursed -1
+                           (25, 3), # magic +1
+                           (90, 4)]) # absolutely normal
     @patch('random.choices')
-    def test_armor(self, mock_randint):
-        mock_randint.return_value = [5]
+    @patch('random.randint')
+    @patch('procgen.plus_value')
+    def test_armor(self, input, expected, mock_plus, mock_randint, mock_choices):
+        mock_plus.return_value = 1
+        mock_randint.return_value = input
+        mock_choices.return_value = [5]  # peg on splint mail
         armor = new_armor()
         assert armor.description == 'splint mail'
-        assert armor.value == 4
+        assert armor.value == expected
+        if input == 0:
+            assert 'cursed' in armor.flags
+        else:
+            assert 'cursed' not in armor.flags
         assert armor.worth == 80
         self.assertTrue(True)
 
+    
+    @parameterized.expand([(5, -1),  # cursed -1
+                           (12, 1), # magic +1
+                           (90, 0)]) # absolutely normal
+    @patch('random.choices')
+    @patch('random.randint')
+    @patch('procgen.plus_value')
+    def test_weapon(self, input, expected, mock_plus, mock_randint, mock_choices): 
+        mock_plus.return_value = 1
+        mock_randint.return_value = input
+        mock_choices.return_value = [6]  # peg on dart
+        weapon = new_weapon()
+        assert weapon.description == 'dart'
+        assert weapon.dam == '1x1'
+        assert weapon.hplus == expected
+        if input == 5:
+            assert 'cursed' in weapon.flags
+        else:
+            assert 'cursed' not in weapon.flags
+        self.assertTrue(True)
 
 # ===== Invocation ========================================
 

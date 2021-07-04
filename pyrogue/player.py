@@ -413,6 +413,8 @@ class Player(Entity):
         level, stren, dmg = self._stats.melee_attack()
         if self.weapon is not None:
             dmg = self.weapon.dam
+            level += self.weapon.hplus
+            # TODO: starting mace is +1 damage...figure that out
         return level, stren, dmg
 
     def take_damage(self, amount: int):

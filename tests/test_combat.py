@@ -155,6 +155,9 @@ class TestCombatBasics(unittest.TestCase):
         assert p.curr_msg == 'You killed the hobgoblin!'
         self.assertTrue(True)
 
+# TODO: test effects of magic/cursed weapon on hit chance
+
+# TODO: test effects of magic/cursed armor on defense
 
 # ===== Invocation ========================================
 

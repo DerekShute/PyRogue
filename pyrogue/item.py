@@ -164,12 +164,17 @@ class Equipment(Item):
     dmg: str = None
     hurl: str = None
     launch: str = None
-    flags: str = None
+    flags: str = ''
+    hplus: int = 0
+    dplus: int = 0
+    known: bool = False  # TODO: Do you know exactly what it does/is?
+
+    # Types
     ARMOR = 0
     WEAPON = 1
-
+    
     def __init__(self, etype: int, value: int = 0, worth: int = 0,
-                 dam: str = None, hurl: str = None, launch: str = None, flags: str = None, **kwargs):
+                 dam: str = None, hurl: str = None, launch: str = None, flags: str = '', **kwargs):
         self.etype = etype
         self.value = value
         self.worth = worth
@@ -189,7 +194,6 @@ class Equipment(Item):
         if etype == Equipment.WEAPON:
             kwargs['char'] = ')'
             kwargs['color'] = COLOR_DEEPSKYBLUE
-            kwargs['value'] = 0
         return Equipment(etype, **kwargs)
 
 
