@@ -36,6 +36,27 @@ ARMOR_TEMPLATES = (
 )
 
 
+# ===== WEAPON TEMPLATES ==================================
+
+# combines obj_info and init_weaps
+# 'dam' - melee damage
+# 'hurl' - missile/thrown damage
+# 'launch' - launching weapon
+# 'flags' - 'many': collective 'missile': missile weapon
+
+WEAPON_TEMPLATES = (
+    'name=mace prob=11 worth=8 dam=2x4 hurl=1x3',
+    'name=long_sword prob=11 worth=15 dam=3x4 hurl=1x2',
+    'name=short_bow prob=12 worth=15 dam=1x1 hurl=1x1',
+    'name=arrow prob=12 worth=1 dam=1x1 hurl=2x3 launch=short_bow flags=many_missle',
+    'name=dagger prob=8 worth=3 dam=1x6 hurl=1x4 flags=missile',
+    'name=two_handed_sword prob=10 worth=75 dam=4x4 hurl=1x2',
+    'name=dart prob=12 worth=2 dam=1x1 hurl=1x3 flags=many_missile',
+    'name=shuriken prob=12 worth=5 dam=1x2 hurl=2x4 flags=many_missile',
+    'name=spear prob=12 worth=5 dam=2x3 hurl=1x6 flags=missile',
+)
+
+
 # ===== Probability calculations and whatnot ==============
 
 def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:

@@ -107,6 +107,18 @@ class TestCombatBasics(unittest.TestCase):
         assert result == 5  # Damage done - max of 1..4 + 1
         self.assertTrue(True)
 
+    @patch('random.randint')
+    @patch('player.Player.melee_attack')
+    def test_roll_em_hit_dplus(self, mock_melee, mock_randint):
+        """dplus figures into damage returned by roll_em"""
+        mock_randint.side_effect = randint_return_max
+        mock_melee.return_value = (1, 16, '1x4', 5)
+        p = Player.factory()
+        m = Monster.factory(None, 1, ord('G'))
+        result = combat.roll_em(p, m)
+        assert result == 10  # Damage done - max of 1..4 + 1 + 5
+        self.assertTrue(True)
+
 # TODO: roll_em multiple attacks, but need monster to attack player
 
     @patch('random.randint')
@@ -155,6 +167,9 @@ class TestCombatBasics(unittest.TestCase):
         assert p.curr_msg == 'You killed the hobgoblin!'
         self.assertTrue(True)
 
+# TODO: test effects of magic/cursed weapon on hit chance
+
+# TODO: test effects of magic/cursed armor on defense
 
 # ===== Invocation ========================================
 

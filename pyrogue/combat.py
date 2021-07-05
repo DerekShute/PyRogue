@@ -40,12 +40,12 @@ def roll(die_roll: str) -> int:
 
 def roll_em(attacker, defender) -> int:  # TODO: weapon, 'hurl'
     """Roll several attacks, which are describe in the XxY/AxB/CxD damage string"""
-    at_lvl, at_stren, at_dmg = attacker.melee_attack()  # TODO: damage bonus that is not strength
+    at_lvl, at_stren, at_dmg, at_dplus = attacker.melee_attack()
     ac = defender.ac
     damage = 0
     for attack in at_dmg.split('/'):  # TODO: some monsters have weird strings here
         if swing(at_lvl, ac, STR_PLUS[at_stren]):  # TODO: just roll this into attacker/defender logic
-            damage = damage + roll(attack) + ADD_DMG[at_stren]
+            damage = damage + roll(attack) + ADD_DMG[at_stren] + at_dplus
     return damage
 
 

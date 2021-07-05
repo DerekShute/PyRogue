@@ -5,6 +5,7 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
+from typing import Tuple
 from item import Item, Food, Equipment
 from position import Pos
 from message import MessageBuffer
@@ -122,7 +123,7 @@ class Stats:  # struct stats
 
     def melee_attack(self):
         """Attack components just based on stats"""
-        return self.level, self.stren, self.dmg
+        return self.level, self.stren, self.dmg, 0
 
     @property
     def ac(self):
@@ -142,6 +143,7 @@ class Player(Entity):
     room = None  # Room
     actionq = []
     armor: Equipment = None
+    weapon: Equipment = None
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -178,6 +180,8 @@ class Player(Entity):
         for item in self.pack:
             if self.armor == item:
                 desc = f'{item.description} (being worn)'
+            elif self.weapon == item:
+                desc = f'{item.description} (wielded)'
             else:
                 desc = f'{item.description}'
 
@@ -246,7 +250,7 @@ class Player(Entity):
         # Once not on the level, the game main loop takes care of it
 
     def drop(self, item: Item):
-        if self.armor == item:
+        if self.armor == item or self.weapon == item:
             self.equip(item)
         self.add_msg(f'You drop the {item.name}')
         self.remove_item(item)  # Remove it from inventory
@@ -256,7 +260,18 @@ class Player(Entity):
         item.set_parent(self.level)
 
     def equip(self, item: Equipment):
-        if item.etype == Equipment.ARMOR:
+        def equip_weapon():
+            if self.weapon is None:
+                self.add_msg(f'You wield the {item.name}')
+                self.weapon = item
+            elif self.weapon == item:
+                self.add_msg(f'You put away the {item.name}')
+                self.weapon = None
+            else:
+                self.equip(self.weapon)
+                self.equip(item)
+
+        def equip_armor():
             if self.armor is None:
                 self.add_msg(f'You put on the {item.name}')
                 self.armor = item
@@ -266,6 +281,11 @@ class Player(Entity):
             else:
                 self.equip(self.armor)
                 self.equip(item)
+
+        if item.etype == Equipment.WEAPON:
+            equip_weapon()
+        if item.etype == Equipment.ARMOR:
+            equip_armor()
 
     def move(self, dx: int, dy: int):
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
@@ -388,10 +408,14 @@ class Player(Entity):
         self.add_msg(f'You killed the {entity.name}!')
         self.add_exp(entity.xp_value)
 
-    def melee_attack(self):
-        """Melee attack (level, strength, dmg)"""
-        # TODO: effect of weapons and objects.  I think it can add to level instead of an explicit bonus
-        return self._stats.melee_attack()
+    def melee_attack(self) -> Tuple[int, int, str, int]:
+        """Melee attack (level, strength, dmg, dplus)"""
+        level, stren, dmg, dplus = self._stats.melee_attack()
+        if self.weapon is not None:
+            dmg = self.weapon.dam
+            level += self.weapon.hplus
+            dplus += self.weapon.dplus
+        return level, stren, dmg, dplus
 
     def take_damage(self, amount: int):
         """Took it on the chin"""

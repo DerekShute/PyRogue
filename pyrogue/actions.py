@@ -45,8 +45,8 @@ class DropAction(Action):
     index: int = 0
 
     def perform(self, entity: Entity) -> None:
-        if entity.pack == []:
-            entity.add_msg('No item to drop!')
+        if self.index >= len(entity.pack):
+            entity.add_msg('No such item to drop!')
             return
         entity.drop(entity.pack[self.index])
 
@@ -94,8 +94,8 @@ class UseAction(Action):
     index: int = 0
 
     def perform(self, entity: Entity) -> None:
-        if entity.pack == []:
-            entity.add_msg('No item to use!')
+        if self.index >= len(entity.pack):
+            entity.add_msg('No such item to use!')
             return
         entity.use(entity.pack[self.index])
 
@@ -109,8 +109,8 @@ class EquipAction(Action):
     index: int = 0
 
     def perform(self, entity: Entity) -> None:
-        if entity.pack == []:
-            entity.add_msg('No item to equip!')
+        if self.index >= len(entity.pack):
+            entity.add_msg('No such item to equip!')
             return
         entity.equip(entity.pack[self.index])
 

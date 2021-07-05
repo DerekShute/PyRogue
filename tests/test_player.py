@@ -132,15 +132,19 @@ class TestPlayer(unittest.TestCase):
         assert len(menu.text) == 0
         self.assertTrue(True)
 
-    def test_equip_inventory(self):
+    @parameterized.expand([
+        (Equipment.WEAPON, 'b: fake (wielded)'),
+        (Equipment.ARMOR, 'b: fake (being worn)'),
+        ])
+    def test_equip(self, input, expected):
         p = Player.factory(pos=Pos(1, 1))
-        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        e = Equipment.factory(etype=input, template='name=fake value=6 worth=10')
         p.add_item(e)
         menu = p.render_inventory('equip')
-        assert menu.text[0] == 'b: fake armor'  # 'a' is a food ration
-        p.armor = e
+        assert menu.text[0] == 'b: fake'  # 'a' is a food ration
+        p.equip(e)
         menu = p.render_inventory('equip')
-        assert menu.text[0] == 'b: fake armor (being worn)'  # 'a' is a food ration
+        assert menu.text[0] == expected  # 'a' is a food ration
         self.assertTrue(True)
 
     @parameterized.expand([(-1, 0),    # If <0 then 0
@@ -176,28 +180,47 @@ class TestPlayerActionCallback(unittest.TestCase):
 
     def test_equip_armor(self):
         p = Player.factory(pos=Pos(10, 10))
-        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        e = Equipment.factory(etype=Equipment.ARMOR, template='name=fake value=6 worth=10')
         p.add_item(e)
         p.equip(e)
         assert p.armor == e
         assert p.ac == 6
-        assert p.curr_msg == 'You put on the fake armor'
+        assert p.curr_msg == 'You put on the fake'
         assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 6 Exp:1(0)'
         self.assertTrue(True)
 
     def test_replace_armor(self):
         p = Player.factory(pos=Pos(10, 10))
-        e = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        e = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
         p.add_item(e)
         p.armor = e
-        f = Equipment(etype=Equipment.ARMOR, name='fake armor2', value=6, worth=10, char=')', color=(0, 0, 0))
+        f = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor2 value=4 worth=10')
         p.add_item(f)
         p.equip(f)
         assert p.armor == f
+        assert p.ac == 4
         assert p.curr_msg == 'You take off the fake armor --MORE--'
         p.advance_msg()
         assert p.curr_msg == 'You put on the fake armor2'
-        assert p.armor == f
+        self.assertTrue(True)
+
+    def test_equip_weapon(self):
+        p = Player.factory(pos=Pos(10, 10))
+        e = Equipment.factory(etype=Equipment.WEAPON, template='name=fake dam=1x99')
+        p.add_item(e)
+        p.equip(e)
+        _, _, dmg, _ = p.melee_attack()
+        assert dmg == '1x99'
+        assert p.curr_msg == 'You wield the fake'
+        p.advance_msg()
+        f = Equipment.factory(etype=Equipment.WEAPON, template='name=fake2 dam=1x3')
+        p.add_item(f)
+        p.equip(f)
+        _, _, dmg, _ = p.melee_attack()
+        assert dmg == '1x3'
+        assert p.curr_msg == 'You put away the fake --MORE--'
+        p.advance_msg()
+        assert p.curr_msg == 'You wield the fake2'
         self.assertTrue(True)
 
 
@@ -324,12 +347,39 @@ class TestPlayerAI(unittest.TestCase):
         assert food in level.items
         self.assertTrue(True)
 
+    def test_perform_drop_badindex(self):
+        """Invalid object index - drop"""
+        p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(DropAction().incorporate(1))
+        # Factory creates a food in player inventory
+        p.perform()
+        assert p.curr_msg == 'No such item to drop!'
+        self.assertTrue(True)
+
+    def test_perform_use_badindex(self):
+        """Invalid object index - use"""
+        p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(UseAction().incorporate(1))
+        # Factory creates a food in player inventory
+        p.perform()
+        assert p.curr_msg == 'No such item to use!'
+        self.assertTrue(True)
+
+    def test_perform_equip_badindex(self):
+        """Invalid object index - equip"""
+        p = Player.factory(pos=Pos(10, 10))
+        p.queue_action(EquipAction().incorporate(1))
+        # Factory creates a food in player inventory
+        p.perform()
+        assert p.curr_msg == 'No such item to equip!'
+        self.assertTrue(True)
+
     def test_perform_equip_armor(self):
         """Drop the nonexistent food in your inventory"""
         p = Player(pos=Pos(10, 10))
         p.queue_action(EquipAction().incorporate(0))
         assert p.armor is None
-        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        armor = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
         p.add_item(armor)
         assert p.pack == [armor]
         p.perform()
@@ -344,7 +394,7 @@ class TestPlayerAI(unittest.TestCase):
         level = Level(1, 80, 25, None)
         level.add_player(p)
         p.queue_action(DropAction().incorporate(1))  # Factory gives one food
-        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        armor = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
         p.add_item(armor)
         p.armor = armor
         p.perform()
@@ -368,16 +418,6 @@ class TestPlayerAI(unittest.TestCase):
         assert p.curr_msg != ''
         self.assertTrue(True)
 
-    def test_perform_use_denied(self):
-        """Use the nonexistent food in your inventory"""
-        p = Player(pos=Pos(10, 10))
-        p.queue_action(UseAction().incorporate(0))
-        assert p.pack == []
-        p.perform()
-        assert p.pack == []
-        assert p.curr_msg == 'No item to use!'
-        self.assertTrue(True)
-
     # TODO: use action that doesn't destroy item
 
     # TODO: bump actions, etc.
@@ -389,17 +429,32 @@ class TestPlayerCombat(unittest.TestCase):
     """Player Combat Interface"""
 
     def test_melee_attack(self):
+        """Melee attack features plus effect of equipment"""
         p = Player.factory()
-        level, stren, dmg = p.melee_attack()
+        level, stren, dmg, dplus = p.melee_attack()
         assert level == 1
-        assert stren == 16  # TODO: weapon
-        assert dmg == '1x4'  # TODO: weapon
+        assert stren == 16
+        assert dmg == '1x4'
+        assert dplus == 0
+        w = Equipment.factory(etype=Equipment.WEAPON, template='name=fake dam=1x6')
+        p.add_item(w)
+        p.weapon = w
+        w.dplus = 2
+        w.hplus = 1
+        level, stren, dmg, dplus = p.melee_attack()
+        assert dmg == '1x6'
+        assert level == 2
+        assert dplus == 2
         self.assertTrue(True)
 
     def test_ac(self):
+        """Armor class and the effect of equipment"""
         p = Player.factory()
-        # print (p.ac)
-        assert p.ac == 10  # TODO: armor
+        assert p.ac == 10
+        armor = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
+        p.add_item(armor)
+        p.armor = armor
+        assert p.ac == 6
         self.assertTrue(True)
 
 

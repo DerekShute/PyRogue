@@ -12,6 +12,7 @@ COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
 COLOR_CHOCOLATE4 = (139, 69, 19)   # AKA "brown"
+COLOR_DEEPSKYBLUE = (0, 191, 255)
 
 FRUIT_NAME = 'slime-mold'
 """Traditional fruit name.  Settable in the original, but I can't be bothered"""
@@ -160,13 +161,27 @@ class Equipment(Item):
     """
     etype: int = 0  # ARMOR / WEAPON / etc
     worth: int = 0  # Score calculation at player demise
+    dmg: str = None
+    hurl: str = None
+    launch: str = None
+    flags: str = ''
+    hplus: int = 0
+    dplus: int = 0
+    known: bool = False  # TODO: Do you know exactly what it does/is?
 
+    # Types
     ARMOR = 0
+    WEAPON = 1
 
-    def __init__(self, etype: int, value: int, worth: int, **kwargs):
+    def __init__(self, etype: int, value: int = 0, worth: int = 0,
+                 dam: str = None, hurl: str = None, launch: str = None, flags: str = '', **kwargs):
         self.etype = etype
         self.value = value
         self.worth = worth
+        self.dam = dam
+        self.hurl = hurl
+        self.launch = launch
+        self.flags = flags
         super().__init__(**kwargs)
 
     @staticmethod
@@ -174,8 +189,11 @@ class Equipment(Item):
         """Convert from the readable format"""
         kwargs = unpack_template(template, ('prob'))
         if etype == Equipment.ARMOR:
-            kwargs['char'] = ')'
+            kwargs['char'] = ']'
             kwargs['color'] = COLOR_CHOCOLATE4
+        if etype == Equipment.WEAPON:
+            kwargs['char'] = ')'
+            kwargs['color'] = COLOR_DEEPSKYBLUE
         return Equipment(etype, **kwargs)
 
 
