@@ -70,7 +70,7 @@ class TestProcgenItem(unittest.TestCase):
     @patch('random.choices')
     @patch('random.randint')
     @patch('procgen.plus_value')
-    def test_weapon(self, input, expected, mock_plus, mock_randint, mock_choices): 
+    def test_weapon(self, input, expected, mock_plus, mock_randint, mock_choices):
         mock_plus.return_value = 1
         mock_randint.return_value = input
         mock_choices.return_value = [6]  # peg on dart
