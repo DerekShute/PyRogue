@@ -37,4 +37,20 @@ class CancelHandler(InputHandler):
     """A sentinel value to catch Cancel/Quit because not every event handler is implemented"""
     pass
 
+
+# ===== Game Loop Superclass ==============================
+
+class Gameloop:
+    _display = None
+    _previous: 'Gameloop' = None
+    _input_handler: InputHandler = None
+
+    def __init__(self, display=None, previous: 'Gameloop' = None):
+        self._display = display
+        self._previous = previous
+
+    def run(self) -> 'Gameloop':  # Quotes: 'forward declaration'
+        assert self
+        raise NotImplementedError('Cannot use Gameloop raw')
+
 # EOF

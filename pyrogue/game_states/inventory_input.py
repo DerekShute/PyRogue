@@ -1,6 +1,6 @@
 import tcod
 from actions import Action
-from input_handler import InputHandler, CancelHandler
+from game_states import InputHandler, CancelHandler
 from menu import Menu
 
 

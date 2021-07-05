@@ -4,7 +4,7 @@
 
 import unittest
 from unittest.mock import Mock
-from gameloop import MainMenuState, MainGameloop, RIPGameState
+from game_states.gameloop import MainMenuState, MainGameloop, RIPGameState
 from player import Player
 
 

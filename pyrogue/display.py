@@ -6,7 +6,7 @@ Stolen liberally from tcod_tutorial_v2
 
 from typing import Any, Tuple
 import tcod
-from input_handler import InputHandler
+from game_states import InputHandler
 from menu import Menu
 
 

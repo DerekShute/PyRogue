@@ -1,5 +1,5 @@
 import tcod
-from input_handler import InputHandler
+from game_states import InputHandler
 
 
 # ===== Main Menu Input management ========================
