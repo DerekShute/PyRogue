@@ -45,7 +45,7 @@ class Gameloop:
     _previous: 'Gameloop' = None
     _input_handler: InputHandler = None
 
-    def __init__(self, display = None, previous: 'Gameloop' = None):
+    def __init__(self, display=None, previous: 'Gameloop' = None):
         self._display = display
         self._previous = previous
 

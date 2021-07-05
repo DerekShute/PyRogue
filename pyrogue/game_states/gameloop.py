@@ -4,9 +4,8 @@
     Concept stolen shamelessly from https://github.com/HexDecimal/roguelike-tutorial
 """
 
-from display import Display
 from player import Player
-from game_states import InputHandler, Gameloop
+from game_states import Gameloop
 from game_states.player_input import PlayerInputHandler
 from game_states.rip_input import RIPInputHandler
 from game_states.mainmenu_input import MainMenuInputHandler

@@ -78,7 +78,7 @@ def connect_rooms(level: Level, r1: int, r2: int):
 
     def rand_x(room: Room) -> int:
         return rand(room.x + 1, room.max_x - 1)
-    
+
     def rand_y(room: Room) -> int:
         return rand(room.y + 1, room.max_y - 1)
 
