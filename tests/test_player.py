@@ -209,14 +209,14 @@ class TestPlayerActionCallback(unittest.TestCase):
         e = Equipment.factory(etype=Equipment.WEAPON, template='name=fake dam=1x99')
         p.add_item(e)
         p.equip(e)
-        _, _, dmg = p.melee_attack()
+        _, _, dmg, _ = p.melee_attack()
         assert dmg == '1x99'
         assert p.curr_msg == 'You wield the fake'
         p.advance_msg()
         f = Equipment.factory(etype=Equipment.WEAPON, template='name=fake2 dam=1x3')
         p.add_item(f)
         p.equip(f)
-        _, _, dmg = p.melee_attack()
+        _, _, dmg, _ = p.melee_attack()
         assert dmg == '1x3'
         assert p.curr_msg == 'You put away the fake --MORE--'
         p.advance_msg()
@@ -379,7 +379,7 @@ class TestPlayerAI(unittest.TestCase):
         p = Player(pos=Pos(10, 10))
         p.queue_action(EquipAction().incorporate(0))
         assert p.armor is None
-        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        armor = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
         p.add_item(armor)
         assert p.pack == [armor]
         p.perform()
@@ -394,7 +394,7 @@ class TestPlayerAI(unittest.TestCase):
         level = Level(1, 80, 25, None)
         level.add_player(p)
         p.queue_action(DropAction().incorporate(1))  # Factory gives one food
-        armor = Equipment(etype=Equipment.ARMOR, name='fake armor', value=6, worth=10, char=')', color=(0, 0, 0))
+        armor = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
         p.add_item(armor)
         p.armor = armor
         p.perform()
@@ -429,17 +429,32 @@ class TestPlayerCombat(unittest.TestCase):
     """Player Combat Interface"""
 
     def test_melee_attack(self):
+        """Melee attack features plus effect of equipment"""
         p = Player.factory()
-        level, stren, dmg = p.melee_attack()
+        level, stren, dmg, dplus = p.melee_attack()
         assert level == 1
-        assert stren == 16  # TODO: weapon
-        assert dmg == '1x4'  # TODO: weapon
+        assert stren == 16
+        assert dmg == '1x4'
+        assert dplus == 0
+        w = Equipment.factory(etype=Equipment.WEAPON, template='name=fake dam=1x6')
+        p.add_item(w)
+        p.weapon = w
+        w.dplus = 2
+        w.hplus = 1
+        level, stren, dmg, dplus = p.melee_attack()
+        assert dmg == '1x6'
+        assert level == 2
+        assert dplus == 2
         self.assertTrue(True)
 
     def test_ac(self):
+        """Armor class and the effect of equipment"""
         p = Player.factory()
-        # print (p.ac)
-        assert p.ac == 10  # TODO: armor
+        assert p.ac == 10
+        armor = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
+        p.add_item(armor)
+        p.armor = armor
+        assert p.ac == 6
         self.assertTrue(True)
 
 

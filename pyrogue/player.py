@@ -5,6 +5,7 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
+from typing import Tuple
 from item import Item, Food, Equipment
 from position import Pos
 from message import MessageBuffer
@@ -122,7 +123,7 @@ class Stats:  # struct stats
 
     def melee_attack(self):
         """Attack components just based on stats"""
-        return self.level, self.stren, self.dmg
+        return self.level, self.stren, self.dmg, 0
 
     @property
     def ac(self):
@@ -407,15 +408,14 @@ class Player(Entity):
         self.add_msg(f'You killed the {entity.name}!')
         self.add_exp(entity.xp_value)
 
-    def melee_attack(self):
-        """Melee attack (level, strength, dmg)"""
-        # TODO: effect of objects.  I think it can add to level instead of an explicit bonus
-        level, stren, dmg = self._stats.melee_attack()
+    def melee_attack(self) -> Tuple[int, int, str, int]:
+        """Melee attack (level, strength, dmg, dplus)"""
+        level, stren, dmg, dplus = self._stats.melee_attack()
         if self.weapon is not None:
             dmg = self.weapon.dam
             level += self.weapon.hplus
-            # TODO: starting mace is +1 damage...figure that out
-        return level, stren, dmg
+            dplus += self.weapon.dplus
+        return level, stren, dmg, dplus
 
     def take_damage(self, amount: int):
         """Took it on the chin"""

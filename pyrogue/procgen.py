@@ -57,9 +57,10 @@ def new_weapon() -> Equipment:
     if r < 10:  # 10% cursed
         weapon.flags = f'{weapon.flags} cursed'
         weapon.hplus -= plus_value()
-        # Note not dplus...interesting (though the initial mace is +1/+1)
+        # Note not dplus...interesting (though the initial mace is +1/+1, and dplus _is_ taken into consideration)
     elif r < 15:  # 5% bonus
         weapon.hplus += plus_value()
+        # Note not dplus
     # else 85% normal
     return weapon
 
