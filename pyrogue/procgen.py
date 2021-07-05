@@ -18,6 +18,7 @@ ARMOR_PROBABILITIES: List[int] = calc_probability(ARMOR_TEMPLATES)
 WEAPON_PROBABILITIES: List[int] = calc_probability(WEAPON_TEMPLATES)
 """Initialized weighted probability list"""
 
+
 # ===== Service Routines ==================================
 
 def plus_value() -> int:
@@ -41,10 +42,10 @@ def new_armor() -> Equipment:
     numlist = random.choices(list(range(0, len(ARMOR_TEMPLATES))), weights=ARMOR_PROBABILITIES, k=1)
     armor = Equipment.factory(etype=Equipment.ARMOR, template=ARMOR_TEMPLATES[numlist[0]])
     r = random.randint(0, 99)
-    if r < 20:  # cursed
+    if r < 20:    # cursed
         armor.value += plus_value()  # AD&D -> this worsens, remember?
         armor.flags = f'{armor.flags} cursed'
-    elif r < 28: # 8% magic
+    elif r < 28:  # 8% magic
         armor.value -= plus_value()  # AD&D -> this improves, remember?
     return armor
 

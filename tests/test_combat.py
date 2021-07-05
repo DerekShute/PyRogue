@@ -2,8 +2,6 @@
     Unit Test Combat Formulae
 """
 
-from parameterized import parameterized
-
 import unittest
 from unittest.mock import patch
 import combat

@@ -44,9 +44,9 @@ class TestProcgenItem(unittest.TestCase):
         assert food.description == expected
         self.assertTrue(True)
 
-    @parameterized.expand([(0, 5),  # cursed -1
-                           (25, 3), # magic +1
-                           (90, 4)]) # absolutely normal
+    @parameterized.expand([(0, 5),    # cursed -1
+                           (25, 3),   # magic +1
+                           (90, 4)])  # absolutely normal
     @patch('random.choices')
     @patch('random.randint')
     @patch('procgen.plus_value')
@@ -64,10 +64,9 @@ class TestProcgenItem(unittest.TestCase):
         assert armor.worth == 80
         self.assertTrue(True)
 
-    
-    @parameterized.expand([(5, -1),  # cursed -1
-                           (12, 1), # magic +1
-                           (90, 0)]) # absolutely normal
+    @parameterized.expand([(5, -1),   # cursed -1
+                           (12, 1),   # magic +1
+                           (90, 0)])  # absolutely normal
     @patch('random.choices')
     @patch('random.randint')
     @patch('procgen.plus_value')
