@@ -6,32 +6,16 @@
 
 from display import Display
 from player import Player
-from input_handler import InputHandler
-from input_handler.player_input import PlayerInputHandler
-from input_handler.rip_input import RIPInputHandler
-from input_handler.mainmenu_input import MainMenuInputHandler
-from rogue_level import RogueLevel
+from game_states import InputHandler, Gameloop
+from game_states.player_input import PlayerInputHandler
+from game_states.rip_input import RIPInputHandler
+from game_states.mainmenu_input import MainMenuInputHandler
+from procgen.rogue_level import RogueLevel
 from actions import QuitAction
 
 
 TEXT_COLOR = {'fg': (255, 255, 255), 'bg': (75, 75, 75)}
 """White on gray"""
-
-
-# ===== Game Loop Superclass ==============================
-
-class Gameloop:
-    _display: Display = None
-    _previous: 'Gameloop' = None
-    _input_handler: InputHandler = None
-
-    def __init__(self, display: Display = None, previous: 'Gameloop' = None):
-        self._display = display
-        self._previous = previous
-
-    def run(self) -> 'Gameloop':  # Quotes: 'forward declaration'
-        assert self
-        raise NotImplementedError('Cannot use Gameloop raw')
 
 
 # ===== RIP State ====================================

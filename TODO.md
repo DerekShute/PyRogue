@@ -35,21 +35,10 @@ Messages
 
     * TODO: history and display of history
 
-Main state machine -> Main menu, gameplay, menus, endgame
-
-    * Need a generalization of InputHandler distinguishing player game input versus menu input
-        * Then can create MainMenu and submenus
-
-    * Test InputHandler and Gameloop logic: this isn't easy
-
 AI
     * subsection and generalization.  Player AI is player input, and is a stack of handlers
 
     * Then monster actions
-
-Engine
-
-    * Everything hangs off of Engine
     
 monster.py
     AMULETLEVEL goes someplace else

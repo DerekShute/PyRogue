@@ -2,7 +2,7 @@
     Let's see if this all hangs together
 """
 from display import Display
-from gameloop import MainMenuState
+from game_states.gameloop import MainMenuState
 
 
 # Map size 80x25, but create a 80x26 display for last-line status

@@ -4,7 +4,7 @@
 
 import unittest
 from unittest.mock import patch
-import rogue_level
+import procgen.rogue_level as rogue_level
 from level import Level
 from player import Player
 

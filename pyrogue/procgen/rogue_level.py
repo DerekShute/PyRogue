@@ -76,43 +76,40 @@ def tunnel_south(r1: int, r2: int) -> bool:
 def connect_rooms(level: Level, r1: int, r2: int):
     """Hook rooms together taking into account Gone rooms and room number direction"""
 
-    # We go from the lower number room to the higher, so either digging south or east
+    def rand_x(room: Room) -> int:
+        return rand(room.x + 1, room.max_x - 1)
+    
+    def rand_y(room: Room) -> int:
+        return rand(room.y + 1, room.max_y - 1)
 
+    # We go from the lower number room to the higher, so either digging south or east
     if r2 < r1:
         temp = r1
         r1 = r2
         r2 = temp
 
-    r1_gone = False
-    r2_gone = False
+    r1_gone = True if level.rooms[r1].max_x == level.rooms[r1].x else False
+    r2_gone = True if level.rooms[r2].max_x == level.rooms[r2].x else False
 
-    if level.rooms[r1].max_x == level.rooms[r1].x:
+    if r1_gone:
         start_pos = Pos(level.rooms[r1].pos)
-        r1_gone = True
-    if level.rooms[r2].max_x == level.rooms[r2].x:
+    if r2_gone:
         end_pos = Pos(level.rooms[r2].pos)
-        r2_gone = True
 
     going_south = tunnel_south(r1, r2)
     if going_south:
         if not r1_gone:
-            start_pos = Pos(rand(level.rooms[r1].x + 1, level.rooms[r1].max_x - 1),
-                            level.rooms[r1].max_y + 1)
+            start_pos = Pos(rand_x(level.rooms[r1]), level.rooms[r1].max_y + 1)
         if not r2_gone:
-            end_pos = Pos(rand(level.rooms[r2].x + 1, level.rooms[r2].max_x - 1),
-                          level.rooms[r2].y - 1)
+            end_pos = Pos(rand_x(level.rooms[r2]), level.rooms[r2].y - 1)
     else:
         if not r1_gone:
-            start_pos = Pos(level.rooms[r1].max_x + 1,
-                            rand(level.rooms[r1].y + 1, level.rooms[r1].max_y - 1))
+            start_pos = Pos(level.rooms[r1].max_x + 1, rand_y(level.rooms[r1]))
         if not r2_gone:
-            end_pos = Pos(level.rooms[r2].x - 1,
-                          rand(level.rooms[r2].y + 1, level.rooms[r2].max_y - 1))
-
-    # Gone rooms don't get the dignification of having a door
+            end_pos = Pos(level.rooms[r2].x - 1, rand_y(level.rooms[r2]))
 
     level.add_passage(start_pos, end_pos, going_south)
-    if not r1_gone:
+    if not r1_gone:  # No doors for gone rooms
         level.add_door(start_pos)
     if not r2_gone:
         level.add_door(end_pos)

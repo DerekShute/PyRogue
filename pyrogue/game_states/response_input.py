@@ -6,7 +6,7 @@
 
 import tcod
 from actions import Action
-from input_handler import InputHandler
+from game_states import InputHandler
 
 
 # ===== ResponseInputHandler ================================
