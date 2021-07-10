@@ -1,7 +1,8 @@
 import tcod
-from typing import Any, Tuple
+from typing import Any
 from entity import Entity
 from position import Pos
+
 
 MOVE_KEYS = {
     # Arrow keys.
@@ -43,6 +44,7 @@ class InputHandler(tcod.event.EventDispatch[Any]):
     def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown):
         self.mouse = Pos(event.tile.x, event.tile.y)
         self.mousedown = True
+
 
 # ===== CancelHandler derived class =======================
 
