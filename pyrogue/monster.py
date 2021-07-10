@@ -153,6 +153,7 @@ class Monster(Entity):  # struct monster
 
     def detach_level(self):
         if self.level is not None:  # Test cases omit having one
+            self.level.queue.remove(self)
             self.level.remove_monster(self)
             self.level = None
 
@@ -168,7 +169,6 @@ class Monster(Entity):  # struct monster
         # TODO: certain monsters have consequences: Venus Flytrap, Leprechaun
         # TODO: drops everything in pack
         assert entity
-        self.level.queue.remove(self)
         self.detach_level()
 
     # TODO: wakes up monsters, and need a solution for monster hitting monster
