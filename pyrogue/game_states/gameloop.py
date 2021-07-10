@@ -10,7 +10,6 @@ from game_states.player_input import PlayerInputHandler
 from game_states.rip_input import RIPInputHandler
 from game_states.mainmenu_input import MainMenuInputHandler
 from procgen.rogue_level import RogueLevel
-from actions import QuitAction
 
 
 TEXT_COLOR = {'fg': (255, 255, 255), 'bg': (75, 75, 75)}

@@ -1,5 +1,5 @@
 import tcod
-from actions import Action, QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction, EquipAction
+from actions import QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction, EquipAction
 from game_states import InputHandler, CancelHandler, MOVE_KEYS
 from game_states.response_input import ResponseInputHandler
 from game_states.inventory_input import InventoryInputHandler
