@@ -33,7 +33,7 @@ class RIPGameState(Gameloop):
         """I don't feel like drawing out a tombstone"""
         self._display.clear()
         # Killed by
-        if self.situation == 'quit':
+        if self.player.demise == 'quit':
             self._display.centered_msg(y=8, string='A COWARDLY ESCAPE BY', **TEXT_COLOR)
         else:
             self._display.centered_msg(y=8, string='REST IN PEACE', **TEXT_COLOR)
@@ -73,13 +73,11 @@ class MainGameloop(Gameloop):
             self.level = RogueLevel(self.level_no, *self._display.size, self._display, player=self.player)
 
         self.player.level.render()
-        self.input_handler, action = self._display.display(self.input_handler, self.player)
-        if isinstance(action, QuitAction):
-            del self.level
-            return RIPGameState(display=self._display, previous=self._previous, player=self.player, situation='quit')
-        self.player.queue_action(action)
+        self.input_handler = self._display.display(self.input_handler)
         self.player.level.run_queue()
-        # TODO: player death
+        if self.player.demise is not None:
+            del self.level
+            return RIPGameState(display=self._display, previous=self._previous, player=self.player)
         return self
 
 

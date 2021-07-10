@@ -70,19 +70,14 @@ class Display:
         """Burying the TCOD details somewhere"""
         ret = None
         for event in tcod.event.wait():  # TODO: use get() for no-wait operation
-            self._context.convert_event(event)  # mouse pixel -> tile
             ret = input_handler.dispatch(event)
-            return ret if ret is not None else (input_handler, None)
+            return ret if ret is not None else input_handler
+        return input_handler
 
-    def display(self, input_handler: InputHandler, player) -> Tuple[InputHandler, Any]:
+    def display(self, input_handler: InputHandler) -> InputHandler:
         """Burying the TCOD details somewhere"""
         input_handler.render_layer(self)
         self.present()
-        if player.msg_count > 1:
-            for event in tcod.event.wait():
-                if event.type == 'KEYDOWN':
-                    player.advance_msg()
-            return (input_handler, None)
         return self.dispatch_event(input_handler)
 
     def draw_menu(self, x: int, menu: Menu):

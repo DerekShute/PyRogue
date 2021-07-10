@@ -30,6 +30,9 @@ class QuitAction(Action):
             return self
         return None
 
+    def perform(self, entity: Entity) -> None:
+        entity.quit_action('quit')
+
 
 class DescendAction(Action):
     """Go down"""

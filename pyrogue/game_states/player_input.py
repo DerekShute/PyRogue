@@ -10,53 +10,54 @@ from game_states.inventory_input import InventoryInputHandler
 class PlayerInputHandler(InputHandler):
     """Base input handler for ordinary game input"""
 
-    def ev_quit(self, event: tcod.event.Quit) -> (InputHandler, Action):
-        return CancelHandler(), None  # Out the door immediately
+    def ev_quit(self, event: tcod.event.Quit) -> InputHandler:
+        return CancelHandler()  # Out the door immediately
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> (InputHandler, Action):
+    def ev_keydown(self, event: tcod.event.KeyDown) -> InputHandler:
         key = event.sym
         modifier = event.mod
 
         if self.entity.msg_count > 1:
             self.entity.advance_msg()
-            return self, None
+            return self
 
         if key == tcod.event.K_PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
-            return self, DescendAction()
+            self.entity.queue_action(DescendAction())
+            return self
         elif key == tcod.event.K_ESCAPE:
-            return (ResponseInputHandler(previous=self,
-                                         responses='YyNn',
-                                         string='Really quit? (y/N)',
-                                         action=QuitAction()),
-                    None)
+            return ResponseInputHandler(previous=self,
+                                        responses='YyNn',
+                                        entity=self.entity,
+                                        string='Really quit? (y/N)',
+                                        action=QuitAction())
         elif key == tcod.event.K_d:
-            return (InventoryInputHandler(usage='drop',
-                                          previous=self,
-                                          entity=self.entity,
-                                          action=DropAction(),
-                                          msg='Drop which item?'),
-                    None)
+            return InventoryInputHandler(usage='drop',
+                                         previous=self,
+                                         entity=self.entity,
+                                         action=DropAction(),
+                                         msg='Drop which item?')
+
         elif key == tcod.event.K_e:
-            return (InventoryInputHandler(usage='equip',
-                                          previous=self,
-                                          entity=self.entity,
-                                          action=EquipAction(),
-                                          msg='Equip which item?'),
-                    None)
+            return InventoryInputHandler(usage='equip',
+                                         previous=self,
+                                         entity=self.entity,
+                                         action=EquipAction(),
+                                         msg='Equip which item?')
         elif key == tcod.event.K_g:
-            return self, PickupAction()
+            self.entity.queue_action(PickupAction())
+            return self
         elif key == tcod.event.K_i:
-            return InventoryInputHandler(previous=self, entity=self.entity), None
+            return InventoryInputHandler(previous=self, entity=self.entity)
         elif key == tcod.event.K_u:
-            return (InventoryInputHandler(usage='use',
-                                          previous=self,
-                                          entity=self.entity,
-                                          action=UseAction(),
-                                          msg='Use which item?'),
-                    None)
+            return InventoryInputHandler(usage='use',
+                                         previous=self,
+                                         entity=self.entity,
+                                         action=UseAction(),
+                                         msg='Use which item?')
         elif key in MOVE_KEYS:
-            return self, MovementAction(*MOVE_KEYS[key])
-        return self, None
+            self.entity.queue_action(MovementAction(*MOVE_KEYS[key]))
+            return self
+        return self
 
     def render_layer(self, display):
         # Note: original uses line 0, this uses last line
