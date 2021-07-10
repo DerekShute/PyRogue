@@ -46,10 +46,11 @@ class TestRIPState(unittest.TestCase):
         p.add_exp(1000)
         p.purse = 500
         p.levelno = 4
+        p.demise = 'quit'
         event_return = Mock(return_value='quit')
         msg_mock = Mock()
         display_mock = Mock(dispatch_event=event_return, centered_msg=msg_mock)
-        loop = RIPGameState(display=display_mock, player=p, situation='quit').run()
+        loop = RIPGameState(display=display_mock, player=p).run()
         assert loop is None
         assert msg_mock.call_count == 4
         expected = ('A COWARDLY ESCAPE BY',

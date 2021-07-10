@@ -144,6 +144,7 @@ class Player(Entity):
     actionq = []
     armor: Equipment = None
     weapon: Equipment = None
+    demise: str = None
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -152,6 +153,7 @@ class Player(Entity):
         self._food_left = food_left
         self.levelno = 0
         self.actionq = []
+        self.demise = None
 
     def __str__(self):
         return f'Player({Pos(self.pos)},{self._stats})'
@@ -230,11 +232,13 @@ class Player(Entity):
 
     # ===== Action ========================================
 
-    def queue_action(self, action):
-        self.actionq.append(action)
+    def quit_action(self, cause: str):
+        """Player has quit or player has died"""
+        self.demise = cause
 
-    def get_action(self):
-        return self.actionq.pop(0) if len(self.actionq) > 0 else None
+    def queue_action(self, action):
+        """Input handler drops an Action onto the queue"""
+        self.actionq.append(action)
 
     def fight(self, entity: Entity):
         fight(self, entity)
@@ -323,8 +327,8 @@ class Player(Entity):
 
     def perform(self) -> bool:
         """Act.  Return True to indicate reschedule"""
-        action = self.get_action()
-        if action is not None:
+        if len(self.actionq) > 0:
+            action = self.actionq.pop(0)
             self.advance_msg()
             action.perform(self)  # TODO: action cost, haste and slow effects
             self.key = self.key + ACTION_COST

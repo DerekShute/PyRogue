@@ -228,10 +228,8 @@ class TestPlayerActionCallback(unittest.TestCase):
 
 class TestPlayerAI(unittest.TestCase):
 
-    @patch('player.Player.get_action')
-    def test_perform_no_action(self, get_action_mock):
+    def test_perform_no_action(self):
         """No action in perform"""
-        get_action_mock.return_value = None
         p = Player.factory(pos=Pos(10, 10))
         p.perform()
         self.assertTrue(True)
