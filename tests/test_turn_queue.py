@@ -58,6 +58,19 @@ class TestTurnQueue(unittest.TestCase):
         assert tq.pop() is None
         self.assertTrue(True)
 
+    def test_remove(self):
+        tq = TurnQueue()
+        qi1 = QueueItem(0)
+        qi2 = QueueItem(4)
+        tq.add(qi2)
+        tq.add(qi1)
+        tq.remove(qi1)
+        assert tq.pop().key == 4
+        tq.add(qi1)
+        tq.remove(qi1)
+        assert tq.pop() is None
+        self.assertTrue(True)
+
 
 # ===== Invocation ========================================
 
