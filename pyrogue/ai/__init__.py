@@ -3,7 +3,6 @@
 """
 import random
 from entity import Entity
-from level import Level
 from actions import Action, MovementAction
 
 
@@ -21,6 +20,7 @@ class AI:
         """Does this entity come awake?"""
         return True  # TODO: chance of staying asleep?
 
+
 # ===== ConfusedAI ========================================
 
 class ConfusedAI(AI):
@@ -35,7 +35,7 @@ class ConfusedAI(AI):
              (1, 0),    # East
              (-1, 1),   # Southwest
              (0, 1),    # South
-             (1, 1),]   # Southeast
+             (1, 1), ]  # Southeast
         )
         return MovementAction(dx, dy)
         # TODO: countdown
