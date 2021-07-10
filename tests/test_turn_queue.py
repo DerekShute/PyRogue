@@ -68,7 +68,7 @@ class TestTurnQueue(unittest.TestCase):
         assert tq.pop().key == 4
         tq.add(qi1)
         tq.remove(qi1)
-        assert tq.pop() == None
+        assert tq.pop() is None
         self.assertTrue(True)
 
 
