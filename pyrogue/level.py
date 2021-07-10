@@ -227,7 +227,7 @@ class Level:
                 curr_room.found = True
                 for monster in [monster for monster in self.monsters if curr_room.inside(monster.pos)]:
                     print(f'Activating {monster.name} at {monster.pos}')
-                    # self.queue.add(monster.activate(self.queue.now))  TODO something like that
+                    self.queue.add(monster.activate(self.queue.now))
         return curr_room
 
 

@@ -7,6 +7,8 @@ from typing import Dict, Any, Tuple
 from position import Pos
 from entity import Entity
 from level import Level
+from ai import AI, ConfusedAI
+
 
 AMULETLEVEL = 26
 """Per rogue.h : this goes somewhere"""
@@ -41,6 +43,9 @@ MONSTER_TEMPLATES = (
 )
 
 ORC_GREEN = (63, 127, 63)  # TODO: color per monster somehow?  Subtype?
+
+
+ACTION_COST = 8
 
 
 # ===== Service Routines ===================================
@@ -109,6 +114,7 @@ class Monster(Entity):  # struct monster
     dmg: str = ''
     disguise: int = 0  # For xeroc in disguise
     dest: Pos = None   # AI: where it is going.  Player location, room gold (see room->r_gold)
+    ai: AI = None
 
     # pack: Item = None   # What the monster is holding and drops
     # TODO: t_room = room it is in (why?)
@@ -122,6 +128,7 @@ class Monster(Entity):  # struct monster
         for key, value in arglist.items():
             setattr(self, key, value)
         self.hpt = self.maxhp
+        self.ai = ConfusedAI()  # TODO: for now
         super().__init__(pos=pos, mtype=mtype, name=arglist['name'])
 
     def __str__(self) -> str:
@@ -146,6 +153,7 @@ class Monster(Entity):  # struct monster
 
     def detach_level(self):
         if self.level is not None:  # Test cases omit having one
+            self.level.queue.remove(self)
             self.level.remove_monster(self)
             self.level = None
 
@@ -183,6 +191,29 @@ class Monster(Entity):  # struct monster
     @property
     def xp_value(self) -> int:
         return self.exp
+
+    # ===== AI ============================================
+
+    def perform(self) -> bool:
+        action = self.ai.get_action()
+        action.perform(self)
+        self.key += ACTION_COST
+        # TODO: possibly revert AI
+        return True
+
+    def activate(self, key: int) -> 'Monster':
+        self.key = key + 5  # TODO: need a bit of noise here
+        self.ai.activate()
+        return self
+
+    # ===== Action callback ===============================
+
+    def move(self, dx: int, dy: int):
+        self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
+
+    def bump(self, pos: Pos):
+        # TODO: witty message about observing it hit the wall
+        assert pos
 
     # ===== Interface =====================================
 
