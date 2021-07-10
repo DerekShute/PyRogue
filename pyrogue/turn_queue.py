@@ -40,6 +40,11 @@ class TurnQueue:
         self._now = ret.key
         return ret
 
+    def remove(self, rid):
+        self._queue.remove(rid)
+        if len(self._queue) > 0:
+            self._now = self._queue[0].key
+
 
 # ===== Testing ===========================================
 
