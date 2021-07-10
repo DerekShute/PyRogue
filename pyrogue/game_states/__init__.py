@@ -1,6 +1,7 @@
 import tcod
 from typing import Any
 from entity import Entity
+from position import Pos
 
 
 MOVE_KEYS = {
@@ -16,6 +17,8 @@ MOVE_KEYS = {
 
 class InputHandler(tcod.event.EventDispatch[Any]):
     previous: 'InputHandler' = None
+    mouse: Pos = None
+    mousedown: bool = False
 
     def __init__(self, entity: Entity = None, previous: 'InputHandler' = None):
         super().__init__()
@@ -28,7 +31,19 @@ class InputHandler(tcod.event.EventDispatch[Any]):
 
     def render_layer(self, display):
         """Display extra stuff needed for this InputHandler"""
-        raise NotImplementedError()
+        return None
+
+    def ev_mousemotion(self, event: tcod.event.MouseMotion):
+        """Mouse has moved"""
+        self.mouse = Pos(event.tile.x, event.tile.y)
+
+    def ev_mousebuttonup(self, event: tcod.event.MouseButtonUp):
+        self.mouse = Pos(event.tile.x, event.tile.y)
+        self.mousedown = False
+
+    def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown):
+        self.mouse = Pos(event.tile.x, event.tile.y)
+        self.mousedown = True
 
 
 # ===== CancelHandler derived class =======================

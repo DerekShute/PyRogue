@@ -1,10 +1,15 @@
-IN PROGRESS
+TARGETING
 
-    Inventory --> need question response, menus, new InputHandlers, split Action
-
+    Select
+    
+    see 't' throw, missile()
+        get_item WEAPON to 'throw'
+            rids object from pack
+            do_motion ydelta, xdelta
+            if wall/door tile at final location, drops to floor
+            if monster at, hit_monster() and if miss falls to floor
+ 
 BIG TODO:
-
-    Items and equipment
 
     Monster AI
 
@@ -14,6 +19,8 @@ Gameplay
 
     Food effects, hunger,
         * Testing of effects, add to display, fainting, weakness, death -- see stomach()
+
+    Better inventory (menu next-line, group similar when no difference, etc)
 
 Items in general
 
