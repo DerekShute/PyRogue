@@ -21,6 +21,9 @@ class PlayerInputHandler(InputHandler):
             self.entity.advance_msg()
             return self
 
+        if len(self.entity.actionq) > 0:  # Don't spam the input
+            return self
+
         if key == tcod.event.K_PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
             self.entity.queue_action(DescendAction())
             return self
