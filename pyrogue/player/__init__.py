@@ -238,7 +238,8 @@ class Player(Entity):
 
     def queue_action(self, action):
         """Input handler drops an Action onto the queue"""
-        self.actionq.append(action)
+        if action is not None:
+            self.actionq.append(action)
 
     def fight(self, entity: Entity):
         fight(self, entity)
