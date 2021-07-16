@@ -23,16 +23,16 @@ class ResponseInputHandler(InputHandler):
         self.action = action
         self.string = string
 
-    def ev_quit(self, event: tcod.event.Quit) -> InputHandler:
+    def ev_quit(self, event: tcod.event.Quit):
         return self.previous
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> InputHandler:
+    def ev_keydown(self, event: tcod.event.KeyDown):
         key = event.sym
 
         # TODO: special meaning escape key
         if key < 257 and chr(key) in self.responses:  # Condition met.  Don't feed large numbers into chr()
             if self.entity is not None and self.action is not None:
-                self.entity.queue_action(self.action.incorporate(key))
+                return self.action.incorporate(key)
             return self.previous
         return self
 

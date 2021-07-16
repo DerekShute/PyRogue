@@ -10,10 +10,10 @@ from game_states.inventory_input import InventoryInputHandler
 class PlayerInputHandler(InputHandler):
     """Base input handler for ordinary game input"""
 
-    def ev_quit(self, event: tcod.event.Quit) -> InputHandler:
+    def ev_quit(self, event: tcod.event.Quit):
         return CancelHandler()  # Out the door immediately
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> InputHandler:
+    def ev_keydown(self, event: tcod.event.KeyDown):
         key = event.sym
         modifier = event.mod
 
@@ -21,12 +21,8 @@ class PlayerInputHandler(InputHandler):
             self.entity.advance_msg()
             return self
 
-        if len(self.entity.actionq) > 0:  # Don't spam the input
-            return self
-
         if key == tcod.event.K_PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
-            self.entity.queue_action(DescendAction())
-            return self
+            return DescendAction()
         elif key == tcod.event.K_ESCAPE:
             return ResponseInputHandler(previous=self,
                                         responses='YyNn',
@@ -47,8 +43,7 @@ class PlayerInputHandler(InputHandler):
                                          action=EquipAction(),
                                          msg='Equip which item?')
         elif key == tcod.event.K_g:
-            self.entity.queue_action(PickupAction())
-            return self
+            return PickupAction()
         elif key == tcod.event.K_i:
             return InventoryInputHandler(previous=self, entity=self.entity)
         elif key == tcod.event.K_u:
@@ -58,8 +53,7 @@ class PlayerInputHandler(InputHandler):
                                          action=UseAction(),
                                          msg='Use which item?')
         elif key in MOVE_KEYS:
-            self.entity.queue_action(MovementAction(*MOVE_KEYS[key]))
-            return self
+            return MovementAction(*MOVE_KEYS[key])
         return self
 
     def render_layer(self, display):

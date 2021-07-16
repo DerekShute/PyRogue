@@ -211,9 +211,9 @@ class Level:
 
     def run_queue(self):
         """Run one element from the timer queue"""
-        element = self.queue.pop()
-        if element is not None:
-            # Not keen on this interface, but we'll see
+        end_time = self.queue.end
+        while self.queue.now <= end_time:
+            element = self.queue.pop()  # TODO: need concept of 'now' so we can run the queue to a certain point
             reschedule = element.perform()
             if reschedule:
                 self.queue.add(element)

@@ -66,16 +66,14 @@ class Display:
         """Perform update"""
         self._context.present(self._console)
 
-    def dispatch_event(self, input_handler: InputHandler) -> Tuple[InputHandler, Any]:
+    def dispatch_event(self, input_handler: InputHandler):
         """Burying the TCOD details somewhere"""
-        ret = None
         for event in tcod.event.wait():  # TODO: use get() for no-wait operation
             self._context.convert_event(event)  # mouse pixel -> tile
-            ret = input_handler.dispatch(event)
-            return ret if ret is not None else input_handler
+            return input_handler.dispatch(event)
         return input_handler
 
-    def display(self, input_handler: InputHandler) -> InputHandler:
+    def display(self, input_handler: InputHandler):
         """Burying the TCOD details somewhere"""
         input_handler.render_layer(self)
         self.present()

@@ -20,15 +20,14 @@ class InventoryInputHandler(InputHandler):
         self.msg = msg
         self.action = action
 
-    def ev_quit(self, event: tcod.event.Quit) -> InputHandler:
+    def ev_quit(self, event: tcod.event.Quit):
         return CancelHandler()
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> InputHandler:
+    def ev_keydown(self, event: tcod.event.KeyDown):
         key = event.sym
         if self.usage != '':
             if key >= ord('a') and key <= ord('z'):
-                self.entity.queue_action(self.action.incorporate(key - ord('a')))
-                return self.previous
+                return self.action.incorporate(key - ord('a'))
         return self.previous
 
     def render_layer(self, display):
