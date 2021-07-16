@@ -264,7 +264,7 @@ class Player(Entity):
         self.level.add_item(item)
         item.set_parent(self.level)
 
-    def equip(self, item: Equipment):
+    def equip(self, item: Item):
         def equip_weapon():
             if self.weapon is None:
                 self.add_msg(f'You wield the {item.name}')
@@ -286,6 +286,10 @@ class Player(Entity):
             else:
                 self.equip(self.armor)
                 self.equip(item)
+
+        if not isinstance(item, Equipment):
+            self.add_msg(f'The {item.name} cannot be equipped.')
+            return
 
         if item.etype == Equipment.WEAPON:
             equip_weapon()

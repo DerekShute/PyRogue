@@ -132,6 +132,15 @@ class TestPlayer(unittest.TestCase):
         assert len(menu.text) == 0
         self.assertTrue(True)
 
+    def test_equip_food(self):
+        p = Player.factory(pos=Pos(1, 1))
+        f = Food(which=Food.FRUIT)
+        f.set_parent(p)
+        p.add_item(f)
+        p.equip(f)
+        assert p.curr_msg == 'The food cannot be equipped.'
+        self.assertTrue(True)
+
     @parameterized.expand([
         (Equipment.WEAPON, 'b: fake (wielded)'),
         (Equipment.ARMOR, 'b: fake (being worn)'),
