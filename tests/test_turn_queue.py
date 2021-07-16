@@ -32,11 +32,13 @@ class TestTurnQueue(unittest.TestCase):
         assert tq.now == 0
         tq.add(QueueItem(4))
         print(str(tq))
+        assert tq.now == 4
+        assert tq.end == 4
+        _ = tq.pop()
         assert tq.now == 0
+        assert tq.end == 0
         _ = tq.pop()
-        assert tq.now == 4
-        _ = tq.pop()
-        assert tq.now == 4
+        assert tq.now == 0
         self.assertTrue(True)
 
     def test_reordering(self):
@@ -45,12 +47,13 @@ class TestTurnQueue(unittest.TestCase):
         tq.add(QueueItem(0))
         tq.add(QueueItem(2))
         assert tq.now == 0
+        assert tq.end == 4
         assert tq.pop().key == 0
-        assert tq.now == 0
-        assert tq.pop().key == 2
         assert tq.now == 2
-        assert tq.pop().key == 4
+        assert tq.pop().key == 2
         assert tq.now == 4
+        assert tq.pop().key == 4
+        assert tq.now == 0
         self.assertTrue(True)
 
     def test_empty(self):

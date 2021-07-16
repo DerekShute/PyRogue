@@ -5,10 +5,11 @@
 """
 
 from player import Player
-from game_states import Gameloop
+from game_states import Gameloop, CancelHandler
 from game_states.player_input import PlayerInputHandler
 from game_states.rip_input import RIPInputHandler
 from game_states.mainmenu_input import MainMenuInputHandler
+from actions import Action
 from procgen.rogue_level import RogueLevel
 
 
@@ -72,7 +73,16 @@ class MainGameloop(Gameloop):
             self.level = RogueLevel(self.level_no, *self._display.size, self._display, player=self.player)
 
         self.player.level.render()
-        self.input_handler = self._display.display(self.input_handler)
+        while True:
+            ret = self._display.display(self.input_handler)
+            if isinstance(ret, Action):
+                self.player.queue_action(ret)
+                self.input_handler = PlayerInputHandler(entity=self.player)
+                break
+            if isinstance(ret, CancelHandler):
+                return self._previous
+            self.input_handler = ret if ret is not None else self.input_handler
+
         self.player.level.run_queue()
         if self.player.demise is not None:
             del self.level
