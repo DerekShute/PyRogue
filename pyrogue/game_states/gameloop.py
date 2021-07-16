@@ -82,7 +82,7 @@ class MainGameloop(Gameloop):
             if isinstance(ret, CancelHandler):
                 return self._previous
             self.input_handler = ret if ret is not None else self.input_handler
-        
+
         self.player.level.run_queue()
         if self.player.demise is not None:
             del self.level
