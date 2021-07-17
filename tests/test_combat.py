@@ -126,7 +126,7 @@ class TestCombatBasics(unittest.TestCase):
         mock_randint.side_effect = randint_return_min
         p = Player.factory()
         m = Monster.factory(None, 1, ord('G'))  # Two attacks
-        result = combat.roll_em(m, p)
+        _ = combat.roll_em(m, p)
         assert mock_roll.call_args_list == [call('4x3'), call('3x5')]
         self.assertTrue(True)
 
