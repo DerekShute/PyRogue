@@ -6,6 +6,8 @@ from __future__ import annotations
 from typing import List, Tuple, TYPE_CHECKING
 from position import Pos
 from item import Item
+from combat import fight
+
 
 if TYPE_CHECKING:
     from level import Level
@@ -72,13 +74,33 @@ class Entity:
     #   ac property
     #   melee_attack tuple
     #   death (this entity dead)
-    #   kill  (this entity kills something else)
     #   take_damage
     #   xp_value property
     #   add_hit_msg
     #   add_was_hit_msg
     #   add_miss_msg
     #   add_was_missed_msg
+
+    def add_hit_msg(self, entity):
+        # TODO: worth a message if monster brawl
+        pass
+
+    def add_was_hit_msg(self, entity):
+        pass
+
+    def add_miss_msg(self, entity):
+        pass
+
+    def add_was_missed_msg(self, entity):
+        pass
+
+    def kill(self, entity: Entity):
+        """This entity killed something else"""
+        # TODO: worth a message if monster brawl
+        pass
+
+    def fight(self, entity: Entity):
+        fight(self, entity)
 
     # ===== Action Callbacks ==============================
 

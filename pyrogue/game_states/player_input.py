@@ -1,5 +1,5 @@
 import tcod
-from actions import QuitAction, DescendAction, MovementAction, PickupAction, UseAction, DropAction, EquipAction
+from actions import QuitAction, DescendAction, BumpAction, PickupAction, UseAction, DropAction, EquipAction
 from game_states import InputHandler, CancelHandler, MOVE_KEYS
 from game_states.response_input import ResponseInputHandler
 from game_states.inventory_input import InventoryInputHandler
@@ -53,7 +53,7 @@ class PlayerInputHandler(InputHandler):
                                          action=UseAction(),
                                          msg='Use which item?')
         elif key in MOVE_KEYS:
-            return MovementAction(*MOVE_KEYS[key])
+            return BumpAction(*MOVE_KEYS[key])
         return self
 
     def render_layer(self, display):

@@ -3,7 +3,7 @@
 """
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, call
 import combat
 from player import Player
 from monster import Monster
@@ -119,7 +119,16 @@ class TestCombatBasics(unittest.TestCase):
         assert result == 10  # Damage done - max of 1..4 + 1 + 5
         self.assertTrue(True)
 
-# TODO: roll_em multiple attacks, but need monster to attack player
+    @patch('combat.roll')
+    @patch('random.randint')
+    def test_roll_em_multiattack(self, mock_randint, mock_roll):
+        """Monsters can have multiple attacks"""
+        mock_randint.side_effect = randint_return_min
+        p = Player.factory()
+        m = Monster.factory(None, 1, ord('G'))  # Two attacks
+        result = combat.roll_em(m, p)
+        assert mock_roll.call_args_list == [call('4x3'), call('3x5')]
+        self.assertTrue(True)
 
     @patch('random.randint')
     @patch('random.choice')

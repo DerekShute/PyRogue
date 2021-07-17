@@ -9,7 +9,6 @@ from typing import Tuple
 from item import Item, Food, Equipment
 from position import Pos
 from message import MessageBuffer
-from combat import fight
 from level import Level
 from menu import Menu
 
@@ -241,9 +240,6 @@ class Player(Entity):
         if action is not None:
             self.actionq.append(action)
 
-    def fight(self, entity: Entity):
-        fight(self, entity)
-
     def bump(self, pos: Pos):
         assert pos
         self.add_msg('Ouch!')
@@ -410,8 +406,8 @@ class Player(Entity):
         self.add_msg(f'The {entity.name} {random.choice(MONSTER_MISS)} you')
 
     def death(self, entity):
-        self.msg(f'You were killed by the {entity.name}!')  # TODO traps?
-        # TODO raise end-of-game
+        self.add_msg(f'You were killed by the {entity.name}!')  # TODO traps?
+        self.demise = entity.name
 
     def kill(self, entity):  # TODO: monster
         self.add_msg(f'You killed the {entity.name}!')

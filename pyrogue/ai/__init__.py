@@ -3,7 +3,7 @@
 """
 import random
 from entity import Entity
-from actions import Action, MovementAction
+from actions import Action, BumpAction
 
 
 # ===== AI ================================================
@@ -37,7 +37,7 @@ class ConfusedAI(AI):
              (0, 1),    # South
              (1, 1), ]  # Southeast
         )
-        return MovementAction(dx, dy)
+        return BumpAction(dx, dy)
         # TODO: countdown
 
 
