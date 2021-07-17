@@ -38,7 +38,9 @@ Messages
 AI
     * subsection and generalization.  Player AI is player input, and is a stack of handlers
 
-    * Then monster actions
+SAVE GAMES
+
+    * Potion description strings and so forth: must somehow attach to savegame...
     
 monster.py
     AMULETLEVEL goes someplace else

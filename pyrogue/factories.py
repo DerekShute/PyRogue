@@ -57,6 +57,57 @@ WEAPON_TEMPLATES = (
 )
 
 
+# ===== POTION TEMPLATES ==================================
+
+POTION_RAINBOW = (
+    'amber',
+    'aquamarine',
+    'black',
+    'blue',
+    'brown',
+    'clear',
+    'crimson',
+    'cyan',
+    'ecru',
+    'gold',
+    'green',
+    'grey',
+    'magenta',
+    'orange',
+    'pink',
+    'plaid',
+    'purple',
+    'red',
+    'silver',
+    'tan',
+    'tangerine',
+    'topaz',
+    'turquoise',
+    'vermilion',
+    'violet',
+    'white',
+    'yellow',
+)
+
+
+POTION_TEMPLATES = (
+    'name=confusion prob=7 worth=5',
+    'name=hallucination prob=8 worth=5',
+    'name=poison prob=8 worth=5',
+    'name=gain_strength prob=13 worth=150',
+    'name=see_invisible prob=3 worth=100',
+    'name=healing prob=13 worth=150',
+    'name=monster_detection prob=6 worth=130',
+    'name=magic_detection prob=5 worth=105',
+    'name=raise_level prob=2 worth=250',
+    'name=extra_healing prob=5 worth=200',
+    'name=haste_self prob=13 worth=130',
+    'name=restore_strength prob=13 worth=130',
+    'name=blindness prob=5 worth=5',
+    'name=levitation prob=5 worth=75',
+)
+
+
 # ===== Probability calculations and whatnot ==============
 
 def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:

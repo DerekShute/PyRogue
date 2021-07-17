@@ -11,6 +11,7 @@ from game_states.rip_input import RIPInputHandler
 from game_states.mainmenu_input import MainMenuInputHandler
 from actions import Action
 from procgen.rogue_level import RogueLevel
+from procgen import game_init
 
 
 TEXT_COLOR = {'fg': (255, 255, 255), 'bg': (75, 75, 75)}
@@ -107,6 +108,7 @@ class MainMenuState(Gameloop):
         self._display.present()
         result = self._display.dispatch_event(self.input_handler)
         if result == 'new':  # New Game
+            game_init()
             return MainGameloop(display=self._display, previous=self)
         if result == 'quit':  # Exit
             return None

@@ -13,6 +13,7 @@ COLOR_WHITE = (255, 255, 255)
 COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
 COLOR_CHOCOLATE4 = (139, 69, 19)   # AKA "brown"
 COLOR_DEEPSKYBLUE = (0, 191, 255)
+COLOR_PURPLE = (128, 0, 128)
 
 FRUIT_NAME = 'slime-mold'
 """Traditional fruit name.  Settable in the original, but I can't be bothered"""
@@ -197,11 +198,42 @@ class Equipment(Item):
         return Equipment(etype, **kwargs)
 
 
-# ===== Level Generation ==================================
+# ===== CONSUMABLES =======================================
 
-# Randomly pick an item ('new_thing'?) during level generation
+class Consumable(Item):
+    """
+    Consumable items: potions, scrolls, and 'sticks'
+    """
+    desc: str = ''   # Description string - 'blue', 'emerald', 'maple', etc.
+    etype: int         # POTION / etc
+    worth: int         # score calculation at player demise
+    known: bool = False  # TODO: uh oh - this is by type
+    # TODO: charges
 
-# Sum the probabilities per types so they start at '5' for a particular item type but becomes a range for a d100 roll
+    # TYPES
+    POTION = 0
+
+    def __init__(self, etype:int, desc: str, worth: int, **kwargs):
+        self.desc = desc
+        self.etype = etype
+        self.worth = worth
+        self.known = False
+        super().__init__(**kwargs)
+
+    # TODO: report name also depends on 'known'
+
+    def description(self):
+        if self.known:
+            return f'a {self.name} potion'
+        return f'a {self.desc} potion'
+
+    @staticmethod
+    def factory(etype: int, template: str, desc: str):
+        kwargs = unpack_template(template, ('prob'))
+        if etype == Consumable.POTION:
+            kwargs['char'] = '!'
+            kwargs['color'] = COLOR_PURPLE
+        return Consumable(etype, desc, **kwargs)
 
 # ===== TESTING ===========================================
 
