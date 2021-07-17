@@ -99,8 +99,8 @@ class TestPlayer(unittest.TestCase):
         p.add_item(f)
         menu = p.render_inventory('')
         assert menu.title == 'inventory'
-        assert menu.text[0] == 'a food ration'
-        assert menu.text[1] == 'a slime-mold'
+        assert menu.text[0] == 'food ration'
+        assert menu.text[1] == 'slime-mold'
         self.assertTrue(True)
 
     def test_drop_inventory(self):
@@ -110,7 +110,7 @@ class TestPlayer(unittest.TestCase):
         p.armor = e
         menu = p.render_inventory('drop')
         assert menu.title == 'drop'
-        assert menu.text[0] == 'a: a food ration'
+        assert menu.text[0] == 'a: food ration'
         assert menu.text[1] == 'b: fake armor (being worn)'
         self.assertTrue(True)
 
@@ -121,8 +121,8 @@ class TestPlayer(unittest.TestCase):
         p.add_item(f)
         menu = p.render_inventory('use')
         assert menu.title == 'use'
-        assert menu.text[0] == 'a: a food ration'
-        assert menu.text[1] == 'b: a slime-mold'
+        assert menu.text[0] == 'a: food ration'
+        assert menu.text[1] == 'b: slime-mold'
         self.assertTrue(True)
 
     def test_equip_empty_inventory(self):
@@ -138,7 +138,7 @@ class TestPlayer(unittest.TestCase):
         f.set_parent(p)
         p.add_item(f)
         p.equip(f)
-        assert p.curr_msg == 'The food cannot be equipped.'
+        assert p.curr_msg == 'The slime-mold cannot be equipped.'
         self.assertTrue(True)
 
     @parameterized.expand([
@@ -303,7 +303,7 @@ class TestPlayerAI(unittest.TestCase):
         assert food.parent == level
         p.perform()
         # Action occurred
-        assert p.curr_msg == 'You pick up the food'
+        assert p.curr_msg == 'You pick up the slime-mold'
         # Gone from level
         assert level.items == []  # Gone from map
         # Into player inventory

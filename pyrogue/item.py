@@ -27,14 +27,14 @@ class Item:  # union thing
     Thing (originally): Superclass structure for monsters / player / items
     """
     pos: Pos = None
-    name: str = '<unknown>'
+    _name: str = '<unknown>'
     _char: int = ord('&')  # No good default
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
     parent = None  # Inventory or floor
 
     def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, parent=None):
         self.pos = pos
-        self.name = name
+        self._name = name
         self._char = ord(char)
         self._color = color
         self.parent = parent
@@ -46,6 +46,10 @@ class Item:  # union thing
         """Return map display information"""
         # TODO: render priority
         return self.pos, self._char, self._color
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     # ===== Interface =====================================
 
@@ -72,8 +76,8 @@ class Item:  # union thing
 
     @property
     def description(self) -> str:
-        """Inventory description"""
-        return self.name
+        """Words used in inventory and dialog: resolve with 'known' and so forth"""
+        return self._name
 
 
 # ===== Items with Quantity ===============================
@@ -136,8 +140,8 @@ class Food(Item):
     def description(self) -> str:
         # TODO: pluralization
         if self.which == self.FRUIT:
-            return f'a {FRUIT_NAME}'
-        return 'a food ration'
+            return f'{FRUIT_NAME}'
+        return 'food ration'
 
 
 # ===== Gold ==============================================
@@ -185,6 +189,18 @@ class Equipment(Item):
         self.flags = flags
         super().__init__(**kwargs)
 
+    @property
+    def description(self) -> str:
+        if not self.known:
+            return f'{self._name}'
+        if self.flags.find('cursed') != -1:
+            cursed_str = 'cursed '
+        else:
+            cursed_str = ''
+        if self.hplus != 0:
+            return f'{cursed_str}{self.hplus:+} {self._name}'
+        return f'{cursed_str}normal {self.name}'
+
     @staticmethod
     def factory(etype: int, template: str) -> 'Equipment':
         """Convert from the readable format"""
@@ -220,12 +236,11 @@ class Consumable(Item):
         self.known = False
         super().__init__(**kwargs)
 
-    # TODO: report name also depends on 'known'
-
+    @property
     def description(self):
         if self.known:
-            return f'a {self.name} potion'
-        return f'a {self.desc} potion'
+            return f'{self._name} potion'
+        return f'{self.desc} potion'
 
     @staticmethod
     def factory(etype: int, template: str, desc: str):

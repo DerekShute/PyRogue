@@ -34,9 +34,9 @@ class TestItemProbs(unittest.TestCase):
 class TestProcgenItem(unittest.TestCase):
     """Create items"""
 
-    @parameterized.expand([(0, 'a slime-mold'),
-                           (10, 'a food ration'),
-                           (90, 'a food ration')])
+    @parameterized.expand([(0, 'slime-mold'),
+                           (10, 'food ration'),
+                           (90, 'food ration')])
     @patch('random.randint')
     def test_food(self, input, expected, mock_randint):
         mock_randint.return_value = input

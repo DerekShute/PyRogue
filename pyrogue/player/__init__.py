@@ -253,7 +253,7 @@ class Player(Entity):
     def drop(self, item: Item):
         if self.armor == item or self.weapon == item:
             self.equip(item)
-        self.add_msg(f'You drop the {item.name}')
+        self.add_msg(f'You drop the {item.description}')
         self.remove_item(item)  # Remove it from inventory
         item.set_parent(None)
         item.pos = self.pos
@@ -263,10 +263,10 @@ class Player(Entity):
     def equip(self, item: Item):
         def equip_weapon():
             if self.weapon is None:
-                self.add_msg(f'You wield the {item.name}')
+                self.add_msg(f'You wield the {item.description}')
                 self.weapon = item
             elif self.weapon == item:
-                self.add_msg(f'You put away the {item.name}')
+                self.add_msg(f'You put away the {item.description}')
                 self.weapon = None
             else:
                 self.equip(self.weapon)
@@ -274,17 +274,17 @@ class Player(Entity):
 
         def equip_armor():
             if self.armor is None:
-                self.add_msg(f'You put on the {item.name}')
+                self.add_msg(f'You put on the {item.description}')
                 self.armor = item
             elif self.armor == item:
-                self.add_msg(f'You take off the {item.name}')
+                self.add_msg(f'You take off the {item.description}')
                 self.armor = None
             else:
                 self.equip(self.armor)
                 self.equip(item)
 
         if not isinstance(item, Equipment):
-            self.add_msg(f'The {item.name} cannot be equipped.')
+            self.add_msg(f'The {item.description} cannot be equipped.')
             return
 
         if item.etype == Equipment.WEAPON:
@@ -311,7 +311,7 @@ class Player(Entity):
             self.purse = self.purse + item.quantity
             del item  # Poof
         else:
-            self.add_msg(f'You pick up the {item.name}')
+            self.add_msg(f'You pick up the {item.description}')
             self.add_item(item)
             item.set_parent(self)
             # TODO: after verifying you can
