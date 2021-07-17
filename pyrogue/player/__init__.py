@@ -6,7 +6,7 @@ import random
 from entity import Entity
 from dataclasses import dataclass
 from typing import Tuple
-from item import Item, Food, Equipment
+from item import Item, Food, Equipment, Consumable
 from position import Pos
 from message import MessageBuffer
 from level import Level
@@ -193,8 +193,11 @@ class Player(Entity):
             add_it = False
             if usage == 'drop':
                 add_it = True
-            elif usage == 'use' and item.name == 'food':
-                add_it = True
+            elif usage == 'use':
+                if item.name == 'food':  # TODO: food as consumable
+                    add_it = True
+                elif isinstance(item, Consumable):
+                    add_it = True
             elif usage == 'equip' and isinstance(item, Equipment):
                 add_it = True
             if add_it:

@@ -250,6 +250,20 @@ class Consumable(Item):
             kwargs['color'] = COLOR_PURPLE
         return Consumable(etype, desc, **kwargs)
 
+    def use(self, entity) -> bool:
+        """Drink the mystery potion.  What could go wrong?"""
+        # TODO: gotta be a better way... -> import consumables.potions or something  effects
+        def use_potion(self, entity):
+            if self._name == 'poison':
+                entity.add_msg('Ah!  You have been poisoned!')
+                # TODO: now known
+                return
+            entity.add_msg('You do not know what this is or what it does')                
+
+        if self.etype == Consumable.POTION:
+            use_potion(self, entity)
+        return True
+
 # ===== TESTING ===========================================
 
 # See test_items.py

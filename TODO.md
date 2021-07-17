@@ -1,10 +1,29 @@
 IN PROGRESS
 
-    Inventory --> need question response, menus, new InputHandlers, split Action
+    Consumables
+    
+        * Potions, potion effects.  Need a better way than some enormous if/elif for effects.
+            * Direct effect by name, attribute of some effects class?  That's skeevy
+            * from consumables import effects as potion_effect
+            
+        * Potion types that become known... how to record it?  Against the player itself
+            known[desc] = True -> stone, wood, inscription, color.  Is there a collection or set to make this easier?
+            Then pickup or inventory resolves it at the item level, or at message time or something.
+                description becomes a method and takes 'known' argument instead
+
+        * Push food under consumables?
+
+    Effects over time:
+        * Turning off via timer, etc.
+        * flag use: convention, adding and removing and testing correctly
 
 BIG TODO:
 
+    Wizard mode game (reveals map, identifies objects)
+
     Items and equipment
+        * rings (new equipment type)
+        * scrolls, sticks
 
     Monster AI
 
@@ -68,9 +87,6 @@ Display / Map / Level
     * Safe to place player: no monster at that square, maze wall, etc.
     * Render priority
 
-Thing
-    * superclass of Item, theoretically superclass of Monster and Player
-
 Rogue Level
     * Traps
     * Maze rooms
@@ -94,5 +110,3 @@ Stats use
     * Strength change (chg_str)
     * Monsters: creation, etc., 
     * saving throws save_throw use lvl
-    
-    * HEALING EFFECTS
