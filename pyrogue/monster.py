@@ -163,27 +163,16 @@ class Monster(Entity):  # struct monster
     def ac(self):
         return self.armor
 
-    # TODO: kill
-
     def death(self, entity: Entity):
         # TODO: certain monsters have consequences: Venus Flytrap, Leprechaun
         # TODO: drops everything in pack
         assert entity
         self.detach_level()
 
-    # TODO: wakes up monsters, and need a solution for monster hitting monster
-
-    def add_hit_msg(self, entity):
-        pass
-
-    def add_was_hit_msg(self, entity):
-        pass
-
-    def add_miss_msg(self, entity):
-        pass
-
-    def add_was_missed_msg(self, entity):
-        pass
+    def melee_attack(self):
+        """Attack components just based on stats"""
+        # Rogue pegs monster strength at 10 and I don't think it ever modifies
+        return self.lvl, 10, self.dmg, 0
 
     def take_damage(self, amount):
         self.hpt = max(0, self.hpt - amount)
@@ -212,7 +201,6 @@ class Monster(Entity):  # struct monster
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
 
     def bump(self, pos: Pos):
-        # TODO: witty message about observing it hit the wall
         assert pos
 
     # ===== Interface =====================================

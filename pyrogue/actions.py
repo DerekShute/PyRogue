@@ -34,13 +34,36 @@ class QuitAction(Action):
         entity.quit_action('quit')
 
 
+class BumpAction(Action):
+    """Bonk into something, or move"""
+
+    def __init__(self, dx: int, dy: int):
+        super().__init__()
+        self.dx = dx
+        self.dy = dy
+
+    def perform(self, entity: Entity) -> None:
+        dest = Pos(entity.pos.x + self.dx, entity.pos.y + self.dy)
+        if not entity.level.can_enter(dest):
+            entity.bump(pos=dest)
+            return
+        if entity.level.player is not None and entity.level.player.pos == dest:
+            entity.fight(entity.level.player)
+            return
+        monsters = entity.level.monsters_at(dest)
+        if len(monsters) > 0:
+            entity.fight(monsters[0])
+            return
+        MovementAction(self.dx, self.dy).perform(entity)
+
+
 class DescendAction(Action):
     """Go down"""
     def perform(self, entity: Entity) -> None:
         if entity.level.is_stairs(entity.pos):
             entity.descend()
         else:
-            entity.add_msg('No stairs here!')  # TODO real message
+            entity.add_msg('No stairs here!')
 
 
 class DropAction(Action):
@@ -71,17 +94,9 @@ class MovementAction(Action):
 
     def perform(self, entity: Entity) -> None:
         dest = Pos(entity.pos.x + self.dx, entity.pos.y + self.dy)
-        monsters = entity.level.monsters_at(dest)
-        if len(monsters) > 0:
-            # TODO: other games verify if monster nonhostile.  Not Rogue.
-            entity.fight(monsters[0])
-        elif entity.level.can_enter(dest):  # TODO: might depend on 'can entity enter square'
+        if entity.level.can_enter(dest):
             entity.move(self.dx, self.dy)
-            # TODO: update display for the two positions involved
-            # TODO: consequences of entering square
-        else:
-            entity.bump(pos=dest)  # TODO: thing you're bonking against
-            # TODO: BumpAction as first level, and if can-enter then MoveAction.perform()
+        # TODO: not sure 'else'
 
 
 class PickupAction(Action):

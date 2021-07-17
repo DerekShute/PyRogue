@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch
 from player import Player, Stats
 from position import Pos
-from actions import MovementAction, PickupAction, DescendAction, DropAction, UseAction, EquipAction
+from actions import BumpAction, PickupAction, DescendAction, DropAction, UseAction, EquipAction
 from level import Level
 from item import Gold, Food, Equipment
 
@@ -246,11 +246,11 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_move_allowed(self):
         """Player was allowed to move"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(MovementAction(-1, -1))
+        p.queue_action(BumpAction(-1, -1))
         with patch.object(Level, 'can_enter', return_value=True) as patched_level:
             p.attach_level(Level(1, 80, 25, None))
             p.perform()
-            patched_level.assert_called_once()
+            patched_level.assert_called()
         assert p.pos == Pos(9, 9)
         assert p.curr_msg == p.display
         self.assertTrue(True)
@@ -258,7 +258,7 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_move_denied(self):
         """Player was not allowed to move"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(MovementAction(-1, -1))
+        p.queue_action(BumpAction(-1, -1))
         with patch.object(Level, 'can_enter', return_value=False) as patched_level:
             p.attach_level(Level(1, 80, 25, None))
             p.perform()

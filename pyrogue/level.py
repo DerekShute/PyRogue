@@ -169,7 +169,7 @@ class Level:
         self.player = None
 
     def can_enter(self, pos: Pos) -> bool:
-        if self.map.can_enter(pos) and not any(m.pos == pos for m in self.monsters):
+        if self.map.can_enter(pos):
             return True
         return False
 
