@@ -64,6 +64,14 @@ class TestPlayer(unittest.TestCase):
         p.add_exp(1000)
         assert p.lvl == 7
         assert p.display == 'Level: 0 Gold: 0 Hp:18/18 Str:16(16) Arm: 10 Exp:7(1010)'
+        assert p.curr_msg == 'Welcome to level 3 --MORE--'
+        p.advance_msg()
+        assert p.curr_msg == 'Welcome to level 4 --MORE--'
+        p.advance_msg()
+        assert p.curr_msg == 'Welcome to level 5 --MORE--'
+        p.advance_msg()
+        assert p.curr_msg == 'Welcome to level 6 --MORE--'
+        p.advance_msg()
         assert p.curr_msg == 'Welcome to level 7'
         self.assertTrue(True)
 

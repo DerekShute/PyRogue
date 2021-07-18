@@ -154,7 +154,7 @@ class Player(Entity):
         self.levelno = 0
         self.actionq = []
         self.demise = None
-        self.max_str = stats.stren
+        self.max_str = stats.stren if stats is not None else None
 
     def __str__(self):
         return f'Player({Pos(self.pos)},{self._stats})'
