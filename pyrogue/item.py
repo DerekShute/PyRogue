@@ -5,6 +5,7 @@
 from typing import Tuple
 from position import Pos
 from factories import unpack_template
+from potions import potion_effect
 # TODO: can't import Entity because recursion
 
 # TODO: colors go somewhere
@@ -251,17 +252,10 @@ class Consumable(Item):
         return Consumable(etype, desc, **kwargs)
 
     def use(self, entity) -> bool:
-        """Drink the mystery potion.  What could go wrong?"""
-        # TODO: gotta be a better way... -> import consumables.potions or something  effects
-        def use_potion(self, entity):
-            if self._name == 'poison':
-                entity.add_msg('Ah!  You have been poisoned!')
-                # TODO: now known
-                return
-            entity.add_msg('You do not know what this is or what it does')                
+        """Drink the mystery fluid found in a dungeon.  What could go wrong?"""               
 
         if self.etype == Consumable.POTION:
-            use_potion(self, entity)
+            potion_effect(self._name, entity)
         return True
 
 # ===== TESTING ===========================================
