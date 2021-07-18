@@ -5,7 +5,7 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Tuple, Dict
 from item import Item, Food, Equipment, Consumable
 from position import Pos
 from message import MessageBuffer
@@ -145,6 +145,7 @@ class Player(Entity):
     weapon: Equipment = None
     demise: str = None
     max_str: int = 0
+    effects: Dict[str, int] = {}
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -155,12 +156,13 @@ class Player(Entity):
         self.actionq = []
         self.demise = None
         self.max_str = stats.stren if stats is not None else None
+        self.effects = {}
 
     def __str__(self):
         return f'Player({Pos(self.pos)},{self._stats})'
 
     def __repr__(self):
-        # TODO: inventory, max strength
+        # TODO: inventory, max strength, effects
         return f'Player(pos={repr(self.pos)},stats={repr(self._stats)},food_left={self._food_left})'
 
     # ===== Display =======================================
@@ -168,6 +170,7 @@ class Player(Entity):
     @property
     def display(self) -> str:
         """Status-line"""
+        # TODO: effects?
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
         return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
                f'Str:{self._stats.stren}({self.max_str}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
@@ -338,6 +341,7 @@ class Player(Entity):
             self.advance_msg()
             action.perform(self)  # TODO: action cost, haste and slow effects
             self.key = self.key + ACTION_COST
+            self.countdown_effects()
         return True
 
     # ===== Stat interface ================================
@@ -433,8 +437,30 @@ class Player(Entity):
 
     # ===== Effects of things =============================
 
+    def add_effect(self, key: str, countdown: int):
+        """Add an effect as a result of potion or monster or whatnot"""
+        self.effects[key] = countdown
+
+    def remove_effect(self, key: str):
+        """Remove an effect outright"""
+        _ = self.effects.pop(key)
+
+    def countdown_effects(self):
+        """Count down all the effects affecting player"""
+        ridlist = []
+        # TODO: permanent effects have countdown of 0, -1?
+        for key, value in self.effects.items():
+            if value <= 1:
+                # Can't change the dictionary during the iteration, so keep track of what to delete
+                ridlist.append(key)
+            else:
+                self.effects[key] -= 1
+        for key in ridlist:
+            _ = self.effects.pop(key)  # TODO: terminating message?
+
     def add_food(self):
         """Eat a piece of food.  Fruit or ration does not matter"""
+        # TODO: this is food.use() ?
         if self._food_left < 0:
             self._food_left = 0
             return

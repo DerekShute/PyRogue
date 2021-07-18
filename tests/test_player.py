@@ -175,7 +175,8 @@ class TestPlayer(unittest.TestCase):
         p.add_food()
         assert p.food_left == expected
 
-
+    # TODO: TEST EFFECTS, COUNTDOWN
+    
 # ===== Test Action =======================================
 
 class TestPlayerActionCallback(unittest.TestCase):

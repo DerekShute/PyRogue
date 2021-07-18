@@ -15,6 +15,15 @@ def roll(count: int, sides: int) -> int:
 
 # ===== Potion Effects ====================================
 
+def do_confusion(entity):
+    entity.add_effect('confusion', 20)  # HUHDURATION
+    if 'hallucinating' in entity.effects:
+        entity.add_message('What a trippy feeling!')
+    else:
+        entity.add_message('Wait, what\'s going on here?  Huh?  What?  Who?')
+    # TODO: known
+    # TODO: unconfuse at timeout --- callback?
+
 def do_extra_healing(entity):
     """(level)d8 points restored.  If max HP exceeded, add one to max"""
     entity.add_hp(roll(entity.lvl, 8))
@@ -27,6 +36,12 @@ def do_gain_strength(entity):
     entity.change_str(1)
     entity.add_msg('You feel stronger now.  What bulging muscles!')
     # TODO: known
+
+def do_hallucination(entity):  # AKA P_LSD   
+    entity.add_effect('hallucinating', 850)
+    entity.add_msg('Oh, wow!  Everything seems so cosmic!')
+    # TODO: known
+    # TODO: come_down() at timeout
 
 def do_healing(entity):
     """(level)d4 points restored.  If max hit points exceeded, add one to max hit points"""
@@ -57,6 +72,7 @@ def do_restore_strength(entity):
 # ===== Potion Effect starting point ======================
 
 POTION_EFFECTS = {
+    'confusion' : do_confusion,
     'extra healing' : do_extra_healing,
     'gain strength' : do_gain_strength,
     'healing' : do_healing,
