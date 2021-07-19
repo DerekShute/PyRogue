@@ -473,8 +473,8 @@ class Player(Entity):
         """Restore hit points, per healing potion"""
         self._stats.hpt += amount
         if self._stats.hpt > self._stats.maxhp:
-            self.stats.maxhp += 1
-            self.stats.hpt = self._stats.maxhp
+            self._stats.maxhp += 1
+            self._stats.hpt = self._stats.maxhp
 
     def change_str(self, amount: int):
         """Adjust strength.  Possibly adjust max to reflect"""

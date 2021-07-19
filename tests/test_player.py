@@ -174,9 +174,31 @@ class TestPlayer(unittest.TestCase):
         p = Player(food_left=input)
         p.add_food()
         assert p.food_left == expected
+        self.assertTrue(True)
+
 
     # TODO: TEST EFFECTS, COUNTDOWN
-    
+
+# ===== Test Effects ======================================
+
+class TestPlayerEffects(unittest.TestCase):
+
+    def test_addhp(self):
+        p = Player.factory(pos=Pos(10, 10))
+        assert p.hpt == 12
+        p.add_hp(1)
+        assert p.hpt == 13
+        p.add_hp(10)
+        assert p.hpt == 14
+        p.take_damage(10)
+        assert p.hpt == 4
+        p.add_hp(5)
+        assert p.hpt == 9
+        p.add_hp(10)
+        assert p.hpt == 15
+        self.assertTrue(True)
+
+
 # ===== Test Action =======================================
 
 class TestPlayerActionCallback(unittest.TestCase):
