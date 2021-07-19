@@ -4,7 +4,7 @@
 
 from parameterized import parameterized
 import unittest
-from item import Gold, Food, Item
+from item import Gold, Food, Item, Equipment, Consumable
 from position import Pos
 from player import Player
 
@@ -90,6 +90,37 @@ class TestFood(unittest.TestCase):
             assert p.exp == 1
         else:
             assert p.exp == 0
+        self.assertTrue(True)
+
+
+class TestEquipment(unittest.TestCase):
+    """Test Equipment"""
+
+    def test_a_w_description(self):
+        e = Equipment.factory(etype=Equipment.ARMOR, template='name=fake value=6 worth=10')
+        e.known = False
+        assert e.description(set()) == 'fake'
+        e.known = True
+        assert e.description(set()) == 'normal fake'
+        e.known = False
+        e.hplus = 1
+        assert e.description(set()) == 'fake'
+        e.known = True
+        assert e.description(set()) == '+1 fake'
+        e.hplus = -1
+        assert e.description(set()) == '-1 fake'
+        e.flags = ' cursed'
+        assert e.description(set()) == 'cursed -1 fake'
+        self.assertTrue(True)
+
+
+class TestConsumables(unittest.TestCase):
+    """Test Consumables"""
+
+    def test_potion_description(self):
+        c = Consumable.factory(Consumable.POTION, template='name=fake worth=10', desc='weird')
+        assert c.description(set()) == 'weird potion'
+        assert c.description({'weird'}) == 'potion of fake'
         self.assertTrue(True)
 
 

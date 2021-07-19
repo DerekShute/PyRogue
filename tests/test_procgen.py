@@ -34,14 +34,14 @@ class TestItemProbs(unittest.TestCase):
 class TestProcgenItem(unittest.TestCase):
     """Create items"""
 
-    @parameterized.expand([(0, 'a slime-mold'),
-                           (10, 'a food ration'),
-                           (90, 'a food ration')])
+    @parameterized.expand([(0, 'slime-mold'),
+                           (10, 'food ration'),
+                           (90, 'food ration')])
     @patch('random.randint')
     def test_food(self, input, expected, mock_randint):
         mock_randint.return_value = input
         food = new_food()
-        assert food.description == expected
+        assert food.description(set()) == expected
         self.assertTrue(True)
 
     @parameterized.expand([(0, 5),    # cursed -1
@@ -55,7 +55,7 @@ class TestProcgenItem(unittest.TestCase):
         mock_randint.return_value = input
         mock_choices.return_value = [5]  # peg on splint mail
         armor = new_armor()
-        assert armor.description == 'splint mail'
+        assert armor.description(set()) == 'splint mail'
         assert armor.value == expected
         if input == 0:
             assert 'cursed' in armor.flags
@@ -75,7 +75,7 @@ class TestProcgenItem(unittest.TestCase):
         mock_randint.return_value = input
         mock_choices.return_value = [6]  # peg on dart
         weapon = new_weapon()
-        assert weapon.description == 'dart'
+        assert weapon.description(set()) == 'dart'
         assert weapon.dam == '1x1'
         assert weapon.hplus == expected
         if input == 5:

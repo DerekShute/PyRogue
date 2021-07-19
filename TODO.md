@@ -1,10 +1,45 @@
 IN PROGRESS
 
-    Inventory --> need question response, menus, new InputHandlers, split Action
+    Consumables
+    
+        * Potions, potion effects.  Need a better way than some enormous if/elif for effects.
+            * Direct effect by name, attribute of some effects class?  That's skeevy
+            * from consumables import effects as potion_effect
+            
+        * Potion types that become known... how to record it?  Against the player itself
+            known[desc] = True -> stone, wood, inscription, color.  Is there a collection or set to make this easier?
+            Then pickup or inventory resolves it at the item level, or at message time or something.
+                description becomes a method and takes 'known' argument instead
+
+        * Push food under consumables?
+
+    Effects over time:
+        * Turning off via timer, etc.
+        * flag use: convention, adding and removing and testing correctly
+
+    Hallucination:
+        * many user messages have alternate output if you're LSDing.  Some second argument to add_msg?
+
+    Haste / Monster Haste
+        * Don't have a good model for this.  Adjusting ACTION_COST causes problems when the user action queue gets empty.
+            * Do not reschedule if no action in queue, adding action adds to queue?  This is general rework
+
+BUGS:
+    * Still ways to get multiple actions in the player action queue and that means an offset.
+    * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
 
 BIG TODO:
 
+    Conditions as set (cursed, hasted monsters, etc)
+
+    Inventory:
+        * Consolidate count of items in listing
+ 
+    Wizard mode game (reveals map, identifies objects)
+
     Items and equipment
+        * rings (new equipment type)
+        * scrolls, sticks
 
     Monster AI
 
@@ -38,7 +73,9 @@ Messages
 AI
     * subsection and generalization.  Player AI is player input, and is a stack of handlers
 
-    * Then monster actions
+SAVE GAMES
+
+    * Potion description strings and so forth: must somehow attach to savegame...
     
 monster.py
     AMULETLEVEL goes someplace else
@@ -66,9 +103,6 @@ Display / Map / Level
     * Safe to place player: no monster at that square, maze wall, etc.
     * Render priority
 
-Thing
-    * superclass of Item, theoretically superclass of Monster and Player
-
 Rogue Level
     * Traps
     * Maze rooms
@@ -92,5 +126,3 @@ Stats use
     * Strength change (chg_str)
     * Monsters: creation, etc., 
     * saving throws save_throw use lvl
-    
-    * HEALING EFFECTS

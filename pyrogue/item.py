@@ -2,9 +2,10 @@
     Items
 """
 
-from typing import Tuple
+from typing import Tuple, Set
 from position import Pos
 from factories import unpack_template
+from potions import potion_effect
 # TODO: can't import Entity because recursion
 
 # TODO: colors go somewhere
@@ -13,6 +14,7 @@ COLOR_WHITE = (255, 255, 255)
 COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
 COLOR_CHOCOLATE4 = (139, 69, 19)   # AKA "brown"
 COLOR_DEEPSKYBLUE = (0, 191, 255)
+COLOR_PURPLE = (128, 0, 128)
 
 FRUIT_NAME = 'slime-mold'
 """Traditional fruit name.  Settable in the original, but I can't be bothered"""
@@ -26,14 +28,14 @@ class Item:  # union thing
     Thing (originally): Superclass structure for monsters / player / items
     """
     pos: Pos = None
-    name: str = '<unknown>'
+    _name: str = '<unknown>'
     _char: int = ord('&')  # No good default
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
     parent = None  # Inventory or floor
 
     def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, parent=None):
         self.pos = pos
-        self.name = name
+        self._name = name
         self._char = ord(char)
         self._color = color
         self.parent = parent
@@ -45,6 +47,10 @@ class Item:  # union thing
         """Return map display information"""
         # TODO: render priority
         return self.pos, self._char, self._color
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     # ===== Interface =====================================
 
@@ -69,10 +75,9 @@ class Item:  # union thing
         entity.add_msg(f'Can\'t do that with a {self.name}!')
         return False
 
-    @property
-    def description(self) -> str:
-        """Inventory description"""
-        return self.name
+    def description(self, known: Set[str]) -> str:
+        """Words used in inventory and dialog: resolve with 'known' and so forth"""
+        return self._name
 
 
 # ===== Items with Quantity ===============================
@@ -131,12 +136,11 @@ class Food(Item):
         entity.add_food()
         return True
 
-    @property
-    def description(self) -> str:
+    def description(self, known: Set[str]) -> str:
         # TODO: pluralization
         if self.which == self.FRUIT:
-            return f'a {FRUIT_NAME}'
-        return 'a food ration'
+            return f'{FRUIT_NAME}'
+        return 'food ration'
 
 
 # ===== Gold ==============================================
@@ -184,6 +188,17 @@ class Equipment(Item):
         self.flags = flags
         super().__init__(**kwargs)
 
+    def description(self, known: Set[str]) -> str:
+        if not self.known:
+            return f'{self._name}'
+        if self.flags.find('cursed') != -1:
+            cursed_str = 'cursed '
+        else:
+            cursed_str = ''
+        if self.hplus != 0:
+            return f'{cursed_str}{self.hplus:+} {self._name}'
+        return f'{cursed_str}normal {self.name}'
+
     @staticmethod
     def factory(etype: int, template: str) -> 'Equipment':
         """Convert from the readable format"""
@@ -197,11 +212,46 @@ class Equipment(Item):
         return Equipment(etype, **kwargs)
 
 
-# ===== Level Generation ==================================
+# ===== CONSUMABLES =======================================
 
-# Randomly pick an item ('new_thing'?) during level generation
+class Consumable(Item):
+    """
+    Consumable items: potions, scrolls, and 'sticks'
+    """
+    desc: str = ''   # Description string - 'blue', 'emerald', 'maple', etc.
+    etype: int         # POTION / etc
+    worth: int         # score calculation at player demise
+    # TODO: charges
 
-# Sum the probabilities per types so they start at '5' for a particular item type but becomes a range for a d100 roll
+    # TYPES
+    POTION = 0
+
+    def __init__(self, etype: int, desc: str, worth: int, **kwargs):
+        self.desc = desc
+        self.etype = etype
+        self.worth = worth
+        super().__init__(**kwargs)
+
+    def description(self, known: Set[str]):
+        if self.desc in known:
+            return f'potion of {self._name}'
+        return f'{self.desc} potion'
+
+    @staticmethod
+    def factory(etype: int, template: str, desc: str):
+        kwargs = unpack_template(template, ('prob'))
+        if etype == Consumable.POTION:
+            kwargs['char'] = '!'
+            kwargs['color'] = COLOR_PURPLE
+        return Consumable(etype, desc, **kwargs)
+
+    def use(self, entity) -> bool:
+        """Drink the mystery fluid found in a dungeon.  What could go wrong?"""
+        if self.etype == Consumable.POTION:
+            now_known = potion_effect(self._name, entity)
+            if now_known:
+                entity.known.add(self.desc)
+        return True
 
 # ===== TESTING ===========================================
 

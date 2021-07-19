@@ -5,8 +5,8 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
-from typing import Tuple
-from item import Item, Food, Equipment
+from typing import Tuple, Dict, Set
+from item import Item, Food, Equipment, Consumable
 from position import Pos
 from message import MessageBuffer
 from level import Level
@@ -144,6 +144,9 @@ class Player(Entity):
     armor: Equipment = None
     weapon: Equipment = None
     demise: str = None
+    max_str: int = 0
+    effects: Dict[str, int] = {}  # Things affecting player: being confused, being hasted...
+    known: Set[str] = set()       # Things that are known: what a blue potion is, etc...
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -153,12 +156,14 @@ class Player(Entity):
         self.levelno = 0
         self.actionq = []
         self.demise = None
+        self.max_str = stats.stren if stats is not None else None
+        self.effects = {}
 
     def __str__(self):
         return f'Player({Pos(self.pos)},{self._stats})'
 
     def __repr__(self):
-        # TODO: inventory
+        # TODO: inventory, max strength, effects
         return f'Player(pos={repr(self.pos)},stats={repr(self._stats)},food_left={self._food_left})'
 
     # ===== Display =======================================
@@ -166,9 +171,9 @@ class Player(Entity):
     @property
     def display(self) -> str:
         """Status-line"""
-        # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
+        # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <hunger status>'
         return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
-               f'Str:{self._stats.stren}({self._stats.stren}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
+               f'Str:{self._stats.stren}({self.max_str}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
 
     def render_inventory(self, usage: str) -> Menu:
         inventory = []
@@ -180,11 +185,11 @@ class Player(Entity):
         listing = ord('a')
         for item in self.pack:
             if self.armor == item:
-                desc = f'{item.description} (being worn)'
+                desc = f'{item.description(self.known)} (being worn)'
             elif self.weapon == item:
-                desc = f'{item.description} (wielded)'
+                desc = f'{item.description(self.known)} (wielded)'
             else:
-                desc = f'{item.description}'
+                desc = f'{item.description(self.known)}'
 
             if usage == '':
                 inventory.append(desc)  # TODO: consolidate similar objects
@@ -193,8 +198,11 @@ class Player(Entity):
             add_it = False
             if usage == 'drop':
                 add_it = True
-            elif usage == 'use' and item.name == 'food':
-                add_it = True
+            elif usage == 'use':
+                if item.name == 'food':  # TODO: food as consumable
+                    add_it = True
+                elif isinstance(item, Consumable):
+                    add_it = True
             elif usage == 'equip' and isinstance(item, Equipment):
                 add_it = True
             if add_it:
@@ -253,7 +261,7 @@ class Player(Entity):
     def drop(self, item: Item):
         if self.armor == item or self.weapon == item:
             self.equip(item)
-        self.add_msg(f'You drop the {item.name}')
+        self.add_msg(f'You drop the {item.description(self.known)}')
         self.remove_item(item)  # Remove it from inventory
         item.set_parent(None)
         item.pos = self.pos
@@ -263,10 +271,10 @@ class Player(Entity):
     def equip(self, item: Item):
         def equip_weapon():
             if self.weapon is None:
-                self.add_msg(f'You wield the {item.name}')
+                self.add_msg(f'You wield the {item.description(self.known)}')
                 self.weapon = item
             elif self.weapon == item:
-                self.add_msg(f'You put away the {item.name}')
+                self.add_msg(f'You put away the {item.description(self.known)}')
                 self.weapon = None
             else:
                 self.equip(self.weapon)
@@ -274,17 +282,17 @@ class Player(Entity):
 
         def equip_armor():
             if self.armor is None:
-                self.add_msg(f'You put on the {item.name}')
+                self.add_msg(f'You put on the {item.description(self.known)}')
                 self.armor = item
             elif self.armor == item:
-                self.add_msg(f'You take off the {item.name}')
+                self.add_msg(f'You take off the {item.description(self.known)}')
                 self.armor = None
             else:
                 self.equip(self.armor)
                 self.equip(item)
 
         if not isinstance(item, Equipment):
-            self.add_msg(f'The {item.name} cannot be equipped.')
+            self.add_msg(f'The {item.description(self.known)} cannot be equipped.')
             return
 
         if item.etype == Equipment.WEAPON:
@@ -311,7 +319,7 @@ class Player(Entity):
             self.purse = self.purse + item.quantity
             del item  # Poof
         else:
-            self.add_msg(f'You pick up the {item.name}')
+            self.add_msg(f'You pick up the {item.description(self.known)}')
             self.add_item(item)
             item.set_parent(self)
             # TODO: after verifying you can
@@ -333,6 +341,7 @@ class Player(Entity):
             self.advance_msg()
             action.perform(self)  # TODO: action cost, haste and slow effects
             self.key = self.key + ACTION_COST
+            self.countdown_effects()
         return True
 
     # ===== Stat interface ================================
@@ -357,12 +366,8 @@ class Player(Entity):
             if self._stats.exp < E_LEVELS[lvl]:
                 break
             new_lvl = lvl
-        if new_lvl > self._stats.level:
-            add = die_roll(new_lvl - self._stats.level, 10)
-            self._stats.level = new_lvl
-            self._stats.maxhp += add
-            self._stats.hpt += add
-            self.add_msg(f'Welcome to level {new_lvl}')
+        while self._stats.level < new_lvl:
+            self.raise_level()
 
     @property
     def stren(self) -> int:
@@ -373,15 +378,15 @@ class Player(Entity):
     def food_left(self) -> int:
         return self._food_left
 
-    def add_food(self):
-        """Eat a piece of food.  Fruit or ration does not matter"""
-        if self._food_left < 0:
-            self._food_left = 0
-            return
-        self._food_left = self._food_left + HUNGERTIME - 200 + random.randint(0, 400)
-        if self._food_left > STOMACHSIZE:
-            # I thought there was some vomit case but maybe in a different game
-            self._food_left = STOMACHSIZE
+    def raise_level(self):
+        """Player level++: you can arrive here via magic effect"""
+        add = die_roll(1, 10)
+        self._stats.level += 1
+        if self._stats.exp < E_LEVELS[self._stats.level]:
+            self._stats.exp = E_LEVELS[self._stats.level] + 1
+        self._stats.maxhp += add
+        self._stats.hpt += add
+        self.add_msg(f'Welcome to level {self._stats.level}')
 
     # ===== Combat Interface ==============================
 
@@ -429,6 +434,71 @@ class Player(Entity):
     @property
     def xp_value(self) -> int:
         return 0  # TODO: how did we get here?
+
+    # ===== Effects of things =============================
+
+    def add_effect(self, key: str, countdown: int):
+        """Add an effect as a result of potion or monster or whatnot"""
+        self.effects[key] = countdown
+
+    def remove_effect(self, key: str):
+        """Remove an effect outright"""
+        _ = self.effects.pop(key)
+
+    def countdown_effects(self):
+        """Count down all the effects affecting player"""
+        ridlist = []
+        # TODO: permanent effects have countdown of 0, -1?
+        for key, value in self.effects.items():
+            if value <= 1:
+                # Can't change the dictionary during the iteration, so keep track of what to delete
+                ridlist.append(key)
+            else:
+                self.effects[key] -= 1
+        for key in ridlist:
+            _ = self.effects.pop(key)
+            # TODO: most have choose_str() based on hallucinating
+            if key == 'confused':  # unconfuse()
+                self.add_msg('You feel less confused now.')
+            elif key == 'blind':   # sight()
+                self.add_msg('The veil of darkness lifts.')
+            elif key == 'hasted':  # nohaste()
+                self.add_msg('You feel yourself slowing down.')
+            elif key == 'hallucinating':  # come_down()
+                self.add_msg('Everything looks SO boring now.')
+            elif key == 'levitating':     # land()
+                self.add_msg('You float gently to the ground.')
+
+    def add_food(self):
+        """Eat a piece of food.  Fruit or ration does not matter"""
+        # TODO: this is food.use() ?
+        if self._food_left < 0:
+            self._food_left = 0
+            return
+        self._food_left = self._food_left + HUNGERTIME - 200 + random.randint(0, 400)
+        if self._food_left > STOMACHSIZE:
+            # I thought there was some vomit case but maybe in a different game
+            self._food_left = STOMACHSIZE
+
+    def add_hp(self, amount: int):
+        """Restore hit points, per healing potion"""
+        self._stats.hpt += amount
+        if self._stats.hpt > self._stats.maxhp:
+            self._stats.maxhp += 1
+            self._stats.hpt = self._stats.maxhp
+
+    def change_str(self, amount: int):
+        """Adjust strength.  Possibly adjust max to reflect"""
+        # TODO: Not if wearing ring of sustain strength
+        self._stats.stren += amount
+        if amount > 0 and self._stats.stren > self.max_str:
+            self.max_str = self._stats.stren
+
+    def restore_strength(self):
+        """Restore strength to maximum, do not exceed it"""
+        if self._stats.stren < self.max_str:
+            self._stats.stren = self.max_str
+            # TODO: message here instead of in potions.py
 
     # ===== Constructor ===================================
 
