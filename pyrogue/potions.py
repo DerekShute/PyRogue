@@ -149,6 +149,8 @@ POTION_EFFECTS = {
     'see invisible': do_see_invisible,
 }
 
+
+
 def potion_effect(name: str, entity) -> bool:
     """Dispatch the potion name to the callback that implements the effect"""
     call = POTION_EFFECTS.get(name)
