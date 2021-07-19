@@ -177,8 +177,6 @@ class TestPlayer(unittest.TestCase):
         self.assertTrue(True)
 
 
-    # TODO: TEST EFFECTS, COUNTDOWN
-
 # ===== Test Effects ======================================
 
 class TestPlayerEffects(unittest.TestCase):
@@ -208,6 +206,7 @@ class TestPlayerEffects(unittest.TestCase):
         assert 'testing' not in p.effects
         assert p.effects['testing2'] == 9
         self.assertTrue(True)
+
 
 # ===== Test Action =======================================
 

@@ -99,13 +99,14 @@ def new_thing() -> Item:  # new_thing
         return new_armor()
     return new_potion()
 
+
 # ==== Initialization for a new game ======================
 
 def game_init():
     """Scramble the description strings for the new game"""
     # NOTE: need to hook it into save game
     global POTION_DESCRIPTIONS
-    
+
     POTION_DESCRIPTIONS = list(POTION_RAINBOW)
     random.shuffle(POTION_DESCRIPTIONS)
 

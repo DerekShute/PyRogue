@@ -226,7 +226,7 @@ class Consumable(Item):
     # TYPES
     POTION = 0
 
-    def __init__(self, etype:int, desc: str, worth: int, **kwargs):
+    def __init__(self, etype: int, desc: str, worth: int, **kwargs):
         self.desc = desc
         self.etype = etype
         self.worth = worth
@@ -246,7 +246,7 @@ class Consumable(Item):
         return Consumable(etype, desc, **kwargs)
 
     def use(self, entity) -> bool:
-        """Drink the mystery fluid found in a dungeon.  What could go wrong?"""               
+        """Drink the mystery fluid found in a dungeon.  What could go wrong?"""
         if self.etype == Consumable.POTION:
             now_known = potion_effect(self._name, entity)
             if now_known:
