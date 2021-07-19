@@ -170,8 +170,7 @@ class Player(Entity):
     @property
     def display(self) -> str:
         """Status-line"""
-        # TODO: effects?
-        # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <status>'
+        # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <hunger status>'
         return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
                f'Str:{self._stats.stren}({self.max_str}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
 

@@ -198,6 +198,16 @@ class TestPlayerEffects(unittest.TestCase):
         assert p.hpt == 15
         self.assertTrue(True)
 
+    def test_effect(self):
+        p = Player.factory(pos=Pos(10, 10))
+        p.add_effect('testing', 1)
+        p.add_effect('testing2', 10)
+        assert 'testing' in p.effects
+        assert 'testing2' in p.effects
+        p.countdown_effects()
+        assert 'testing' not in p.effects
+        assert p.effects['testing2'] == 9
+        self.assertTrue(True)
 
 # ===== Test Action =======================================
 
