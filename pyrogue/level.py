@@ -4,6 +4,7 @@ Fundamentals of levels: rooms and corridors
 Probably will be consolidated with other modules at some point
 """
 
+import random
 from room import Room
 from game_map import GameMap
 from display import Display
@@ -183,9 +184,12 @@ class Level:
                 self.map.lit_tile(item.pos)
             self.map.set_char(*item.char)
         for monster in self.monsters:
+            pos, char, color = monster.char
+            if 'hallucinating' in self.player.effects:
+                char = ord('A') + random.randint(0, 25)
             if 'monster detection' in self.player.effects:
-                self.map.lit_tile(monster.pos)
-            self.map.set_char(*monster.char)
+                self.map.lit_tile(pos)
+            self.map.set_char(pos, char, color)
         if self.player is not None:
             self.map.set_char(*self.player.char)
 
@@ -216,9 +220,8 @@ class Level:
     def run_queue(self):
         """Run elements from the timer queue"""
         end_time = self.queue.end
-        while self.queue.now <= min(end_time, self.queue.end):
+        while self.queue.now <= end_time:
             element = self.queue.pop()  # TODO: need concept of 'now' so we can run the queue to a certain point
-            print(f'{element.key} / {self.queue.end} / {end_time} : executing {element}')
             reschedule = element.perform()
             if reschedule:
                 self.queue.add(element)

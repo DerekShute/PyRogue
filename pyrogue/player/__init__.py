@@ -5,7 +5,7 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Set
 from item import Item, Food, Equipment, Consumable
 from position import Pos
 from message import MessageBuffer
@@ -145,7 +145,8 @@ class Player(Entity):
     weapon: Equipment = None
     demise: str = None
     max_str: int = 0
-    effects: Dict[str, int] = {}
+    effects: Dict[str, int] = {}  # Things affecting player: being confused, being hasted...
+    known: Set[str] = set()       # Things that are known: what a blue potion is, etc...
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -184,11 +185,11 @@ class Player(Entity):
         listing = ord('a')
         for item in self.pack:
             if self.armor == item:
-                desc = f'{item.description} (being worn)'
+                desc = f'{item.description(self.known)} (being worn)'
             elif self.weapon == item:
-                desc = f'{item.description} (wielded)'
+                desc = f'{item.description(self.known)} (wielded)'
             else:
-                desc = f'{item.description}'
+                desc = f'{item.description(self.known)}'
 
             if usage == '':
                 inventory.append(desc)  # TODO: consolidate similar objects
@@ -260,7 +261,7 @@ class Player(Entity):
     def drop(self, item: Item):
         if self.armor == item or self.weapon == item:
             self.equip(item)
-        self.add_msg(f'You drop the {item.description}')
+        self.add_msg(f'You drop the {item.description(self.known)}')
         self.remove_item(item)  # Remove it from inventory
         item.set_parent(None)
         item.pos = self.pos
@@ -270,10 +271,10 @@ class Player(Entity):
     def equip(self, item: Item):
         def equip_weapon():
             if self.weapon is None:
-                self.add_msg(f'You wield the {item.description}')
+                self.add_msg(f'You wield the {item.description(self.known)}')
                 self.weapon = item
             elif self.weapon == item:
-                self.add_msg(f'You put away the {item.description}')
+                self.add_msg(f'You put away the {item.description(self.known)}')
                 self.weapon = None
             else:
                 self.equip(self.weapon)
@@ -281,17 +282,17 @@ class Player(Entity):
 
         def equip_armor():
             if self.armor is None:
-                self.add_msg(f'You put on the {item.description}')
+                self.add_msg(f'You put on the {item.description(self.known)}')
                 self.armor = item
             elif self.armor == item:
-                self.add_msg(f'You take off the {item.description}')
+                self.add_msg(f'You take off the {item.description(self.known)}')
                 self.armor = None
             else:
                 self.equip(self.armor)
                 self.equip(item)
 
         if not isinstance(item, Equipment):
-            self.add_msg(f'The {item.description} cannot be equipped.')
+            self.add_msg(f'The {item.description(self.known)} cannot be equipped.')
             return
 
         if item.etype == Equipment.WEAPON:
@@ -318,7 +319,7 @@ class Player(Entity):
             self.purse = self.purse + item.quantity
             del item  # Poof
         else:
-            self.add_msg(f'You pick up the {item.description}')
+            self.add_msg(f'You pick up the {item.description(self.known)}')
             self.add_item(item)
             item.set_parent(self)
             # TODO: after verifying you can
@@ -455,7 +456,18 @@ class Player(Entity):
             else:
                 self.effects[key] -= 1
         for key in ridlist:
-            _ = self.effects.pop(key)  # TODO: terminating message?
+            _ = self.effects.pop(key)
+            # TODO: most have choose_str() based on hallucinating
+            if key == 'confused':  # unconfuse()
+                self.add_msg('You feel less confused now.')
+            elif key == 'blind':   # sight()
+                self.add_msg('The veil of darkness lifts.')
+            elif key == 'hasted':  # nohaste()
+                self.add_msg('You feel yourself slowing down.')
+            elif key == 'hallucinating':  # come_down()
+                self.add_msg('Everything looks SO boring now.')
+            elif key == 'levitating':     # land()
+                self.add_msg('You float gently to the ground.')
 
     def add_food(self):
         """Eat a piece of food.  Fruit or ration does not matter"""

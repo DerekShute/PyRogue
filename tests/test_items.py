@@ -99,18 +99,18 @@ class TestEquipment(unittest.TestCase):
     def test_a_w_description(self):
         e = Equipment.factory(etype=Equipment.ARMOR, template='name=fake value=6 worth=10')
         e.known = False
-        assert e.description == 'fake'
+        assert e.description(set()) == 'fake'
         e.known = True
-        assert e.description == 'normal fake'
+        assert e.description(set()) == 'normal fake'
         e.known = False
         e.hplus = 1
-        assert e.description == 'fake'
+        assert e.description(set()) == 'fake'
         e.known = True
-        assert e.description == '+1 fake'
+        assert e.description(set()) == '+1 fake'
         e.hplus = -1
-        assert e.description == '-1 fake'
+        assert e.description(set()) == '-1 fake'
         e.flags = ' cursed'
-        assert e.description == 'cursed -1 fake'
+        assert e.description(set()) == 'cursed -1 fake'
         self.assertTrue(True)
 
 
@@ -119,10 +119,8 @@ class TestConsumables(unittest.TestCase):
 
     def test_potion_description(self):
         c = Consumable.factory(Consumable.POTION, template='name=fake worth=10', desc='weird')
-        c.known = False
-        assert c.description == 'weird potion'
-        c.known = True
-        assert c.description == 'fake potion'
+        assert c.description(set()) == 'weird potion'
+        assert c.description({'weird'}) == 'potion of fake'
         self.assertTrue(True)
 
 

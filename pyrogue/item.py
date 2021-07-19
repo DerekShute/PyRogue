@@ -2,7 +2,7 @@
     Items
 """
 
-from typing import Tuple
+from typing import Tuple, Set
 from position import Pos
 from factories import unpack_template
 from potions import potion_effect
@@ -75,8 +75,7 @@ class Item:  # union thing
         entity.add_msg(f'Can\'t do that with a {self.name}!')
         return False
 
-    @property
-    def description(self) -> str:
+    def description(self, known: Set[str]) -> str:
         """Words used in inventory and dialog: resolve with 'known' and so forth"""
         return self._name
 
@@ -137,8 +136,7 @@ class Food(Item):
         entity.add_food()
         return True
 
-    @property
-    def description(self) -> str:
+    def description(self, known: Set[str]) -> str:
         # TODO: pluralization
         if self.which == self.FRUIT:
             return f'{FRUIT_NAME}'
@@ -190,8 +188,7 @@ class Equipment(Item):
         self.flags = flags
         super().__init__(**kwargs)
 
-    @property
-    def description(self) -> str:
+    def description(self, known: Set[str]) -> str:
         if not self.known:
             return f'{self._name}'
         if self.flags.find('cursed') != -1:
@@ -224,7 +221,6 @@ class Consumable(Item):
     desc: str = ''   # Description string - 'blue', 'emerald', 'maple', etc.
     etype: int         # POTION / etc
     worth: int         # score calculation at player demise
-    known: bool = False  # TODO: uh oh - this is by type
     # TODO: charges
 
     # TYPES
@@ -234,13 +230,11 @@ class Consumable(Item):
         self.desc = desc
         self.etype = etype
         self.worth = worth
-        self.known = False
         super().__init__(**kwargs)
 
-    @property
-    def description(self):
-        if self.known:
-            return f'{self._name} potion'
+    def description(self, known: Set[str]):
+        if self.desc in known:
+            return f'potion of {self._name}'
         return f'{self.desc} potion'
 
     @staticmethod
@@ -253,9 +247,10 @@ class Consumable(Item):
 
     def use(self, entity) -> bool:
         """Drink the mystery fluid found in a dungeon.  What could go wrong?"""               
-
         if self.etype == Consumable.POTION:
-            potion_effect(self._name, entity)
+            now_known = potion_effect(self._name, entity)
+            if now_known:
+                entity.known.add(self.desc)
         return True
 
 # ===== TESTING ===========================================

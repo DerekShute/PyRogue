@@ -17,8 +17,24 @@ IN PROGRESS
         * Turning off via timer, etc.
         * flag use: convention, adding and removing and testing correctly
 
+    Hallucination:
+        * many user messages have alternate output if you're LSDing.  Some second argument to add_msg?
+
+    Haste / Monster Haste
+        * Don't have a good model for this.  Adjusting ACTION_COST causes problems when the user action queue gets empty.
+            * Do not reschedule if no action in queue, adding action adds to queue?  This is general rework
+
+BUGS:
+    * Still ways to get multiple actions in the player action queue and that means an offset.
+    * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
+
 BIG TODO:
 
+    Conditions as set (cursed, hasted monsters, etc)
+
+    Inventory:
+        * Consolidate count of items in listing
+ 
     Wizard mode game (reveals map, identifies objects)
 
     Items and equipment
