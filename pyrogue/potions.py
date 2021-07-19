@@ -78,9 +78,8 @@ def do_levitation(entity):
 
 def do_magic_detection(entity):   # P_TFIND
     """Oh my.  Find the magic items."""
-    # TODO: not sure how to do this.  As is, it'll be shown in the display update
     entity.add_effect('detect magic', 2)
-    entity.add_msg('You sense the presence of magic on this level.')
+    entity.add_msg('You sense the presence of magic on this level.')  # only if something revealed
     # TODO: known
     # TODO: technically, only if items are revealed
 
@@ -88,7 +87,7 @@ def do_monster_detection(entity):  # P_MFIND
     """Monster detection"""
     entity.add_effect('monster detection', 20)  # HUHDURATION
     if 'blind' in entity.effects:
-        entity.add_msg('You have a strange feeling for a moment, then it passes')  # Technically a choice here, but who cares
+        entity.add_msg('You have a strange feeling for a moment, then it passes')
     # Apparently not 'known' after this
 
 def do_poison(entity):

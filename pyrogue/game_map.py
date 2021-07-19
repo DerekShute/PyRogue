@@ -68,7 +68,6 @@ class GameMap:
             choicelist=[self.tiles["light"], self.tiles["dark"]],
             default=tile_types.SHROUD
         )
-        # TODO : Entities
 
     def set_tiles(self, inner: Tuple[slice, slice], tile: int):
         """
