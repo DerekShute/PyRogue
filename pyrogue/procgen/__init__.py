@@ -5,7 +5,7 @@ import random
 from typing import List
 from item import Item, Food, Equipment, Consumable
 from factories import (calc_probability, ITEM_PROB_TEMPLATES, ARMOR_TEMPLATES, WEAPON_TEMPLATES,
-                       POTION_TEMPLATES, POTION_RAINBOW)
+                       POTION_TEMPLATES, POTION_RAINBOW, RING_TEMPLATES, RING_STONES)
 
 
 # TODO: randmonster
@@ -24,6 +24,13 @@ POTION_PROBABILITIES: List[int] = calc_probability(POTION_TEMPLATES)
 
 POTION_DESCRIPTIONS: List[str] = []
 """Initialized potion colors, scrambled per game"""
+# TODO: this totally will not work for save games
+
+RING_PROBABILITIES: List[int] = calc_probability(RING_TEMPLATES)
+"""Initialized weighted probability list"""
+
+RING_DESCRIPTIONS: List[str] =[]
+"""Initialized ring stones (with value add), scrambled per game"""
 # TODO: this totally will not work for save games
 
 
@@ -66,6 +73,20 @@ def new_potion() -> Consumable:
         )
 
 
+def new_ring() -> Equipment:
+    """Fabricate a random ring"""
+    numlist = random.choices(list(range(0, len(RING_TEMPLATES))), weights=RING_PROBABILITIES, k=1)
+    ring = Equipment.factory(
+        etype=Equipment.RING, template=RING_TEMPLATES[numlist[0]], desc=RING_DESCRIPTIONS[numlist[0]]
+        )
+    if ring.name in ('add strength', 'protection', 'dexterity', 'increase damage'):
+        ring.hplus = plus_value() - 1
+        if ring.hplus < 1:
+            ring.hplus = -1
+            ring.flags = 'cursed'
+    return ring
+
+
 def new_weapon() -> Equipment:
     """Fabricate a random weapon"""
     numlist = random.choices(list(range(0, len(WEAPON_TEMPLATES))), weights=WEAPON_PROBABILITIES, k=1)
@@ -97,7 +118,9 @@ def new_thing() -> Item:  # new_thing
         return new_weapon()
     if i == 2:
         return new_armor()
-    return new_potion()
+    if i == 3:
+        return new_potion()
+    return new_ring()
 
 
 # ==== Initialization for a new game ======================
@@ -106,8 +129,11 @@ def game_init():
     """Scramble the description strings for the new game"""
     # NOTE: need to hook it into save game
     global POTION_DESCRIPTIONS
+    global RING_DESCRIPTIONS
 
     POTION_DESCRIPTIONS = list(POTION_RAINBOW)
     random.shuffle(POTION_DESCRIPTIONS)
 
+    RING_DESCRIPTIONS = list(RING_STONES)
+    random.shuffle(RING_DESCRIPTIONS)
 # EOF

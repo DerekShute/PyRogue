@@ -108,6 +108,56 @@ POTION_TEMPLATES = (
 )
 
 
+# ===== RING TEMPLATES ====================================
+
+RING_STONES = (
+    'desc=agate worth=25',
+    'desc=alexandrite worth=40',
+    'desc=amethyst worth=50',
+    'desc=carnelian worth=40',
+    'desc=diamond worth=300',
+    'desc=emerald worth=300',
+    'desc=germanium worth=225',
+    'desc=granite worth=5',
+    'desc=garnet worth=50',
+    'desc=jade worth=150',
+    'desc=kryptonite worth=300',
+    'desc=lapis_lazuli worth=50',
+    'desc=moonstone worth=50',
+    'desc=obsidian worth=15',
+    'desc=onyx worth=60',
+    'desc=opal worth=200',
+    'desc=pearl worth=220',
+    'desc=peridot worth=63',  # That one is weirdly specific
+    'desc=ruby worth=350',
+    'desc=sapphire worth=285',
+    'desc=stibiotantalite worth=200',  # (spelling corrected because of course I had to look it up)
+    'desc=tiger_eye worth=50',
+    'desc=topaz worth=60',
+    'desc=turquoise worth=70',
+    'desc=taaffeite worth=300',
+    'desc=zircon worth=80',  # worth 80?  really?
+)
+
+
+RING_TEMPLATES = (
+    'name=protection prob=9 worth=400',
+    'name=add_strength prob=9 worth=400',
+    'name=sustain_strength prob=5 worth=280',
+    'name=searching prob=10 worth=420',
+    'name=see_invisible prob=10 worth=310',
+    'name=adornment prob=1 worth=10',
+    'name=aggravate_monster prob=10 worth=10 flags=cursed',
+    'name=dexterity prob=8 worth=440',
+    'name=increase_damage prob=8 worth=400',
+    'name=regeneration prob=4 worth=460',
+    'name=slow_digestion prob=9 worth=240',
+    'name=teleportation prob=5 worth=30 flags=cursed',
+    'name=stealth prob=7 worth=470',
+    'name=maintain_armor prob=5 worth=380',
+)
+
+
 # ===== Probability calculations and whatnot ==============
 
 def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:
