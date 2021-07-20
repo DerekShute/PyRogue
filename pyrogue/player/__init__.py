@@ -300,7 +300,7 @@ class Player(Entity):
                 self.add_msg(f'You take off the {item.description(self.known)}')
                 self.rings.remove(item)
             elif len(self.rings) > 1:
-                self.add_msg(f'You already have a ring on each hand')
+                self.add_msg('You already have a ring on each hand')
             else:
                 self.add_msg(f'You put on the {item.description(self.known)}')
                 self.rings.append(item)

@@ -29,7 +29,7 @@ POTION_DESCRIPTIONS: List[str] = []
 RING_PROBABILITIES: List[int] = calc_probability(RING_TEMPLATES)
 """Initialized weighted probability list"""
 
-RING_DESCRIPTIONS: List[str] =[]
+RING_DESCRIPTIONS: List[str] = []
 """Initialized ring stones (with value add), scrambled per game"""
 # TODO: this totally will not work for save games
 

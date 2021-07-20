@@ -34,7 +34,7 @@ class Item:  # union thing
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
     parent = None  # Inventory or floor
     desc: str = ''
-    
+
     def __init__(self, name: str, char: str, color: Tuple[int, int, int], desc: str = None, pos: Pos = None, parent=None):
         self.pos = pos
         self.name = name
@@ -206,7 +206,7 @@ class Equipment(Item):
             if self.hplus != 0:
                 return f'{cursed_str}{self.hplus:+} {self.name}'
             return f'{cursed_str}normal {self.name}'
- 
+
         if self.etype == Equipment.RING:
             return describe_ring()
         return describe_other()
