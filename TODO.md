@@ -45,6 +45,15 @@ BIG TODO:
 
     Monster special powers
 
+    Rings:
+        Teleportation
+        monster aggrevation
+        haste
+        sustain hunger
+        invisibility
+        detect invisibility
+        regeneration
+      
 Gameplay
 
     Food effects, hunger,

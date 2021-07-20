@@ -5,7 +5,7 @@
 import random
 from entity import Entity
 from dataclasses import dataclass
-from typing import Tuple, Dict, Set
+from typing import Tuple, Dict, Set, List
 from item import Item, Food, Equipment, Consumable
 from position import Pos
 from message import MessageBuffer
@@ -143,6 +143,7 @@ class Player(Entity):
     actionq = []
     armor: Equipment = None
     weapon: Equipment = None
+    rings: List[Equipment] = []
     demise: str = None
     max_str: int = 0
     effects: Dict[str, int] = {}  # Things affecting player: being confused, being hasted...
@@ -173,7 +174,7 @@ class Player(Entity):
         """Status-line"""
         # TODO: originally 'Level: <dungeon level> Gold: %d Hp: %d/%d Str:%d(%d) Arm: %d Exp:%lvl/%xp <hunger status>'
         return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
-               f'Str:{self._stats.stren}({self.max_str}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
+               f'Str:{self.stren}({self.max_str}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
 
     def render_inventory(self, usage: str) -> Menu:
         inventory = []
@@ -184,7 +185,9 @@ class Player(Entity):
 
         listing = ord('a')
         for item in self.pack:
-            if self.armor == item:
+            if item in self.rings:
+                desc = f'{item.description(self.known)} (being worn)'
+            elif self.armor == item:
                 desc = f'{item.description(self.known)} (being worn)'
             elif self.weapon == item:
                 desc = f'{item.description(self.known)} (wielded)'
@@ -259,7 +262,7 @@ class Player(Entity):
         # Once not on the level, the game main loop takes care of it
 
     def drop(self, item: Item):
-        if self.armor == item or self.weapon == item:
+        if self.armor == item or self.weapon == item or item in self.rings:
             self.equip(item)
         self.add_msg(f'You drop the {item.description(self.known)}')
         self.remove_item(item)  # Remove it from inventory
@@ -291,14 +294,29 @@ class Player(Entity):
                 self.equip(self.armor)
                 self.equip(item)
 
+        def equip_ring():
+            # WONT-DO: believe it or not, there was a dialog to choose which hand.  I can't see how it matters
+            if item in self.rings:
+                self.add_msg(f'You take off the {item.description(self.known)}')
+                self.rings.remove(item)
+            elif len(self.rings) > 1:
+                self.add_msg('You already have a ring on each hand')
+            else:
+                self.add_msg(f'You put on the {item.description(self.known)}')
+                self.rings.append(item)
+
         if not isinstance(item, Equipment):
             self.add_msg(f'The {item.description(self.known)} cannot be equipped.')
             return
+
+        # TODO: cannot un-equip cursed items
 
         if item.etype == Equipment.WEAPON:
             equip_weapon()
         if item.etype == Equipment.ARMOR:
             equip_armor()
+        if item.etype == Equipment.RING:
+            equip_ring()
 
     def move(self, dx: int, dy: int):
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
@@ -342,6 +360,7 @@ class Player(Entity):
             action.perform(self)  # TODO: action cost, haste and slow effects
             self.key = self.key + ACTION_COST
             self.countdown_effects()
+            # TODO: hunger and ring effects on hunger
         return True
 
     # ===== Stat interface ================================
@@ -371,8 +390,12 @@ class Player(Entity):
 
     @property
     def stren(self) -> int:
-        # TODO: effects of equipment
-        return self._stats.stren
+        """Effective player strength: includes ring of add strength"""
+        stren = self._stats.stren
+        for ring in self.rings:
+            if ring.name == 'add strength':
+                stren += ring.hplus  # This is correct: sum of adjustments
+        return stren
 
     @property
     def food_left(self) -> int:
@@ -392,11 +415,15 @@ class Player(Entity):
 
     @property
     def ac(self):
-        """Armor class"""
-        # TODO: account for armor, rings, whatever
+        """Armor class: Affected by armor and rings of protection"""
         if self.armor is not None:
-            return self.armor.value
-        return self._stats.ac
+            ac = self.armor.value
+        else:
+            ac = self._stats.ac
+        for ring in self.rings:
+            if ring.name == 'protection':
+                ac -= ring.hplus  # This is correct: sum of adjustments
+        return ac
 
     def add_hit_msg(self, entity):
         self.add_msg(f'You {random.choice(HIT_NAMES)} the {entity.name}')
@@ -419,12 +446,17 @@ class Player(Entity):
         self.add_exp(entity.xp_value)
 
     def melee_attack(self) -> Tuple[int, int, str, int]:
-        """Melee attack (level, strength, dmg, dplus)"""
+        """Melee attack (level, strength, dmg, dplus): affected by weapon bonuses and rings"""
         level, stren, dmg, dplus = self._stats.melee_attack()
         if self.weapon is not None:
             dmg = self.weapon.dam
             level += self.weapon.hplus
             dplus += self.weapon.dplus
+        for ring in self.rings:  # This is correct: sum of adjustments
+            if ring.name == 'increase damage':
+                dplus += ring.hplus
+            elif ring.name == 'dexterity':
+                level += ring.hplus
         return level, stren, dmg, dplus
 
     def take_damage(self, amount: int):

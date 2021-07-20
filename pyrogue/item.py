@@ -15,9 +15,10 @@ COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
 COLOR_CHOCOLATE4 = (139, 69, 19)   # AKA "brown"
 COLOR_DEEPSKYBLUE = (0, 191, 255)
 COLOR_PURPLE = (128, 0, 128)
+COLOR_SILVER = (192, 192, 192)
 
 FRUIT_NAME = 'slime-mold'
-"""Traditional fruit name.  Settable in the original, but I can't be bothered"""
+"""Traditional fruit name.  WONT-DO: Settable in the original, but I can't be bothered"""
 
 
 # ===== Item ==============================================
@@ -28,17 +29,19 @@ class Item:  # union thing
     Thing (originally): Superclass structure for monsters / player / items
     """
     pos: Pos = None
-    _name: str = '<unknown>'
+    name: str = '<unknown>'
     _char: int = ord('&')  # No good default
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
     parent = None  # Inventory or floor
+    desc: str = ''
 
-    def __init__(self, name: str, char: str, color: Tuple[int, int, int], pos: Pos = None, parent=None):
+    def __init__(self, name: str, char: str, color: Tuple[int, int, int], desc: str = None, pos: Pos = None, parent=None):
         self.pos = pos
-        self._name = name
+        self.name = name
         self._char = ord(char)
         self._color = color
         self.parent = parent
+        self.desc = desc
 
     # ===== Display =======================================
 
@@ -47,10 +50,6 @@ class Item:  # union thing
         """Return map display information"""
         # TODO: render priority
         return self.pos, self._char, self._color
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     # ===== Interface =====================================
 
@@ -72,12 +71,12 @@ class Item:  # union thing
     # ===== Item callbacks from Entity ====================
 
     def use(self, entity) -> bool:
-        entity.add_msg(f'Can\'t do that with a {self.name}!')
+        entity.add_msg(f'Can\'t do that with a {self.description(entity.known)}!')
         return False
 
     def description(self, known: Set[str]) -> str:
         """Words used in inventory and dialog: resolve with 'known' and so forth"""
-        return self._name
+        return self.name
 
 
 # ===== Items with Quantity ===============================
@@ -107,6 +106,10 @@ class Food(Item):
 
     def __init__(self, which: int, **kwargs):
         self.which = which
+        if self.which == Food.FRUIT:
+            kwargs['desc'] = FRUIT_NAME
+        else:
+            kwargs['desc'] = 'food ration'
         super().__init__(name='food', char=':', color=COLOR_BURNTSIENNA, **kwargs)
 
     def __str__(self) -> str:
@@ -127,7 +130,7 @@ class Food(Item):
     def use(self, entity) -> bool:
         """Eat it.  You know you want to."""
         if self.which == self.FRUIT:
-            entity.add_msg(f'my, that was a yummy {FRUIT_NAME}')
+            entity.add_msg(f'my, that was a yummy {self.desc}')
         elif self.which == self.BAD_RATION:
             entity.add_msg('yuk, this food tastes awful')
             entity.add_exp(1)
@@ -137,10 +140,7 @@ class Food(Item):
         return True
 
     def description(self, known: Set[str]) -> str:
-        # TODO: pluralization
-        if self.which == self.FRUIT:
-            return f'{FRUIT_NAME}'
-        return 'food ration'
+        return self.desc
 
 
 # ===== Gold ==============================================
@@ -176,6 +176,7 @@ class Equipment(Item):
     # Types
     ARMOR = 0
     WEAPON = 1
+    RING = 2
 
     def __init__(self, etype: int, value: int = 0, worth: int = 0,
                  dam: str = None, hurl: str = None, launch: str = None, flags: str = '', **kwargs):
@@ -189,26 +190,43 @@ class Equipment(Item):
         super().__init__(**kwargs)
 
     def description(self, known: Set[str]) -> str:
-        if not self.known:
-            return f'{self._name}'
-        if self.flags.find('cursed') != -1:
-            cursed_str = 'cursed '
-        else:
-            cursed_str = ''
-        if self.hplus != 0:
-            return f'{cursed_str}{self.hplus:+} {self._name}'
-        return f'{cursed_str}normal {self.name}'
+        def describe_ring() -> str:
+            # TODO: bonuses
+            if self.desc in known:
+                return f'{self.desc} ring of {self.name}'
+            return f'{self.desc} ring'
+
+        def describe_other() -> str:
+            if not self.known:
+                return f'{self.name}'
+            if self.flags.find('cursed') != -1:
+                cursed_str = 'cursed '
+            else:
+                cursed_str = ''
+            if self.hplus != 0:
+                return f'{cursed_str}{self.hplus:+} {self.name}'
+            return f'{cursed_str}normal {self.name}'
+
+        if self.etype == Equipment.RING:
+            return describe_ring()
+        return describe_other()
 
     @staticmethod
-    def factory(etype: int, template: str) -> 'Equipment':
+    def factory(etype: int, template: str, desc: str = None) -> 'Equipment':
         """Convert from the readable format"""
         kwargs = unpack_template(template, ('prob'))
         if etype == Equipment.ARMOR:
             kwargs['char'] = ']'
             kwargs['color'] = COLOR_CHOCOLATE4
-        if etype == Equipment.WEAPON:
+        elif etype == Equipment.WEAPON:
             kwargs['char'] = ')'
             kwargs['color'] = COLOR_DEEPSKYBLUE
+        elif etype == Equipment.RING:
+            desc_kwargs = unpack_template(desc, '')
+            kwargs['char'] = '='
+            kwargs['color'] = COLOR_SILVER
+            kwargs['worth'] += desc_kwargs['worth']
+            kwargs['desc'] = desc_kwargs['desc']
         return Equipment(etype, **kwargs)
 
 
@@ -218,7 +236,6 @@ class Consumable(Item):
     """
     Consumable items: potions, scrolls, and 'sticks'
     """
-    desc: str = ''   # Description string - 'blue', 'emerald', 'maple', etc.
     etype: int         # POTION / etc
     worth: int         # score calculation at player demise
     # TODO: charges
@@ -226,15 +243,15 @@ class Consumable(Item):
     # TYPES
     POTION = 0
 
-    def __init__(self, etype: int, desc: str, worth: int, **kwargs):
-        self.desc = desc
+    def __init__(self, etype: int, worth: int, **kwargs):
         self.etype = etype
         self.worth = worth
         super().__init__(**kwargs)
 
     def description(self, known: Set[str]):
+        # TODO: this is potion only right now
         if self.desc in known:
-            return f'potion of {self._name}'
+            return f'potion of {self.name}'
         return f'{self.desc} potion'
 
     @staticmethod
@@ -243,12 +260,13 @@ class Consumable(Item):
         if etype == Consumable.POTION:
             kwargs['char'] = '!'
             kwargs['color'] = COLOR_PURPLE
-        return Consumable(etype, desc, **kwargs)
+        kwargs['desc'] = desc
+        return Consumable(etype, **kwargs)
 
     def use(self, entity) -> bool:
         """Drink the mystery fluid found in a dungeon.  What could go wrong?"""
         if self.etype == Consumable.POTION:
-            now_known = potion_effect(self._name, entity)
+            now_known = potion_effect(self.name, entity)
             if now_known:
                 entity.known.add(self.desc)
         return True
