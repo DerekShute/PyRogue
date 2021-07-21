@@ -5,7 +5,8 @@ import random
 from typing import List
 from item import Item, Food, Equipment, Consumable
 from factories import (calc_probability, ITEM_PROB_TEMPLATES, ARMOR_TEMPLATES, WEAPON_TEMPLATES,
-                       POTION_TEMPLATES, POTION_RAINBOW, RING_TEMPLATES, RING_STONES)
+                       POTION_TEMPLATES, POTION_RAINBOW, RING_TEMPLATES, RING_STONES,
+                       SCROLL_TEMPLATES, SCROLL_SYLLABLES)
 
 
 # TODO: randmonster
@@ -33,6 +34,12 @@ RING_DESCRIPTIONS: List[str] = []
 """Initialized ring stones (with value add), scrambled per game"""
 # TODO: this totally will not work for save games
 
+SCROLL_PROBABILITIES: List[int] = calc_probability(SCROLL_TEMPLATES)
+"""Initialized weighted probability list"""
+
+SCROLL_DESCRIPTIONS: List[str] = []
+"""Initialized scroll inscriptions, scrambled per game"""
+# TODO: this totally will not work for save games
 
 # ===== Service Routines ==================================
 
@@ -87,6 +94,14 @@ def new_ring() -> Equipment:
     return ring
 
 
+def new_scroll() -> Consumable:
+    """Fabricate a random scroll"""
+    numlist = random.choices(list(range(0, len(SCROLL_TEMPLATES))), weights=SCROLL_PROBABILITIES, k=1)
+    return Consumable.factory(
+        etype=Consumable.SCROLL, template=SCROLL_TEMPLATES[numlist[0]], desc=SCROLL_DESCRIPTIONS[numlist[0]]
+        )
+
+
 def new_weapon() -> Equipment:
     """Fabricate a random weapon"""
     numlist = random.choices(list(range(0, len(WEAPON_TEMPLATES))), weights=WEAPON_PROBABILITIES, k=1)
@@ -120,7 +135,9 @@ def new_thing() -> Item:  # new_thing
         return new_armor()
     if i == 3:
         return new_potion()
-    return new_ring()
+    if i == 4:
+        return new_ring()
+    return new_scroll()
 
 
 # ==== Initialization for a new game ======================
@@ -130,10 +147,27 @@ def game_init():
     # NOTE: need to hook it into save game
     global POTION_DESCRIPTIONS
     global RING_DESCRIPTIONS
+    global SCROLL_DESCRIPTIONS
 
     POTION_DESCRIPTIONS = list(POTION_RAINBOW)
     random.shuffle(POTION_DESCRIPTIONS)
 
     RING_DESCRIPTIONS = list(RING_STONES)
     random.shuffle(RING_DESCRIPTIONS)
+
+    SCROLL_DESCRIPTIONS = []
+    i = 0
+    while i < len(SCROLL_TEMPLATES):
+        words = None
+        nwords = random.randint(2, 4)
+        while nwords > 0:
+            word = ''
+            nsyl = random.randint(1, 3)
+            while nsyl > 0:
+                word = word + random.choice(SCROLL_SYLLABLES)
+                nsyl -= 1
+            words = word if words is None else f'{words} {word}'
+            nwords -= 1
+        SCROLL_DESCRIPTIONS.append(words)
+        i += 1
 # EOF

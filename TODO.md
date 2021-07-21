@@ -1,21 +1,17 @@
 IN PROGRESS
 
     Consumables
-    
-        * Potions, potion effects.  Need a better way than some enormous if/elif for effects.
-            * Direct effect by name, attribute of some effects class?  That's skeevy
-            * from consumables import effects as potion_effect
-            
-        * Potion types that become known... how to record it?  Against the player itself
-            known[desc] = True -> stone, wood, inscription, color.  Is there a collection or set to make this easier?
-            Then pickup or inventory resolves it at the item level, or at message time or something.
-                description becomes a method and takes 'known' argument instead
 
-        * Push food under consumables?
+        SCROLLS
 
-    Effects over time:
-        * Turning off via timer, etc.
-        * flag use: convention, adding and removing and testing correctly
+BUGS:
+    * Still ways to get multiple actions in the player action queue and that means an offset.
+    * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
+
+BIG TODO:
+
+    Curses:
+        * Cannot remove equipped item  (dropped item?)
 
     Hallucination:
         * many user messages have alternate output if you're LSDing.  Some second argument to add_msg?
@@ -24,13 +20,10 @@ IN PROGRESS
         * Don't have a good model for this.  Adjusting ACTION_COST causes problems when the user action queue gets empty.
             * Do not reschedule if no action in queue, adding action adds to queue?  This is general rework
 
-BUGS:
-    * Still ways to get multiple actions in the player action queue and that means an offset.
-    * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
-
-BIG TODO:
+    * Push food under consumables?
 
     Conditions as set (cursed, hasted monsters, etc)
+        * Player: confuse monster effect via scroll
 
     Inventory:
         * Consolidate count of items in listing
@@ -38,12 +31,14 @@ BIG TODO:
     Wizard mode game (reveals map, identifies objects)
 
     Items and equipment
-        * rings (new equipment type)
-        * scrolls, sticks
+        * sticks
 
     Monster AI
 
     Monster special powers
+
+    Potions:
+        Detect Magic
 
     Rings:
         Teleportation
@@ -53,7 +48,16 @@ BIG TODO:
         invisibility
         detect invisibility
         regeneration
-      
+
+    Scrolls:
+        monster confusion, magic mapping, hold monster, sleep, identify potion,
+        identify scroll, identify weapon, identify armor, identify ring staff or want, 
+        food detection, teleportation, create monster, remove curse, aggravate monsters
+
+    Traps
+    
+    Amulet and stairs up
+
 Gameplay
 
     Food effects, hunger,
