@@ -1,8 +1,9 @@
 IN PROGRESS
 
-    Consumables
-
-        SCROLLS
+    Wizard Mode
+    
+        * Text "chat" interface : - "/" enters chat mode
+          * InputHandler to add text to thing
 
 BUGS:
     * Still ways to get multiple actions in the player action queue and that means an offset.

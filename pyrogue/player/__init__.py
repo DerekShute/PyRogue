@@ -148,8 +148,9 @@ class Player(Entity):
     max_str: int = 0
     effects: Dict[str, int] = {}  # Things affecting player: being confused, being hasted...
     known: Set[str] = set()       # Things that are known: what a blue potion is, etc...
-
-    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
+    wizard: bool  # Wizard mode
+    
+    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME, wizard:bool = False):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
         self._msg = MessageBuffer()
         self._stats = stats
@@ -159,6 +160,7 @@ class Player(Entity):
         self.demise = None
         self.max_str = stats.stren if stats is not None else None
         self.effects = {}
+        self.wizard = wizard
 
     def __str__(self):
         return f'Player({Pos(self.pos)},{self._stats})'
@@ -535,8 +537,8 @@ class Player(Entity):
     # ===== Constructor ===================================
 
     @staticmethod
-    def factory(pos: Pos = None):   # init_player
-        plr = Player(pos=pos, stats=Stats(**INIT_STATS))
+    def factory(pos: Pos = None, wizard: bool = False):   # init_player
+        plr = Player(pos=pos, stats=Stats(**INIT_STATS), wizard=wizard)
         # cur_armor Armor: ring_mail, known, a_class = RING_MAIL
 
         # one food.  I think a ration, if I'm reading correctly

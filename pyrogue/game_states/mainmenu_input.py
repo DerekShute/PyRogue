@@ -17,6 +17,8 @@ class MainMenuInputHandler(InputHandler):
         key = event.sym
         if key == tcod.event.K_n:  # New Game
             return 'new'
+        if key == tcod.event.K_w:  # Wizard mode game
+            return 'wizard'
         if key == tcod.event.K_ESCAPE or key == tcod.event.K_q:
             return 'quit'
         if key == tcod.event.K_c:

@@ -57,15 +57,16 @@ class RIPGameState(Gameloop):
 class MainGameloop(Gameloop):
     """Main gameplay loop: moving around and doing things"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, wizard: bool = False, **kwargs):
         super().__init__(*args, **kwargs)
         self.level = None
         self.level_no = 0
         self.player = None
+        self.wizard = wizard
 
     def run(self) -> Gameloop:
         if self.player is None:
-            self.player = Player.factory()
+            self.player = Player.factory(wizard=self.wizard)
             self.input_handler = PlayerInputHandler(entity=self.player)
             self.player.add_msg('Welcome to the dungeon!')
         if self.player.level is None:
@@ -103,13 +104,15 @@ class MainMenuState(Gameloop):
     def run(self) -> Gameloop:
         self._display.clear()
         self._display.centered_msg(y=9, string='WELCOME TO THE DUNGEON OF DOOM', **TEXT_COLOR)
-        self._display.centered_msg(y=11, string="(N)ew Game  ", **TEXT_COLOR)
-        self._display.centered_msg(y=13, string="(Q)uit      ", **TEXT_COLOR)
+        self._display.centered_msg(y=11, string="(N)ew Game     ", **TEXT_COLOR)
+        self._display.centered_msg(y=12, string='  (w)izard mode', **TEXT_COLOR)
+        self._display.centered_msg(y=14, string="(Q)uit         ", **TEXT_COLOR)
         self._display.present()
         result = self._display.dispatch_event(self.input_handler)
-        if result == 'new':  # New Game
+        if result == 'new' or result == 'wizard':  # New Game
+            print(f'result: {result}')
             game_init()
-            return MainGameloop(display=self._display, previous=self)
+            return MainGameloop(display=self._display, previous=self, wizard=True if result=='wizard' else False)
         if result == 'quit':  # Exit
             return None
         # TODO: continue
