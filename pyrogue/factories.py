@@ -201,6 +201,7 @@ SCROLL_TEMPLATES = (
     'name=protect_armor prob=2 worth=250',
 )
 
+
 # ===== Probability calculations and whatnot ==============
 
 def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:

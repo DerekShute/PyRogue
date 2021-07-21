@@ -4,6 +4,7 @@
 import random
 # TODO: can't import Entity here
 
+
 def do_enchant_armor(entity) -> bool:
     """Enchant armor, remove curse"""
     if entity.armor is not None:
@@ -18,7 +19,7 @@ def do_enchant_weapon(entity) -> bool:
     if entity.weapon is None:
         entity.add_msg('You feel a strange sense of loss.')
         return False
-    entity.weapons.flags = '' # TODO: remove 'cursed' specifically
+    entity.weapons.flags = ''  # TODO: remove 'cursed' specifically
     if random.randint(0, 1) == 0:
         entity.weapon.hplus += 1
     else:
@@ -40,11 +41,11 @@ def do_protect_armor(entity) -> bool:
 def do_remove_curse(entity) -> bool:
     """Remove curses from all equipped items"""
     if entity.armor is not None:
-        entity.armor.flags = '' # TODO: real flags
+        entity.armor.flags = ''  # TODO: real flags
     if entity.weapon is not None:
-        entity.weapon.flags = '' # TODO: real flags
+        entity.weapon.flags = ''  # TODO: real flags
     for ring in entity.rings:
-        ring.flags = '' # TODO: real flags
+        ring.flags = ''  # TODO: real flags
     entity.add_msg('You feel as if somebody is watching over you')  # TODO: choose_str
     return False
 

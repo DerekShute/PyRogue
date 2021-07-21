@@ -41,6 +41,7 @@ SCROLL_DESCRIPTIONS: List[str] = []
 """Initialized scroll inscriptions, scrambled per game"""
 # TODO: this totally will not work for save games
 
+
 # ===== Service Routines ==================================
 
 def plus_value() -> int:
