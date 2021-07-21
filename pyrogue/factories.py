@@ -158,6 +158,50 @@ RING_TEMPLATES = (
 )
 
 
+# ===== SCROLL TEMPLATES ==================================
+
+SCROLL_SYLLABLES = (
+    "a", "ab", "ag", "aks", "ala", "an", "app", "arg", "arze", "ash",
+    "bek", "bie", "bit", "bjor", "blu", "bot", "bu", "byt", "comp",
+    "con", "cos", "cre", "dalf", "dan", "den", "do", "e", "eep", "el",
+    "eng", "er", "ere", "erk", "esh", "evs", "fa", "fid", "fri", "fu",
+    "gan", "gar", "glen", "gop", "gre", "ha", "hyd", "i", "ing", "ip",
+    "ish", "it", "ite", "iv", "jo", "kho", "kli", "klis", "la", "lech",
+    "mar", "me", "mi", "mic", "mik", "mon", "mung", "mur", "nej",
+    "nelg", "nep", "ner", "nes", "nes", "nih", "nin", "o", "od", "ood",
+    "org", "orn", "ox", "oxy", "pay", "ple", "plu", "po", "pot",
+    "prok", "re", "rea", "rhov", "ri", "ro", "rog", "rok", "rol", "sa",
+    "san", "sat", "sef", "seh", "shu", "ski", "sna", "sne", "snik",
+    "sno", "so", "sol", "sri", "sta", "sun", "ta", "tab", "tem",
+    "ther", "ti", "tox", "trol", "tue", "turs", "u", "ulk", "um", "un",
+    "uni", "ur", "val", "viv", "vly", "vom", "wah", "wed", "werg",
+    "wex", "whon", "wun", "xo", "y", "yot", "yu", "zant", "zeb", "zim",
+    "zok", "zon", "zum",
+)
+
+
+SCROLL_TEMPLATES = (
+    'name=monster_confusion prob=7 worth=140',
+    'name=magic_mapping prob=4 worth=150',
+    'name=hold_monster prob=2 worth=180',
+    'name=sleep prob=3 worth=5',
+    'name=enchant_armor prob=7 worth=160',
+    'name=identify_potion prob=10 worth=80',
+    'name=identify_scroll prob=10 worth=80',
+    'name=identify_weapon prob=6 worth=80',
+    'name=identify_armor prob=7 worth=100',
+    'name=identify_ring_wand_or_staff prob=10 worth=115',  # TODO: we'll see if that name sticks
+    'name=scare_monster prob=3 worth=200',
+    'name=food_detection prob=2 worth=60',
+    'name=teleportation prob=5 worth=165',
+    'name=enchant_weapon prob=8 worth=150',
+    'name=create_monster prob=4 worth=75',
+    'name=remove_curse prob=7 worth=105',
+    'name=aggravate_monsters prob=3 worth=20',
+    'name=protect_armor prob=2 worth=250',
+)
+
+
 # ===== Probability calculations and whatnot ==============
 
 def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:

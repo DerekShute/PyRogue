@@ -6,9 +6,11 @@ from typing import Tuple, Set
 from position import Pos
 from factories import unpack_template
 from potions import potion_effect
+from scrolls import scroll_effect
 # TODO: can't import Entity because recursion
 
 # TODO: colors go somewhere
+COLOR_BLACK = (0, 0, 0)
 COLOR_YELLOW = (255, 255, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
@@ -242,6 +244,7 @@ class Consumable(Item):
 
     # TYPES
     POTION = 0
+    SCROLL = 1
 
     def __init__(self, etype: int, worth: int, **kwargs):
         self.etype = etype
@@ -249,10 +252,14 @@ class Consumable(Item):
         super().__init__(**kwargs)
 
     def description(self, known: Set[str]):
-        # TODO: this is potion only right now
+        if self.etype == Consumable.POTION:
+            if self.desc in known:
+                return f'potion of {self.name}'
+            return f'{self.desc} potion'
+        # Scroll
         if self.desc in known:
-            return f'potion of {self.name}'
-        return f'{self.desc} potion'
+            return f'scroll of {self.name}'
+        return f'scroll titled "{self.desc}"'
 
     @staticmethod
     def factory(etype: int, template: str, desc: str):
@@ -260,15 +267,21 @@ class Consumable(Item):
         if etype == Consumable.POTION:
             kwargs['char'] = '!'
             kwargs['color'] = COLOR_PURPLE
+        elif etype == Consumable.SCROLL:
+            kwargs['char'] = '?'
+            kwargs['color'] = COLOR_BLACK
         kwargs['desc'] = desc
         return Consumable(etype, **kwargs)
 
     def use(self, entity) -> bool:
-        """Drink the mystery fluid found in a dungeon.  What could go wrong?"""
+        """Drink the mystery fluid found in a dungeon, etc.  What could go wrong?"""
+        now_known = False
         if self.etype == Consumable.POTION:
             now_known = potion_effect(self.name, entity)
-            if now_known:
-                entity.known.add(self.desc)
+        elif self.etype == Consumable.SCROLL:
+            now_known = scroll_effect(self.name, entity)
+        if now_known:
+            entity.known.add(self.desc)
         return True
 
 # ===== TESTING ===========================================
