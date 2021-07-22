@@ -11,6 +11,7 @@ from position import Pos
 from message import MessageBuffer
 from level import Level
 from menu import Menu
+from player.wizard import wizard_request
 
 
 ACTION_COST = 8
@@ -257,6 +258,12 @@ class Player(Entity):
         assert pos
         self.add_msg('Ouch!')
 
+    def chat(self, text: str):
+        if self.wizard:
+            wizard_request(self, text)
+        else:
+            self.add_msg(f'Someone shouts "{text}"!')
+
     def descend(self):
         self.add_msg('You stumble down the stairs.')  # TODO: real message?
         self.level.remove_player()
@@ -419,7 +426,7 @@ class Player(Entity):
     def ac(self):
         """Armor class: Affected by armor and rings of protection"""
         if self.armor is not None:
-            ac = self.armor.value
+            ac = self.armor.value - self.armor.hplus # AD&D - subtract to improve
         else:
             ac = self._stats.ac
         for ring in self.rings:

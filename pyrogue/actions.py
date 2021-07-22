@@ -57,6 +57,17 @@ class BumpAction(Action):
         MovementAction(self.dx, self.dy).perform(entity)
 
 
+class ChatAction(Action):
+    """Text some text.  Used by wizards"""
+    text: str
+
+    def __init__(self, text: str):
+        self.text = text
+
+    def perform(self, entity: Entity) -> None:
+        entity.chat(self.text)
+
+
 class DescendAction(Action):
     """Go down"""
     def perform(self, entity: Entity) -> None:

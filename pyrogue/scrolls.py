@@ -9,7 +9,7 @@ def do_enchant_armor(entity) -> bool:
     """Enchant armor, remove curse"""
     if entity.armor is not None:
         entity.armor.flags = ''  # TODO: remove 'cursed' specifically
-        entity.armor.value -= 1  # Note AD&D rules
+        entity.armor.hplus += 1  # Plus always improves, minus always worsens
         entity.add_msg('Your armor glows silver for a moment')  # WONT-DO: other colors pick_color
     return False  # Really, not set known
 

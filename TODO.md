@@ -11,6 +11,11 @@ BUGS:
 
 BIG TODO:
 
+    Wizard mode / Chat
+        * shift-key ('+') needs special decode.  Not sure how to deal with that
+        * identify sequence -> subsequent InputHandler
+        * wizard mode always gets scorecard
+
     Curses:
         * Cannot remove equipped item  (dropped item?)
 
@@ -28,11 +33,9 @@ BIG TODO:
 
     Inventory:
         * Consolidate count of items in listing
- 
-    Wizard mode game (reveals map, identifies objects)
 
     Items and equipment
-        * sticks
+        * sticks -> targeting
 
     Monster AI
 
@@ -49,10 +52,11 @@ BIG TODO:
         invisibility
         detect invisibility
         regeneration
+        searching
 
     Scrolls:
-        monster confusion, magic mapping, hold monster, sleep, identify potion,
-        identify scroll, identify weapon, identify armor, identify ring staff or want, 
+        monster confusion -> state, magic mapping, hold monster, sleep, identify potion,
+        identify scroll, identify weapon, identify armor, identify ring staff or wand, 
         food detection, teleportation, create monster, remove curse, aggravate monsters
 
     Traps
@@ -96,9 +100,6 @@ monster.py
 
     venus flytrap has odd damage declaration
 
-    Monster
-        * should this really be a dataclass?
-
     Monster.factory()
         * xeroc takes on a disguise
         * pack, chance of having an item
@@ -118,14 +119,10 @@ Display / Map / Level
     * Render priority
 
 Rogue Level
-    * Traps
     * Maze rooms
     * Treasure rooms
-    * put_things
 
-Combat
-    * Must take weapon / armor / rings / confusion effect / etc. into consideration
-    
+Combat    
     * Projectile rules
     
     * helpless target?  Additional bonus
@@ -135,8 +132,4 @@ Combat
 Stats use
 
     * doctor daemon: pstats.lvl, pstats.hpt max_hp(?)
-    * stat line: hpt, exp, str, lvl, cur_armor, s_arm
-    * check level: exp, lvl, hpt
-    * Strength change (chg_str)
-    * Monsters: creation, etc., 
     * saving throws save_throw use lvl
