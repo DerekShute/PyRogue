@@ -170,7 +170,7 @@ class Equipment(Item):
     dmg: str = None
     hurl: str = None
     launch: str = None
-    flags: str = ''
+    state: Set[str] = set()
     hplus: int = 0
     dplus: int = 0
     known: bool = False  # TODO: Do you know exactly what it does/is?
@@ -188,7 +188,7 @@ class Equipment(Item):
         self.dam = dam
         self.hurl = hurl
         self.launch = launch
-        self.flags = flags
+        self.state = set(flags.split(' '))
         super().__init__(**kwargs)
 
     def description(self, known: Set[str]) -> str:
@@ -201,10 +201,7 @@ class Equipment(Item):
         def describe_other() -> str:
             if not self.known:
                 return f'{self.name}'
-            if self.flags.find('cursed') != -1:
-                cursed_str = 'cursed '
-            else:
-                cursed_str = ''
+            cursed_str = 'cursed ' if 'cursed' in self.state else ''
             if self.hplus != 0:
                 return f'{cursed_str}{self.hplus:+} {self.name}'
             return f'{cursed_str}normal {self.name}'

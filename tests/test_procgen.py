@@ -58,9 +58,9 @@ class TestProcgenItem(unittest.TestCase):
         assert armor.description(set()) == 'splint mail'
         assert armor.hplus == expected
         if input == 0:
-            assert 'cursed' in armor.flags
+            assert 'cursed' in armor.state
         else:
-            assert 'cursed' not in armor.flags
+            assert 'cursed' not in armor.state
         assert armor.worth == 80
         self.assertTrue(True)
 
@@ -79,9 +79,9 @@ class TestProcgenItem(unittest.TestCase):
         assert weapon.dam == '1x1'
         assert weapon.hplus == expected
         if input == 5:
-            assert 'cursed' in weapon.flags
+            assert 'cursed' in weapon.state
         else:
-            assert 'cursed' not in weapon.flags
+            assert 'cursed' not in weapon.state
         self.assertTrue(True)
 
 # ===== Invocation ========================================

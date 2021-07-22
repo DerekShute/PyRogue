@@ -7,8 +7,8 @@ from level import Level, lit_area
 from position import Pos
 from room import Room
 from item import Gold
-from monster import Monster
 from player import Player
+from procgen.randmonster import new_monster
 
 
 # ===== Test Level ========================================
@@ -74,7 +74,7 @@ class TestLevel(unittest.TestCase):
     def test_monsters_at_location(self):
         """Exercise 'there is monsters here' """
         lvl = Level(1, 10, 10, None)
-        mon = Monster.factory(Pos(3, 3), 1, ord('A'))
+        mon = new_monster(Pos(3, 3), 1, ord('A'))
         lvl.add_monster(mon)
         assert lvl.monsters_at(Pos(0, 0)) == []
         assert lvl.monsters_at(Pos(3, 3)) == [mon]

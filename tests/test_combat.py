@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch, call
 import combat
 from player import Player
-from monster import Monster
+from procgen.randmonster import new_monster
 
 
 # ===== Service Routines ==================================
@@ -93,7 +93,7 @@ class TestCombatBasics(unittest.TestCase):
     def test_roll_em_miss(self, mock_randint):
         mock_randint.return_value = 16  # Needs 17 to hit
         p = Player.factory()
-        m = Monster.factory(None, 1, ord('G'))
+        m = new_monster(None, 1, ord('G'))
         result = combat.roll_em(p, m)
         assert result == 0
         self.assertTrue(True)
@@ -102,7 +102,7 @@ class TestCombatBasics(unittest.TestCase):
     def test_roll_em_hit(self, mock_randint):
         mock_randint.side_effect = randint_return_max
         p = Player.factory()
-        m = Monster.factory(None, 1, ord('G'))
+        m = new_monster(None, 1, ord('G'))
         result = combat.roll_em(p, m)
         assert result == 5  # Damage done - max of 1..4 + 1
         self.assertTrue(True)
@@ -114,7 +114,7 @@ class TestCombatBasics(unittest.TestCase):
         mock_randint.side_effect = randint_return_max
         mock_melee.return_value = (1, 16, '1x4', 5)
         p = Player.factory()
-        m = Monster.factory(None, 1, ord('G'))
+        m = new_monster(None, 1, ord('G'))
         result = combat.roll_em(p, m)
         assert result == 10  # Damage done - max of 1..4 + 1 + 5
         self.assertTrue(True)
@@ -125,7 +125,7 @@ class TestCombatBasics(unittest.TestCase):
         """Monsters can have multiple attacks"""
         mock_randint.side_effect = randint_return_min
         p = Player.factory()
-        m = Monster.factory(None, 1, ord('G'))  # Two attacks
+        m = new_monster(None, 1, ord('G'))  # Two attacks
         _ = combat.roll_em(m, p)
         assert mock_roll.call_args_list == [call('4x3'), call('3x5')]
         self.assertTrue(True)
@@ -136,7 +136,7 @@ class TestCombatBasics(unittest.TestCase):
         mock_choice.side_effect = choice_return_first
         mock_randint.return_value = 10
         p = Player.factory()
-        m = Monster.factory(None, 1, ord('G'))
+        m = new_monster(None, 1, ord('G'))
         assert m.hpt == 130
         combat.fight(p, m)
         assert m.hpt == 130  # Swing and a miss
@@ -149,7 +149,7 @@ class TestCombatBasics(unittest.TestCase):
         mock_choice.side_effect = choice_return_first
         mock_randint.side_effect = randint_return_max
         p = Player.factory()
-        m = Monster.factory(None, 1, ord('G'))
+        m = new_monster(None, 1, ord('G'))
         assert m.hpt == 104
         combat.fight(p, m)
         assert m.hpt == 99  # 5 points - max(1, 4) + 1
@@ -162,7 +162,7 @@ class TestCombatBasics(unittest.TestCase):
         mock_choice.side_effect = choice_return_first
         mock_randint.side_effect = randint_return_max
         p = Player.factory()
-        m = Monster.factory(None, 1, ord('H'))
+        m = new_monster(None, 1, ord('H'))
         assert p.exp == 0  # Buck private
         assert m.hpt == 8
         combat.fight(p, m)
@@ -176,9 +176,6 @@ class TestCombatBasics(unittest.TestCase):
         assert p.curr_msg == 'You killed the hobgoblin!'
         self.assertTrue(True)
 
-# TODO: test effects of magic/cursed weapon on hit chance
-
-# TODO: test effects of magic/cursed armor on defense
 
 # ===== Invocation ========================================
 

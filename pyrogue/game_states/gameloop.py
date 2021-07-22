@@ -34,8 +34,8 @@ class RIPGameState(Gameloop):
         """I don't feel like drawing out a tombstone"""
         self._display.clear()
         # Killed by
-        pname = 'adventurer' if not self.player.wizard else 'wizard'
-        if self.player.wizard:
+        pname = 'wizard' if 'wizard' in self.player.state else 'adventurer'
+        if 'wizard' in self.player.state:
             self._display.centered_msg(y=8, string='A DIGNIFIED STRATEGIC WITHDRAWAL BY', **TEXT_COLOR)
         elif self.player.demise == 'quit':
             self._display.centered_msg(y=8, string='A COWARDLY ESCAPE BY', **TEXT_COLOR)
@@ -78,7 +78,7 @@ class MainGameloop(Gameloop):
             del self.level
             self.level_no = self.level_no + 1
             self.level = RogueLevel(self.level_no, *self._display.size, self._display, player=self.player)
-            if self.player.wizard:
+            if 'wizard' in self.player.state:
                 self.player.add_effect('monster detection', 20)
                 self.player.add_effect('detect magic', 20)
         self.player.level.render()

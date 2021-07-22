@@ -4,7 +4,7 @@
 
 import unittest
 from unittest.mock import patch
-from monster import Monster
+from procgen.randmonster import new_monster
 from position import Pos
 from level import Level
 
@@ -27,9 +27,9 @@ class TestMonster(unittest.TestCase):
     def test(self, mock_randint):
         """Smoke Test"""
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(Pos(3, 2), 1, ord('A'))
+        mon = new_monster(Pos(3, 2), 1, ord('A'))
         # print(str(mon))
-        assert str(mon) == 'Monster(aquator:@(3,2),HP=5/5,AC=2,dmg=\'0x0/0x0\',flags=\'mean\')'
+        assert str(mon) == 'Monster(aquator:@(3,2),HP=5/5,AC=2,dmg=\'0x0/0x0\',state={\'mean\'})'
         assert mon.name == 'aquator'
         assert mon.pos == Pos(3, 2)
         pos, mtype, color = mon.char
@@ -42,16 +42,16 @@ class TestMonster(unittest.TestCase):
     @patch('random.randint')
     def test_lowest(self, mock_randint):
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(None, 1, ord('A'))
+        mon = new_monster(None, 1, ord('A'))
         # print(mon)
-        assert str(mon) == 'Monster(aquator:@(0,0),HP=5/5,AC=2,dmg=\'0x0/0x0\',flags=\'mean\')'
+        assert str(mon) == 'Monster(aquator:@(0,0),HP=5/5,AC=2,dmg=\'0x0/0x0\',state={\'mean\'})'
         self.assertTrue(True)
 
     @patch('random.randint')
     def test_negative_armor(self, mock_randint):
         """Black unicorn armor is negative.  Did parse do that right?"""
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(None, 1, ord('U'))
+        mon = new_monster(None, 1, ord('U'))
         # print(mon)
         assert mon.armor == -2
         self.assertTrue(True)
@@ -60,15 +60,15 @@ class TestMonster(unittest.TestCase):
     def test_flags(self, mock_randint):
         """Griffin has many flags"""
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(None, 1, ord('G'))
+        mon = new_monster(None, 1, ord('G'))
         # print(mon)
-        assert mon.flags == 'mean fly regenerate'
+        assert mon.state == set(('mean', 'fly', 'regenerate'))
         self.assertTrue(True)
 
     def test_oob_high(self):
         """Out of bounds monster index"""
         try:
-            _ = Monster.factory(None, 1, 100)
+            _ = new_monster(None, 1, 100)
             assert False
         except ValueError:
             pass
@@ -77,7 +77,7 @@ class TestMonster(unittest.TestCase):
     def test_oob_low(self):
         """Out of bounds low"""
         try:
-            _ = Monster.factory(None, 1, ord('A') - 1)
+            _ = new_monster(None, 1, ord('A') - 1)
             assert False
         except ValueError:
             pass
@@ -87,7 +87,7 @@ class TestMonster(unittest.TestCase):
     def test_leveladd(self, mock_randint):
         """At high dungeon levels, additional benefits (to be a monster)"""
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(None, 27, ord('A'))
+        mon = new_monster(None, 27, ord('A'))
         # print(mon)
         assert mon.lvl == 6 and mon.armor == 1 and mon.hpt == 6 and mon.maxhp == 6
         self.assertTrue(True)
@@ -96,9 +96,9 @@ class TestMonster(unittest.TestCase):
     def test_haste(self, mock_randint):
         """At dungeon level > 29, monsters get hasted"""
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(None, 31, ord('A'))
+        mon = new_monster(None, 31, ord('A'))
         # print(mon)
-        assert mon.flags == 'mean haste'
+        assert mon.state == set(('mean', 'haste'))
         self.assertTrue(True)
 
 
@@ -107,7 +107,7 @@ class TestMonsterMapLevel(unittest.TestCase):
 
     def test_pos(self):
         """Test positioning and set-positioning"""
-        mon = Monster.factory(Pos(10, 10), 1, ord('G'))
+        mon = new_monster(Pos(10, 10), 1, ord('G'))
         assert mon.pos == Pos(10, 10)
         mon.set_pos(Pos(20, 20))
         assert mon.pos == Pos(20, 20)
@@ -115,7 +115,7 @@ class TestMonsterMapLevel(unittest.TestCase):
 
     def test_char(self):
         """Test map display"""
-        mon = Monster.factory(Pos(10, 10), 1, ord('G'))
+        mon = new_monster(Pos(10, 10), 1, ord('G'))
         pos, char, color = mon.char
         assert pos == Pos(10, 10)
         assert char == ord('G')
@@ -124,7 +124,7 @@ class TestMonsterMapLevel(unittest.TestCase):
 
     def test_level(self):
         """Monster attachment to level"""
-        mon = Monster.factory(Pos(10, 10), 1, ord('G'))
+        mon = new_monster(Pos(10, 10), 1, ord('G'))
         lvl = Level(1, 80, 25, None)
         mon.attach_level(lvl)
         assert mon.level == lvl  # Test point in neighborhood
@@ -144,7 +144,7 @@ class TestMonsterCombat(unittest.TestCase):
     def test_xp_value(self, mock_randint):
         """Test xp_value returned for killing the darn thing"""
         mock_randint.side_effect = randint_return_min
-        mon = Monster.factory(Pos(10, 10), 1, ord('A'))
+        mon = new_monster(Pos(10, 10), 1, ord('A'))
         assert mon.xp_value == 20  # 20 in listing plus zero for 5 HP
         self.assertTrue(True)
 

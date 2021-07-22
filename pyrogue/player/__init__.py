@@ -149,7 +149,6 @@ class Player(Entity):
     max_str: int = 0
     effects: Dict[str, int] = {}  # Things affecting player: being confused, being hasted...
     known: Set[str] = set()       # Things that are known: what a blue potion is, etc...
-    wizard: bool  # Wizard mode
 
     def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME, wizard: bool = False):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
@@ -161,7 +160,8 @@ class Player(Entity):
         self.demise = None
         self.max_str = stats.stren if stats is not None else None
         self.effects = {}
-        self.wizard = wizard
+        if wizard:
+            self.state.add('wizard')
 
     def __str__(self):
         return f'Player({Pos(self.pos)},{self._stats})'
@@ -259,7 +259,7 @@ class Player(Entity):
         self.add_msg('Ouch!')
 
     def chat(self, text: str):
-        if self.wizard:
+        if 'wizard' in self.state:
             wizard_request(self, text)
         else:
             self.add_msg(f'Someone shouts "{text}"!')
@@ -328,7 +328,7 @@ class Player(Entity):
             equip_ring()
 
     def move(self, dx: int, dy: int):
-        self.pos = Pos(self.pos.x + dx, self.pos.y + dy)  # TODO: Pos addition
+        super().move(dx, dy)
         self.room = self.level.new_room(self.pos, self.room)
         # TODO : returns timer tick cost
 

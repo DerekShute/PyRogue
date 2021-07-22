@@ -61,7 +61,7 @@ def new_armor(which: int = None) -> Equipment:
     r = random.randint(0, 99)
     if r < 20:    # cursed
         armor.hplus -= plus_value()  # Minuses always _worsen_
-        armor.flags = f'{armor.flags} cursed'
+        armor.state.add('cursed')
     elif r < 28:  # 8% magic
         armor.hplus += plus_value()  # Pluses always _improve_
     return armor
@@ -103,7 +103,7 @@ def new_ring(which: int = None) -> Equipment:
         ring.hplus = plus_value() - 1
         if ring.hplus < 1:
             ring.hplus = -1
-            ring.flags = 'cursed'
+            ring.state.add('cursed')
     return ring
 
 
@@ -129,7 +129,7 @@ def new_weapon(which: int = None) -> Equipment:
     weapon = Equipment.factory(etype=Equipment.WEAPON, template=WEAPON_TEMPLATES[which])
     r = random.randint(0, 100)
     if r < 10:  # 10% cursed
-        weapon.flags = f'{weapon.flags} cursed'
+        weapon.state.add('cursed')
         weapon.hplus -= plus_value()
         # Note not dplus...interesting (though the initial mace is +1/+1, and dplus _is_ taken into consideration)
     elif r < 15:  # 5% bonus
