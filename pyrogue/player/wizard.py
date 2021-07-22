@@ -23,7 +23,7 @@ def ready_item(player, item, plus: int = None):
     if plus is not None:
         item.hplus = int(plus)
         if item.hplus < 0:
-            item.flags = 'cursed'
+            item.state.add('cursed')
     item.known = True
     item.set_parent(player)
     player.add_item(item)

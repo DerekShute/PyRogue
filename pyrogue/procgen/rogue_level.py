@@ -7,13 +7,12 @@ import math
 from position import Pos
 from room import Room
 from level import Level
-from monster import Monster
 from item import Gold
 from display import Display
 from typing import Tuple
 from player import Player
 from procgen import new_thing
-
+from procgen.randmonster import new_monster
 
 # ===== Constants =========================================
 
@@ -204,7 +203,7 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
     # Put the monster in
 
     if rand(0, 100) < 80 if gold else 25:
-        monster = Monster.factory(r.rnd_pos, levelno, randmonster(levelno, False))
+        monster = new_monster(r.rnd_pos, levelno, randmonster(levelno, False))
         monster.attach_level(level)
 
     return r
@@ -315,7 +314,7 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
         # TODO: position has to be safe to be.
         level.add_player(player)
         player.room = level.new_room(player.pos, None)
-        if player and player.wizard:
+        if player and 'wizard' in player.state:
             level.map.explore(rectangle(0, 0, width, height - 1))
 
     return level

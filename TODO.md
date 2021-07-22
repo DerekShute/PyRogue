@@ -1,23 +1,20 @@
 IN PROGRESS
 
-    Wizard Mode
-    
-        * Text "chat" interface : - "/" enters chat mode
-          * InputHandler to add text to thing
-
 BUGS:
     * Still ways to get multiple actions in the player action queue and that means an offset.
     * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
 
 BIG TODO:
 
+    Curses:
+        * Cannot remove equipped item  (dropped item?)
+    Potions:
+        Detect Magic
+
     Wizard mode / Chat
         * shift-key ('+') needs special decode.  Not sure how to deal with that
         * identify sequence -> subsequent InputHandler
         * wizard mode always gets scorecard
-
-    Curses:
-        * Cannot remove equipped item  (dropped item?)
 
     Hallucination:
         * many user messages have alternate output if you're LSDing.  Some second argument to add_msg?
@@ -28,9 +25,6 @@ BIG TODO:
 
     * Push food under consumables?
 
-    Conditions as set (cursed, hasted monsters, etc)
-        * Player: confuse monster effect via scroll
-
     Inventory:
         * Consolidate count of items in listing
 
@@ -40,9 +34,6 @@ BIG TODO:
     Monster AI
 
     Monster special powers
-
-    Potions:
-        Detect Magic
 
     Rings:
         Teleportation

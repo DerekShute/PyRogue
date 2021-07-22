@@ -109,7 +109,7 @@ class TestEquipment(unittest.TestCase):
         assert e.description(set()) == '+1 fake'
         e.hplus = -1
         assert e.description(set()) == '-1 fake'
-        e.flags = ' cursed'
+        e.state.add('cursed')
         assert e.description(set()) == 'cursed -1 fake'
         self.assertTrue(True)
 

@@ -3,7 +3,7 @@
 """
 from __future__ import annotations
 
-from typing import List, Tuple, TYPE_CHECKING
+from typing import List, Tuple, Set, TYPE_CHECKING
 from position import Pos
 from item import Item
 from combat import fight
@@ -26,6 +26,7 @@ class Entity:
     mtype: int = ord('?')
     _color: Tuple[int, int, int] = COLOR_WHITE
     pack: List[Item] = None
+    state: Set[str] = set()
 
     # ===== Private etc ===================================
 
@@ -38,6 +39,7 @@ class Entity:
         self.mtype = mtype
         self._color = color
         self.pack = []
+        self.state = set()
 
     def __lt__(self, other: 'Entity') -> bool:
         """Comparison for TurnQueue bisect operation"""
@@ -105,11 +107,15 @@ class Entity:
     # ===== Action Callbacks ==============================
 
     # Derived classes must implement:
-    #   bump
     #   descend
     #   fight
-    #   move
     #   pick_up
+
+    def move(self, dx: int, dy: int):
+        self.pos = Pos(self.pos.x + dx, self.pos.y + dy)
+
+    def bump(self, pos: Pos):
+        assert pos
 
 # ===== Testing ===========================================
 
