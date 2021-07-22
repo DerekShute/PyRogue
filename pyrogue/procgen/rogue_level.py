@@ -7,7 +7,6 @@ import math
 from position import Pos
 from room import Room
 from level import Level
-from monster import Monster
 from item import Gold
 from display import Display
 from typing import Tuple

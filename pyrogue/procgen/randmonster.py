@@ -41,7 +41,7 @@ def exp_add(mon: Dict[str, Any]) -> int:
 
 # ===== NEW MONSTER =======================================
 
-def new_monster(pos: Pos = None, levelno: int = 1, code:int = 0) -> Entity:
+def new_monster(pos: Pos = None, levelno: int = 1, code: int = 0) -> Entity:
     """Cough up a new monster"""
     # TODO: randmonster here?
 

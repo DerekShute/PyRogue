@@ -110,7 +110,7 @@ class Entity:
     #   descend
     #   fight
     #   pick_up
-    
+
     def move(self, dx: int, dy: int):
         self.pos = Pos(self.pos.x + dx, self.pos.y + dy)
 
