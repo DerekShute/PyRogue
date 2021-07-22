@@ -315,8 +315,8 @@ def RogueLevel(levelno: int, width: int, height: int, display: Display, player: 
         # TODO: position has to be safe to be.
         level.add_player(player)
         player.room = level.new_room(player.pos, None)
-
-    level.map.explore(rectangle(0, 0, width, height - 1))  # TODO wizard mode
+        if player and player.wizard:
+            level.map.explore(rectangle(0, 0, width, height - 1))
 
     return level
 

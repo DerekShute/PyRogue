@@ -44,9 +44,9 @@ class TestProcgenItem(unittest.TestCase):
         assert food.description(set()) == expected
         self.assertTrue(True)
 
-    @parameterized.expand([(0, 5),    # cursed -1
-                           (25, 3),   # magic +1
-                           (90, 4)])  # absolutely normal
+    @parameterized.expand([(0, -1),    # cursed -1
+                           (25, 1),   # magic +1
+                           (90, 0)])  # absolutely normal
     @patch('random.choices')
     @patch('random.randint')
     @patch('procgen.plus_value')
@@ -56,7 +56,7 @@ class TestProcgenItem(unittest.TestCase):
         mock_choices.return_value = [5]  # peg on splint mail
         armor = new_armor()
         assert armor.description(set()) == 'splint mail'
-        assert armor.value == expected
+        assert armor.hplus == expected
         if input == 0:
             assert 'cursed' in armor.flags
         else:

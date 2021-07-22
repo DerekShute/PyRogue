@@ -50,43 +50,55 @@ def plus_value() -> int:
     return random.randint(1, 3)
 
 
-def new_armor() -> Equipment:
+def new_armor(which: int = None) -> Equipment:
     """Fabricate a random armor"""
-    numlist = random.choices(list(range(0, len(ARMOR_TEMPLATES))), weights=ARMOR_PROBABILITIES, k=1)
-    armor = Equipment.factory(etype=Equipment.ARMOR, template=ARMOR_TEMPLATES[numlist[0]])
+    if which is None:
+        numlist = random.choices(list(range(0, len(ARMOR_TEMPLATES))), weights=ARMOR_PROBABILITIES, k=1)
+        which = numlist[0]
+    elif which >= len(ARMOR_TEMPLATES):
+        return None
+    armor = Equipment.factory(etype=Equipment.ARMOR, template=ARMOR_TEMPLATES[which])
     r = random.randint(0, 99)
     if r < 20:    # cursed
-        armor.value += plus_value()  # AD&D -> this worsens, remember?
+        armor.hplus -= plus_value()  # Minuses always _worsen_
         armor.flags = f'{armor.flags} cursed'
     elif r < 28:  # 8% magic
-        armor.value -= plus_value()  # AD&D -> this improves, remember?
+        armor.hplus += plus_value()  # Pluses always _improve_
     return armor
 
 
-def new_food() -> Food:
-    if random.randint(0, 100) < 10:
-        which = Food.FRUIT
-    elif random.randint(0, 100) > 70:
-        which = Food.BAD_RATION
-    else:
-        which = Food.GOOD_RATION
+def new_food(which: int = None) -> Food:
+    """Make some food"""
+    if which is None:
+        if random.randint(0, 100) < 10:
+            which = Food.FRUIT
+        elif random.randint(0, 100) > 70:
+            which = Food.BAD_RATION
+        else:
+            which = Food.GOOD_RATION
     return Food(which=which)
 
 
-def new_potion() -> Consumable:
+def new_potion(which: int = None) -> Consumable:
     """Fabricate a random potion"""
-    numlist = random.choices(list(range(0, len(POTION_TEMPLATES))), weights=POTION_PROBABILITIES, k=1)
+    if which is None:
+        numlist = random.choices(list(range(0, len(POTION_TEMPLATES))), weights=POTION_PROBABILITIES, k=1)
+        which = numlist[0]
+    elif which >= len(POTION_TEMPLATES):
+        return None
     return Consumable.factory(
-        etype=Consumable.POTION, template=POTION_TEMPLATES[numlist[0]], desc=POTION_DESCRIPTIONS[numlist[0]]
+        etype=Consumable.POTION, template=POTION_TEMPLATES[which], desc=POTION_DESCRIPTIONS[which]
         )
 
 
-def new_ring() -> Equipment:
+def new_ring(which: int = None) -> Equipment:
     """Fabricate a random ring"""
-    numlist = random.choices(list(range(0, len(RING_TEMPLATES))), weights=RING_PROBABILITIES, k=1)
-    ring = Equipment.factory(
-        etype=Equipment.RING, template=RING_TEMPLATES[numlist[0]], desc=RING_DESCRIPTIONS[numlist[0]]
-        )
+    if which is None:
+        numlist = random.choices(list(range(0, len(RING_TEMPLATES))), weights=RING_PROBABILITIES, k=1)
+        which = numlist[0]
+    elif which >= len(RING_TEMPLATES):
+        return None
+    ring = Equipment.factory(etype=Equipment.RING, template=RING_TEMPLATES[which], desc=RING_DESCRIPTIONS[which])
     if ring.name in ('add strength', 'protection', 'dexterity', 'increase damage'):
         ring.hplus = plus_value() - 1
         if ring.hplus < 1:
@@ -95,18 +107,26 @@ def new_ring() -> Equipment:
     return ring
 
 
-def new_scroll() -> Consumable:
+def new_scroll(which: int = None) -> Consumable:
     """Fabricate a random scroll"""
-    numlist = random.choices(list(range(0, len(SCROLL_TEMPLATES))), weights=SCROLL_PROBABILITIES, k=1)
+    if which is None:
+        numlist = random.choices(list(range(0, len(SCROLL_TEMPLATES))), weights=SCROLL_PROBABILITIES, k=1)
+        which = numlist[0]
+    elif which >= len(SCROLL_TEMPLATES):
+        return None
     return Consumable.factory(
-        etype=Consumable.SCROLL, template=SCROLL_TEMPLATES[numlist[0]], desc=SCROLL_DESCRIPTIONS[numlist[0]]
+        etype=Consumable.SCROLL, template=SCROLL_TEMPLATES[which], desc=SCROLL_DESCRIPTIONS[which]
         )
 
 
-def new_weapon() -> Equipment:
+def new_weapon(which: int = None) -> Equipment:
     """Fabricate a random weapon"""
-    numlist = random.choices(list(range(0, len(WEAPON_TEMPLATES))), weights=WEAPON_PROBABILITIES, k=1)
-    weapon = Equipment.factory(etype=Equipment.WEAPON, template=WEAPON_TEMPLATES[numlist[0]])
+    if which is None:
+        numlist = random.choices(list(range(0, len(WEAPON_TEMPLATES))), weights=WEAPON_PROBABILITIES, k=1)
+        which = numlist[0]
+    elif which >= len(WEAPON_TEMPLATES):
+        return None
+    weapon = Equipment.factory(etype=Equipment.WEAPON, template=WEAPON_TEMPLATES[which])
     r = random.randint(0, 100)
     if r < 10:  # 10% cursed
         weapon.flags = f'{weapon.flags} cursed'

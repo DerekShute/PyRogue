@@ -11,6 +11,7 @@ from position import Pos
 from message import MessageBuffer
 from level import Level
 from menu import Menu
+from player.wizard import wizard_request
 
 
 ACTION_COST = 8
@@ -148,8 +149,9 @@ class Player(Entity):
     max_str: int = 0
     effects: Dict[str, int] = {}  # Things affecting player: being confused, being hasted...
     known: Set[str] = set()       # Things that are known: what a blue potion is, etc...
+    wizard: bool  # Wizard mode
 
-    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME):
+    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME, wizard: bool = False):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
         self._msg = MessageBuffer()
         self._stats = stats
@@ -159,6 +161,7 @@ class Player(Entity):
         self.demise = None
         self.max_str = stats.stren if stats is not None else None
         self.effects = {}
+        self.wizard = wizard
 
     def __str__(self):
         return f'Player({Pos(self.pos)},{self._stats})'
@@ -254,6 +257,12 @@ class Player(Entity):
     def bump(self, pos: Pos):
         assert pos
         self.add_msg('Ouch!')
+
+    def chat(self, text: str):
+        if self.wizard:
+            wizard_request(self, text)
+        else:
+            self.add_msg(f'Someone shouts "{text}"!')
 
     def descend(self):
         self.add_msg('You stumble down the stairs.')  # TODO: real message?
@@ -417,7 +426,7 @@ class Player(Entity):
     def ac(self):
         """Armor class: Affected by armor and rings of protection"""
         if self.armor is not None:
-            ac = self.armor.value
+            ac = self.armor.value - self.armor.hplus  # AD&D - subtract to improve
         else:
             ac = self._stats.ac
         for ring in self.rings:
@@ -535,8 +544,8 @@ class Player(Entity):
     # ===== Constructor ===================================
 
     @staticmethod
-    def factory(pos: Pos = None):   # init_player
-        plr = Player(pos=pos, stats=Stats(**INIT_STATS))
+    def factory(pos: Pos = None, wizard: bool = False):   # init_player
+        plr = Player(pos=pos, stats=Stats(**INIT_STATS), wizard=wizard)
         # cur_armor Armor: ring_mail, known, a_class = RING_MAIL
 
         # one food.  I think a ration, if I'm reading correctly
