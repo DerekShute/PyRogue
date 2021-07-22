@@ -27,7 +27,7 @@ class PlayerInputHandler(InputHandler):
 
         if key == tcod.event.K_PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
             return DescendAction()
-        
+
         if key == tcod.event.K_ESCAPE:
             return ResponseInputHandler(previous=self,
                                         responses='YyNn',

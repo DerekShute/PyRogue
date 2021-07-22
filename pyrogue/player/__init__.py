@@ -150,8 +150,8 @@ class Player(Entity):
     effects: Dict[str, int] = {}  # Things affecting player: being confused, being hasted...
     known: Set[str] = set()       # Things that are known: what a blue potion is, etc...
     wizard: bool  # Wizard mode
-    
-    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME, wizard:bool = False):
+
+    def __init__(self, pos: Pos = None, stats: Stats = None, food_left: int = HUNGERTIME, wizard: bool = False):
         super().__init__(pos=pos, mtype=PLAYER_CHAR, color=PLAYER_COLOR, name='Player')
         self._msg = MessageBuffer()
         self._stats = stats
@@ -426,7 +426,7 @@ class Player(Entity):
     def ac(self):
         """Armor class: Affected by armor and rings of protection"""
         if self.armor is not None:
-            ac = self.armor.value - self.armor.hplus # AD&D - subtract to improve
+            ac = self.armor.value - self.armor.hplus  # AD&D - subtract to improve
         else:
             ac = self._stats.ac
         for ring in self.rings:

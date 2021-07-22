@@ -45,7 +45,7 @@ class RIPGameState(Gameloop):
         self._display.centered_msg(y=12, string=f'On level {self.player.levelno} of The Dungeon of Doom', **TEXT_COLOR)
         self._display.centered_msg(y=14, string=f'Clutching {self.player.purse} gold pieces', **TEXT_COLOR)
         self._display.present()
-        
+
         # TODO: scorecard if wizard or died: have amulet?  Total winner?
         # TODO: Top scores?
 
@@ -119,7 +119,7 @@ class MainMenuState(Gameloop):
         if result == 'new' or result == 'wizard':  # New Game
             print(f'result: {result}')
             game_init()
-            return MainGameloop(display=self._display, previous=self, wizard=True if result=='wizard' else False)
+            return MainGameloop(display=self._display, previous=self, wizard=True if result == 'wizard' else False)
         if result == 'quit':  # Exit
             return None
         # TODO: continue

@@ -11,7 +11,7 @@ def convert_plus(player, plus: str) -> int:
         negative = True
     value = plus.lstrip('+-')
     if not value.isdigit():
-        player.add_msg(f'plusval must be positive integer or negative integer')
+        player.add_msg('Plusval must be positive integer or negative integer')
         return None
     return -int(value) if negative else int(value)
 
@@ -80,12 +80,12 @@ def make_weapon(player, cmd):
 # ===== Parse the chat line ===============================
 
 GIVERS = {
-    'armor' : make_armor,
-    'food'  : make_food,
-    'potion' : make_potion,
-    'ring' : make_ring,
-    'scroll' : make_scroll,
-    'weapon' : make_weapon,
+    'armor': make_armor,
+    'food': make_food,
+    'potion': make_potion,
+    'ring': make_ring,
+    'scroll': make_scroll,
+    'weapon': make_weapon,
 }
 
 
@@ -93,7 +93,7 @@ def wizard_request(player, text: str):
     """Turn the text into a request and handle it"""
     cmd = text.split(' ')
     if len(cmd) < 2 or not cmd[1].isdigit():
-        player.add_msg(f'Must give object type and index')
+        player.add_msg('Must give object type and index')
         return
 
     call = GIVERS.get(cmd[0])
