@@ -6,8 +6,6 @@ BUGS:
 
 BIG TODO:
 
-    Curses:
-        * Cannot remove equipped item  (dropped item?)
     Potions:
         Detect Magic
 
@@ -97,8 +95,10 @@ monster.py
         * behavior change if ring of aggravation
         * destination position if aggressive or greedy
 
-./rogue_level.py:68:1: C901 'connect_rooms' is too complex (11)
-1     C901 'connect_rooms' is too complex (11)
+./pyrogue/player/__init__.py:182:5: C901 'Player.render_inventory' is too complex (13)
+./pyrogue/player/__init__.py:284:5: C901 'Player.equip' is too complex (17)
+./pyrogue/procgen/rogue_level.py:75:1: C901 'connect_rooms' is too complex (13)
+./pyrogue/game_states/player_input.py:17:5: C901 'PlayerInputHandler.ev_keydown' is too complex (11)
 
 rogue_level
     player.Stats is imported but unused (except by eval()
