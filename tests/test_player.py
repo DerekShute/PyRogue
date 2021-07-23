@@ -238,6 +238,19 @@ class TestPlayerActionCallback(unittest.TestCase):
         assert p.display == 'Level: 0 Gold: 0 Hp:12/12 Str:16(16) Arm: 6 Exp:1(0)'
         self.assertTrue(True)
 
+    def test_unequip_cursed_armor(self):
+        """Roughest case: unequip current armor to equip new armor"""
+        p = Player.factory(pos=Pos(10, 10))
+        e = Equipment.factory(etype=Equipment.ARMOR, template='name=fake value=6 worth=10 flags=cursed')
+        e2 = Equipment.factory(etype=Equipment.ARMOR, template='name=fake2 value=6 worth=10')
+        p.add_item(e)
+        p.equip(e)
+        p.equip(e2)
+        p.advance_msg()
+        assert p.curr_msg == 'You can\'t unequip the fake.  It appears to be cursed.'
+        assert p.armor == e
+        self.assertTrue(True)
+
     def test_replace_armor(self):
         p = Player.factory(pos=Pos(10, 10))
         e = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
@@ -246,11 +259,11 @@ class TestPlayerActionCallback(unittest.TestCase):
         f = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor2 value=4 worth=10')
         p.add_item(f)
         p.equip(f)
-        assert p.armor == f
-        assert p.ac == 4
         assert p.curr_msg == 'You take off the fake armor --MORE--'
         p.advance_msg()
         assert p.curr_msg == 'You put on the fake armor2'
+        assert p.armor == f
+        assert p.ac == 4
         self.assertTrue(True)
 
     def test_equip_weapon(self):
@@ -266,12 +279,37 @@ class TestPlayerActionCallback(unittest.TestCase):
         p.add_item(f)
         p.equip(f)
         _, _, dmg, _ = p.melee_attack()
-        assert dmg == '1x3'
         assert p.curr_msg == 'You put away the fake --MORE--'
         p.advance_msg()
         assert p.curr_msg == 'You wield the fake2'
+        assert dmg == '1x3'
         self.assertTrue(True)
 
+    def test_unequip_cursed_weapon(self):
+        """Roughest case: unequip current weapon to equip new weapon"""
+        p = Player.factory(pos=Pos(10, 10))
+        e = Equipment.factory(etype=Equipment.WEAPON, template='name=fake value=6 worth=10 flags=cursed')
+        e2 = Equipment.factory(etype=Equipment.WEAPON, template='name=fake2 value=6 worth=10')
+        p.add_item(e)
+        p.equip(e)
+        p.equip(e2)
+        p.advance_msg()
+        assert p.curr_msg == 'You can\'t unequip the fake.  It appears to be cursed.'
+        assert p.weapon == e
+        self.assertTrue(True)
+
+    def test_unequip_cursed_ring(self):
+        """Unequip a cursed ring"""
+        p = Player.factory(pos=Pos(10, 10))
+        e = Equipment.factory(etype=Equipment.RING, template='name=fake value=6 worth=10 flags=cursed',
+                              desc='desc=fancy_shmancy worth=0')
+        p.add_item(e)
+        p.equip(e)
+        p.equip(e)
+        p.advance_msg()
+        assert p.curr_msg == 'You can\'t unequip the fancy shmancy ring.  It appears to be cursed.'
+        assert e in p.rings
+        self.assertTrue(True)
 
 # ===== Test AI Callback ==================================
 
@@ -507,7 +545,6 @@ class TestPlayerCombat(unittest.TestCase):
 
 # ===== Invocation ========================================
 
-if __name__ == '__main__':
-    unittest.main()
+# Unit test via run_tests.py
 
 # EOF

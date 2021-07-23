@@ -271,8 +271,9 @@ class Player(Entity):
         # Once not on the level, the game main loop takes care of it
 
     def drop(self, item: Item):
-        if self.armor == item or self.weapon == item or item in self.rings:
-            self.equip(item)
+        if item in (self.armor, self.weapon, self.rings):
+            if not self.equip(item):
+                return
         self.add_msg(f'You drop the {item.description(self.known)}')
         self.remove_item(item)  # Remove it from inventory
         item.set_parent(None)
@@ -280,7 +281,7 @@ class Player(Entity):
         self.level.add_item(item)
         item.set_parent(self.level)
 
-    def equip(self, item: Item):
+    def equip(self, item: Item) -> bool:
         def equip_weapon():
             if self.weapon is None:
                 self.add_msg(f'You wield the {item.description(self.known)}')
@@ -289,8 +290,8 @@ class Player(Entity):
                 self.add_msg(f'You put away the {item.description(self.known)}')
                 self.weapon = None
             else:
-                self.equip(self.weapon)
-                self.equip(item)
+                if self.equip(self.weapon):
+                    self.equip(item)
 
         def equip_armor():
             if self.armor is None:
@@ -300,8 +301,8 @@ class Player(Entity):
                 self.add_msg(f'You take off the {item.description(self.known)}')
                 self.armor = None
             else:
-                self.equip(self.armor)
-                self.equip(item)
+                if self.equip(self.armor):
+                    self.equip(item)
 
         def equip_ring():
             # WONT-DO: believe it or not, there was a dialog to choose which hand.  I can't see how it matters
@@ -318,7 +319,9 @@ class Player(Entity):
             self.add_msg(f'The {item.description(self.known)} cannot be equipped.')
             return
 
-        # TODO: cannot un-equip cursed items
+        if 'cursed' in item.state and item in (*self.rings, self.weapon, self.armor):
+            self.add_msg(f'You can\'t unequip the {item.description(self.known)}.  It appears to be cursed.')
+            return False
 
         if item.etype == Equipment.WEAPON:
             equip_weapon()
@@ -326,6 +329,7 @@ class Player(Entity):
             equip_armor()
         if item.etype == Equipment.RING:
             equip_ring()
+        return True
 
     def move(self, dx: int, dy: int):
         super().move(dx, dy)
