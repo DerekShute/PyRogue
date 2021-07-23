@@ -53,6 +53,11 @@ class Item:  # union thing
         # TODO: render priority
         return self.pos, self._char, self._color
 
+    @property
+    def magic(self) -> bool:
+        """Map display 'detect magic'"""
+        return False
+
     # ===== Interface =====================================
 
     @property
@@ -191,6 +196,10 @@ class Equipment(Item):
         self.state = set(flags.split(' '))
         super().__init__(**kwargs)
 
+    @property
+    def magic(self):
+        return True if self.etype == Equipment.RING or self.hplus != 0 or self.dplus != 0 else False
+
     def description(self, known: Set[str]) -> str:
         def describe_ring() -> str:
             # TODO: bonuses
@@ -247,6 +256,10 @@ class Consumable(Item):
         self.etype = etype
         self.worth = worth
         super().__init__(**kwargs)
+
+    @property
+    def magic(self):
+        return True
 
     def description(self, known: Set[str]):
         if self.etype == Consumable.POTION:

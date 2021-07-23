@@ -180,7 +180,7 @@ class Level:
         # TODO: tutorial attaches this to GameMap and adds the clause for visibility
         # TODO: ordering - entity, item, tile
         for item in self.items:
-            if 'detect magic' in self.player.effects:
+            if item.magic and 'detect magic' in self.player.effects:
                 self.map.lit_tile(item.pos)
             self.map.set_char(*item.char)
         for monster in self.monsters:

@@ -19,6 +19,10 @@ Combat
     
     Likewise Monster.melee_attack()
 
+Magic Items
+
+    "detect magic" - one moment
+   
 Commands
 
     u : use (includes food)

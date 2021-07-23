@@ -3,11 +3,21 @@ IN PROGRESS
 BUGS:
     * Still ways to get multiple actions in the player action queue and that means an offset.
     * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
+        * Countdown on a single message: remains for 3 moves or something
+    * QuantityItem exists
 
 BIG TODO:
 
+    roll() and friends go in one place
+
     Potions:
         Detect Magic
+        Haste: if already hasted, faint
+        see invisible
+        blindness
+
+    Items:
+        set parent, set level can be consolidated
 
     Wizard mode / Chat
         * shift-key ('+') needs special decode.  Not sure how to deal with that
@@ -23,8 +33,11 @@ BIG TODO:
 
     * Push food under consumables?
 
-    Inventory:
-        * Consolidate count of items in listing
+    UI:
+        Inventory:
+            * Consolidate count of items in listing
+        Status screen
+        help screen
 
     Items and equipment
         * sticks -> targeting
