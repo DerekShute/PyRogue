@@ -311,6 +311,7 @@ class TestPlayerActionCallback(unittest.TestCase):
         assert e in p.rings
         self.assertTrue(True)
 
+
 # ===== Test AI Callback ==================================
 
 class TestPlayerAI(unittest.TestCase):
