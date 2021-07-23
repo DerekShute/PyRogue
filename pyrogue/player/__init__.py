@@ -493,7 +493,6 @@ class Player(Entity):
     def countdown_effects(self):
         """Count down all the effects affecting player"""
         ridlist = []
-        # TODO: permanent effects have countdown of 0, -1?
         for key, value in self.effects.items():
             if value <= 1:
                 # Can't change the dictionary during the iteration, so keep track of what to delete

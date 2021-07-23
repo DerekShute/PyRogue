@@ -35,7 +35,6 @@ def do_confusion(entity) -> bool:
         entity.add_msg('What a trippy feeling!')
     else:
         entity.add_msg('Wait, what\'s going on here?  Huh?  What?  Who?')
-    # TODO: unconfuse at timeout --- callback?
     return True
 
 
@@ -43,8 +42,10 @@ def do_extra_healing(entity) -> bool:
     """(level)d8 points restored.  If max HP exceeded, add one to max"""
     entity.add_hp(roll(entity.lvl, 8))
     entity.add_msg('You begin to feel much better.')
-    # TODO: sight()
-    # TODO: come_down()
+    if 'blind' in self.effects:
+        self.effects['blind'] = 0
+    if 'hallucinating' in self.effects:
+        self.effects['hallucinating'] = 0
     return True
 
 
@@ -72,7 +73,8 @@ def do_healing(entity) -> bool:
     """(level)d4 points restored.  If max hit points exceeded, add one to max hit points"""
     entity.add_hp(roll(entity.lvl, 4))
     entity.add_msg('You begin to feel better.')
-    # TODO: sight() ?
+    if 'blind' in self.effects:
+        self.effects['blind'] = 0
     return True
 
 
@@ -90,7 +92,7 @@ def do_magic_detection(entity) -> bool:   # P_TFIND
     """Oh my.  Find the magic items."""
     entity.add_effect('detect magic', 2)
     entity.add_msg('You sense the presence of magic on this level.')  # only if something revealed
-    return True  # TODO: technically only if items are revealed
+    return True  # WONT-DO: technically only if items are revealed
 
 
 def do_monster_detection(entity) -> bool:  # P_MFIND
@@ -105,7 +107,8 @@ def do_poison(entity) -> bool:
     """Strength decreased by 1-3 points, unless wearing a ring of sustain strength"""
     entity.change_str(-random.randint(1, 3))
     entity.add_msg('You feel very sick now.')
-    # TODO: come_down
+    if 'hallucinating' in self.effects:
+        self.effects['hallucinating'] = 0
     return True
 
 
