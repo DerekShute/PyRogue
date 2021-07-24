@@ -42,10 +42,10 @@ def do_extra_healing(entity) -> bool:
     """(level)d8 points restored.  If max HP exceeded, add one to max"""
     entity.add_hp(roll(entity.lvl, 8))
     entity.add_msg('You begin to feel much better.')
-    if 'blind' in self.effects:
-        self.effects['blind'] = 0
-    if 'hallucinating' in self.effects:
-        self.effects['hallucinating'] = 0
+    if 'blind' in entity.effects:
+        entity.effects['blind'] = 0
+    if 'hallucinating' in entity.effects:
+        entity.effects['hallucinating'] = 0
     return True
 
 
@@ -73,8 +73,8 @@ def do_healing(entity) -> bool:
     """(level)d4 points restored.  If max hit points exceeded, add one to max hit points"""
     entity.add_hp(roll(entity.lvl, 4))
     entity.add_msg('You begin to feel better.')
-    if 'blind' in self.effects:
-        self.effects['blind'] = 0
+    if 'blind' in entity.effects:
+        entity.effects['blind'] = 0
     return True
 
 
@@ -107,8 +107,8 @@ def do_poison(entity) -> bool:
     """Strength decreased by 1-3 points, unless wearing a ring of sustain strength"""
     entity.change_str(-random.randint(1, 3))
     entity.add_msg('You feel very sick now.')
-    if 'hallucinating' in self.effects:
-        self.effects['hallucinating'] = 0
+    if 'hallucinating' in entity.effects:
+        entity.effects['hallucinating'] = 0
     return True
 
 
