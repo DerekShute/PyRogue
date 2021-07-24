@@ -86,16 +86,6 @@ class Item:  # union thing
         return self.name
 
 
-# ===== Items with Quantity ===============================
-
-class QuantityItem(Item):
-    quantity: int = 0  # o_count
-
-    def __init__(self, quantity: int = 0, **kwargs):
-        self.quantity = quantity
-        super().__init__(**kwargs)
-
-
 # ===== Food ==============================================
 
 class Food(Item):
@@ -152,8 +142,11 @@ class Food(Item):
 
 # ===== Gold ==============================================
 
-class Gold(QuantityItem):
-    def __init__(self, **kwargs):
+class Gold(Item):
+    quantity: int = 0
+
+    def __init__(self, quantity: int = 0, **kwargs):
+        self.quantity = quantity
         super().__init__(name='gold', char='*', color=COLOR_YELLOW, **kwargs)
 
     def __str__(self) -> str:
