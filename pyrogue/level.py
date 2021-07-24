@@ -20,9 +20,11 @@ import tcod
 
 def lit_area(player: Entity) -> Tuple[slice, slice]:
     """The section of the map that is guaranteed to be lit by the player"""
-    # TODO: blindness, complete darkness
+    # TODO: complete darkness
     if player is None:
         return None
+    if 'blind' in player.effects:
+        return slice(player.pos.x, player.pos.x + 1), slice(player.pos.y, player.pos.y + 1)
     room = player.room
     if room is not None and room.max_pos.x > room.pos.x:  # Not a gone room
         p1 = room.pos
