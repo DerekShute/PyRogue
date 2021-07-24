@@ -32,8 +32,6 @@ BIG TODO:
         * Don't have a good model for this.  Adjusting ACTION_COST causes problems when the user action queue gets empty.
             * Do not reschedule if no action in queue, adding action adds to queue?  This is general rework
 
-    * Push food under consumables?
-
     UI:
         Inventory:
             * Consolidate count of items in listing
