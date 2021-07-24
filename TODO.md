@@ -8,13 +8,14 @@ BUGS:
 
 BIG TODO:
 
+    invoke pylint programmatically
+
     roll() and friends go in one place
 
     Potions:
-        Detect Magic
+        Duration of effects is probably wrong
         Haste: if already hasted, faint
         see invisible
-        blindness
 
     Items:
         set parent, set level can be consolidated
@@ -61,6 +62,12 @@ BIG TODO:
         identify scroll, identify weapon, identify armor, identify ring staff or wand, 
         food detection, teleportation, create monster, remove curse, aggravate monsters
 
+    Rooms:
+        darkness
+        treasure room
+        lair
+        maze room
+
     Traps
     
     Amulet and stairs up
@@ -75,8 +82,6 @@ Items in general
     Equip and un-equip : if replacing, this is technically two actions.  Requeue as such?
 
     o_count == quantity
-
-    Treasure rooms
 
     player repr() for inventory
 
@@ -121,10 +126,6 @@ Display / Map / Level
     * Consolidate colors into a set of manifest constants
     * Safe to place player: no monster at that square, maze wall, etc.
     * Render priority
-
-Rogue Level
-    * Maze rooms
-    * Treasure rooms
 
 Combat    
     * Projectile rules
