@@ -235,6 +235,45 @@ SCROLL_TEMPLATES = (
 )
 
 
+# ===== WAND / STAFF ======================================
+
+WOOD_NAMES = (
+    'avacado wood', 'balsa', 'bamboo', 'banyan', 'birch',
+    'cedar', 'cherry', 'cinnibar', 'cypress',
+    'dogwood', 'driftwood', 'ebony', 'elm', 'eucalyptus',
+    'fall', 'hemlock', 'holly', 'ironwood', 'kikui wood',
+    'mahogany', 'manzanita', 'maple', 'oaken',
+    'persimmon wood', 'pecan', 'pine', 'poplar',
+    'redwood', 'rosewood', 'spruce', 'teak', 'walnut', 'zebrawood',
+)
+
+
+METAL_NAMES = (
+    'aluminum', 'beryllium', 'bone', 'brass', 'bronze',
+    'copper', 'electrum', 'gold', 'iron', 'lead', 'magnesium',
+    'mercury', 'nickel', 'pewter', 'platinum', 'steel', 'silver',
+    'silicon', 'tin', 'titanium', 'tungsten', 'zinc',
+)
+
+
+STICK_TEMPLATES = (
+    'name=light prob=12 worth=250',
+    'name=invisibility prob=6 worth=5',
+    'name=lightning prob=3 worth=330',
+    'name=fire prob=3 worth=330',
+    'name=cold prob=3 worth=330',
+    'name=polymorph prob=15 worth=310',
+    'name=magic_missile prob=10 worth=170',
+    'name=haste_monster prob=10 worth=5',
+    'name=slow_monster prob=11 worth=350',
+    'name=drain_life prob=9 worth=300',
+    'name=nothing prob=1 worth=5',
+    'name=teleport_away prob=6 worth=340',
+    'name=teleport_to prob=6 worth=50',
+    'name=cancellation prob=5 worth=280',
+)
+
+
 # ===== Probability calculations and whatnot ==============
 
 def unpack_template(template: str, omit: Tuple[str]) -> Dict[str, Any]:

@@ -16,6 +16,7 @@ COLOR_WHITE = (255, 255, 255)
 COLOR_BURNTSIENNA = (138, 54, 15)  # AKA "brown"
 COLOR_CHOCOLATE4 = (139, 69, 19)   # AKA "brown"
 COLOR_DEEPSKYBLUE = (0, 191, 255)
+COLOR_GREEN = (0, 128, 0)
 COLOR_PURPLE = (128, 0, 128)
 COLOR_SILVER = (192, 192, 192)
 
@@ -239,15 +240,18 @@ class Consumable(Item):
     """
     etype: int         # POTION / etc
     worth: int         # score calculation at player demise
-    # TODO: charges
+    charges: int
 
     # TYPES
     POTION = 0
     SCROLL = 1
+    WAND = 2  # Distinguish just for description output
+    STAFF = 3
 
     def __init__(self, etype: int, worth: int, **kwargs):
         self.etype = etype
         self.worth = worth
+        self.charges = 1
         super().__init__(**kwargs)
 
     @property
@@ -255,14 +259,25 @@ class Consumable(Item):
         return True
 
     def description(self, known: Set[str]):
+        charges_str = ''
+        if self.known:
+            charges_str = f' [{self.charges} charges]'
         if self.etype == Consumable.POTION:
             if self.desc in known:
                 return f'potion of {self.name}'
             return f'{self.desc} potion'
-        # Scroll
-        if self.desc in known:
-            return f'scroll of {self.name}'
-        return f'scroll titled "{self.desc}"'
+        if self.etype == Consumable.SCROLL:
+            if self.desc in known:
+                return f'scroll of {self.name}'
+            return f'scroll titled "{self.desc}"'
+        if self.etype == Consumable.WAND:
+            if self.desc in known:
+                return f'wand of {self.name}{charges_str}'
+            return f'{self.desc} wand'
+        if self.etype == Consumable.STAFF:
+            if self.desc in known:
+                return f'staff of {self.name}{charges_str}'
+            return f'{self.desc} staff'
 
     @staticmethod
     def factory(etype: int, template: str, desc: str):
@@ -273,6 +288,9 @@ class Consumable(Item):
         elif etype == Consumable.SCROLL:
             kwargs['char'] = '?'
             kwargs['color'] = COLOR_BLACK
+        elif etype in (Consumable.WAND, Consumable.STAFF):
+            kwargs['char'] = '/'
+            kwargs['color'] = COLOR_GREEN
         kwargs['desc'] = desc
         return Consumable(etype, **kwargs)
 
@@ -285,7 +303,8 @@ class Consumable(Item):
             now_known = scroll_effect(self.name, entity)
         if now_known:
             entity.known.add(self.desc)
-        return True
+        self.charges -= 1
+        return False if self.charges > 0 else True
 
 # ===== TESTING ===========================================
 
