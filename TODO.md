@@ -1,5 +1,8 @@
 IN PROGRESS
 
+    Sticks
+        * Targeting
+        * Doing Things : staff_effects()
 BUGS:
     * Still ways to get multiple actions in the player action queue and that means an offset.
     * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
@@ -8,9 +11,15 @@ BUGS:
 
 BIG TODO:
 
+    "Bravely bravely bravely run away" suggests my son
+
     invoke pylint programmatically
 
     roll() and friends go in one place
+
+    Sticks: light -> room darkness, invisibility, lightning, fire, cold, polymorph, magic missile,
+        haste monster, slow monster, drain life, nothing, teleport away, teleport to, cancellation
+        * have 'dmg' and 'hurldmg'
 
     Potions:
         Duration of effects is probably wrong
@@ -24,6 +33,7 @@ BIG TODO:
         * shift-key ('+') needs special decode.  Not sure how to deal with that
         * identify sequence -> subsequent InputHandler
         * wizard mode always gets scorecard
+        * summon monster
 
     Hallucination:
         * many user messages have alternate output if you're LSDing.  Some second argument to add_msg?
@@ -37,9 +47,6 @@ BIG TODO:
             * Consolidate count of items in listing
         Status screen
         help screen
-
-    Items and equipment
-        * sticks -> targeting
 
     Monster AI
 

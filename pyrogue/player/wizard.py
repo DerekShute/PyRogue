@@ -1,7 +1,7 @@
 """
     Wizardry
 """
-from procgen import new_weapon, new_armor, new_food, new_scroll, new_potion, new_ring
+from procgen import new_weapon, new_armor, new_food, new_scroll, new_potion, new_ring, new_stick
 
 
 # ===== Service Routines ==================================
@@ -67,6 +67,11 @@ def make_scroll(player, cmd):
     ready_item(player, new_scroll(int(cmd[1])))
 
 
+def make_stick(player, cmd):
+    """Format: stick <#>"""
+    ready_item(player, new_stick(int(cmd[1])))
+
+
 def make_weapon(player, cmd):
     """Format: weapon <#> <plusval, cursed if < 0>"""
     plus = None
@@ -85,6 +90,7 @@ GIVERS = {
     'potion': make_potion,
     'ring': make_ring,
     'scroll': make_scroll,
+    'stick': make_stick,
     'weapon': make_weapon,
 }
 

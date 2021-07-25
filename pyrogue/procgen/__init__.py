@@ -6,7 +6,7 @@ from typing import List
 from item import Item, Food, Equipment, Consumable
 from factories import (calc_probability, ITEM_PROB_TEMPLATES, ARMOR_TEMPLATES, WEAPON_TEMPLATES,
                        POTION_TEMPLATES, POTION_RAINBOW, RING_TEMPLATES, RING_STONES,
-                       SCROLL_TEMPLATES, SCROLL_SYLLABLES)
+                       SCROLL_TEMPLATES, SCROLL_SYLLABLES, STICK_TEMPLATES, WOOD_NAMES, METAL_NAMES)
 
 
 # TODO: randmonster
@@ -40,6 +40,16 @@ SCROLL_PROBABILITIES: List[int] = calc_probability(SCROLL_TEMPLATES)
 SCROLL_DESCRIPTIONS: List[str] = []
 """Initialized scroll inscriptions, scrambled per game"""
 # TODO: this totally will not work for save games
+
+STICK_PROBABILITIES: List[int] = calc_probability(STICK_TEMPLATES)
+"""Initialized weighted probability list"""
+
+STICK_DESCRIPTIONS: List[str] = []
+"""Initialized wand/staff descriptions, scrambled per game"""
+# TODO: This totally will not work for save games
+
+STICK_IS_WAND: List[bool] = []
+"""Initialized wand/staff type, scrambled per game"""
 
 
 # ===== Service Routines ==================================
@@ -119,6 +129,24 @@ def new_scroll(which: int = None) -> Consumable:
         )
 
 
+def new_stick(which: int = None) -> Consumable:
+    """Fabricate a random stick"""
+    if which is None:
+        numlist = random.choices(list(range(0, len(STICK_TEMPLATES))), weights=STICK_PROBABILITIES, k=1)
+        which = numlist[0]
+    elif which >= len(STICK_TEMPLATES):
+        return None
+    etype = Consumable.WAND if STICK_IS_WAND[which] else Consumable.STAFF
+    stick = Consumable.factory(etype=etype, template=STICK_TEMPLATES[which], desc=STICK_DESCRIPTIONS[which])
+    if stick.name == 'light':
+        stick.charges = random.randint(10, 19)
+    else:
+        stick.charges = random.randint(3, 7)
+    # TODO: if staff, damage = '2x3' else '1x1' and hurldmg = '1x1'
+    stick.known = True
+    return stick
+
+
 def new_weapon(which: int = None) -> Equipment:
     """Fabricate a random weapon"""
     if which is None:
@@ -158,7 +186,9 @@ def new_thing() -> Item:  # new_thing
         return new_potion()
     if i == 4:
         return new_ring()
-    return new_scroll()
+    if i == 5:
+        return new_scroll()
+    return new_stick()
 
 
 # ==== Initialization for a new game ======================
@@ -169,12 +199,20 @@ def game_init():
     global POTION_DESCRIPTIONS
     global RING_DESCRIPTIONS
     global SCROLL_DESCRIPTIONS
+    global STICK_DESCRIPTIONS
+    global STICK_IS_WAND
 
     POTION_DESCRIPTIONS = list(POTION_RAINBOW)
     random.shuffle(POTION_DESCRIPTIONS)
 
     RING_DESCRIPTIONS = list(RING_STONES)
     random.shuffle(RING_DESCRIPTIONS)
+
+    wand_descriptions = list(METAL_NAMES)
+    random.shuffle(wand_descriptions)
+
+    staff_descriptions = list(WOOD_NAMES)
+    random.shuffle(staff_descriptions)
 
     SCROLL_DESCRIPTIONS = []
     i = 0
@@ -190,5 +228,16 @@ def game_init():
             words = word if words is None else f'{words} {word}'
             nwords -= 1
         SCROLL_DESCRIPTIONS.append(words)
+        i += 1
+
+    STICK_IS_WAND = []
+    STICK_DESCRIPTIONS = []
+    i = 0
+    while i < len(STICK_TEMPLATES):
+        STICK_IS_WAND.append(random.choice([True, False]))
+        if STICK_IS_WAND[i]:
+            STICK_DESCRIPTIONS.append(wand_descriptions[i])
+        else:
+            STICK_DESCRIPTIONS.append(staff_descriptions[i])
         i += 1
 # EOF
