@@ -329,9 +329,9 @@ class Player(Entity):
             self.remove_item(item)
             del item
 
-    def zap(self, item: Item, pos: Pos):
+    def zap(self, item: Item, pos: Pos = None, target: Entity = None):
         """Zap a thing"""
-        print(f'Zapping at {pos}')
+        print(f'Zapping at {pos} target {target}')
 
     # ===== Timer / AI / Action Interface ==========================
 

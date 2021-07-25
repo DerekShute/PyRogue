@@ -142,7 +142,9 @@ class ZapAction(Action):
         if self.index >= len(entity.pack):
             entity.add_msg('No such item to zap!')
             return
-        entity.zap(entity.pack[self.index], pos=self.pos)
+        targets = entity.level.monsters_at(self.pos)
+        target = targets[0] if len(targets) > 0 else None
+        entity.zap(entity.pack[self.index], pos=self.pos, target=target)
 
     def incorporate(self, index: int = None, pos: Pos = None):
         if index is not None:
