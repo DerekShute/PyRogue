@@ -1,9 +1,10 @@
 IN PROGRESS
 
-    Sticks
-        * Targeting
-        * Doing Things : staff_effects()
+    Targeting
+        * Rework of 'inventory' menu generation and contents
+
 BUGS:
+    * Wizard chat backspace at empty string
     * Still ways to get multiple actions in the player action queue and that means an offset.
     * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
         * Countdown on a single message: remains for 3 moves or something
