@@ -190,6 +190,7 @@ def new_thing() -> Item:  # new_thing
         return new_scroll()
     return new_stick()
 
+
 # ==== Initialization for a new game ======================
 
 def game_init():
@@ -209,10 +210,10 @@ def game_init():
 
     wand_descriptions = list(METAL_NAMES)
     random.shuffle(wand_descriptions)
-    
+
     staff_descriptions = list(WOOD_NAMES)
     random.shuffle(staff_descriptions)
-    
+
     SCROLL_DESCRIPTIONS = []
     i = 0
     while i < len(SCROLL_TEMPLATES):

@@ -4,12 +4,14 @@
 # todo import position
 # TODO targeting.  Always gets a direction...
 
+
 # ===== Stick Effects =====================================
 
 def do_nothing(entity) -> bool:
     return False
 
 # ===== Stick Effect Starting Point ========================
+
 
 STICK_EFFECTS = {
     # cancellation
@@ -39,4 +41,3 @@ def stick_effect(name: str, entity) -> bool:  # do_zap
     # WONT-DO: If effect is not obvious, opportunity to slap a name on it
 
 # EOF
-    
