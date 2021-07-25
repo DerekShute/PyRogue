@@ -117,7 +117,6 @@ class MainMenuState(Gameloop):
         self._display.present()
         result = self._display.dispatch_event(self.input_handler)
         if result == 'new' or result == 'wizard':  # New Game
-            print(f'result: {result}')
             game_init()
             return MainGameloop(display=self._display, previous=self, wizard=True if result == 'wizard' else False)
         if result == 'quit':  # Exit

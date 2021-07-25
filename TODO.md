@@ -1,7 +1,7 @@
 IN PROGRESS
 
     Targeting
-        * Rework of 'inventory' menu generation and contents
+        * For now, 'z'ap wands.
 
 BUGS:
     * Wizard chat backspace at empty string
@@ -13,6 +13,10 @@ BUGS:
 BIG TODO:
 
     "Bravely bravely bravely run away" suggests my son
+
+    Inventory
+        * Combine like items for ISMULT -- food, scroll, potion
+        * This means drop can drop a quantity and that means having to spawn out a new Item
 
     invoke pylint programmatically
 
