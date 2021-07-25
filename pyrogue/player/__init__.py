@@ -10,8 +10,8 @@ from item import Item, Food, Equipment, Consumable
 from position import Pos
 from message import MessageBuffer
 from level import Level
-from menu import Menu
 from player.wizard import wizard_request
+from player.inventory import do_inventory
 
 
 ACTION_COST = 8
@@ -179,42 +179,8 @@ class Player(Entity):
         return f'Level: {self.levelno} Gold: {self.purse} Hp:{self._stats.hpt}/{self._stats.maxhp} ' \
                f'Str:{self.stren}({self.max_str}) Arm: {self.ac} Exp:{self._stats.level}({self._stats.exp})'
 
-    def render_inventory(self, usage: str) -> Menu:
-        inventory = []
-        if usage == '':
-            title = 'inventory'
-        else:
-            title = usage
-
-        listing = ord('a')
-        for item in self.pack:
-            if item in self.rings:
-                desc = f'{item.description(self.known)} (being worn)'
-            elif self.armor == item:
-                desc = f'{item.description(self.known)} (being worn)'
-            elif self.weapon == item:
-                desc = f'{item.description(self.known)} (wielded)'
-            else:
-                desc = f'{item.description(self.known)}'
-
-            if usage == '':
-                inventory.append(desc)  # TODO: consolidate similar objects
-                continue
-
-            add_it = False
-            if usage == 'drop':
-                add_it = True
-            elif usage == 'use':
-                if item.name == 'food':  # TODO: food as consumable
-                    add_it = True
-                elif isinstance(item, Consumable):
-                    add_it = True
-            elif usage == 'equip' and isinstance(item, Equipment):
-                add_it = True
-            if add_it:
-                inventory.append(f'{chr(listing)}: {desc}')  # TODO: consolidate
-            listing = listing + 1
-        return Menu(title=title, text=inventory)
+    def render_inventory(self, usage: str):
+        return do_inventory(self, usage)
 
     # ===== Base Interface ================================
 
@@ -346,8 +312,8 @@ class Player(Entity):
         item.pos = None
         if item.name == 'gold':
             # AD&D would award XP for treasure, but not Rogue apparently
-            self.add_msg(f'You pick up {item.quantity} gold pieces!')
-            self.purse = self.purse + item.quantity
+            self.add_msg(f'You pick up {item.count} gold pieces!')
+            self.purse = self.purse + item.count
             del item  # Poof
         else:
             self.add_msg(f'You pick up the {item.description(self.known)}')

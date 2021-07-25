@@ -11,3 +11,7 @@ class Menu:
     def __init__(self, title: str, text: List[str]):
         self.title = title
         self.text = text
+
+    # TODO: add by index
+    # TODO: item reference for selection
+# EOF
