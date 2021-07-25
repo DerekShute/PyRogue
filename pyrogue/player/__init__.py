@@ -312,8 +312,8 @@ class Player(Entity):
         item.pos = None
         if item.name == 'gold':
             # AD&D would award XP for treasure, but not Rogue apparently
-            self.add_msg(f'You pick up {item.quantity} gold pieces!')
-            self.purse = self.purse + item.quantity
+            self.add_msg(f'You pick up {item.count} gold pieces!')
+            self.purse = self.purse + item.count
             del item  # Poof
         else:
             self.add_msg(f'You pick up the {item.description(self.known)}')

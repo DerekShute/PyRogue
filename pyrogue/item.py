@@ -39,6 +39,7 @@ class Item:  # union thing
     parent = None  # Inventory or floor
     desc: str = ''
     known: bool = False  # Known exactly: charges, bonuses, etc.
+    count: int = 1
 
     def __init__(self, name: str, char: str, color: Tuple[int, int, int], desc: str = None, pos: Pos = None, parent=None):
         self.pos = pos
@@ -146,18 +147,16 @@ class Food(Item):
 # ===== Gold ==============================================
 
 class Gold(Item):
-    quantity: int = 0
 
-    def __init__(self, quantity: int = 0, **kwargs):
-        self.quantity = quantity
+    def __init__(self, count: int = 1, **kwargs):
         super().__init__(name='gold', char='*', color=COLOR_YELLOW, **kwargs)
+        self.count = count
 
     def __str__(self) -> str:
-        return f'Gold({self.pos},{self.quantity})'
+        return f'Gold({self.pos},{self.count})'
 
     def __repr__(self) -> str:
-        # TODO: does not handle parent
-        return f'Gold(pos={repr(self.pos)},quantity={self.quantity})'
+        return f'Gold(pos={repr(self.pos)},count={self.count})'
 
 
 # ===== Equipment =========================================

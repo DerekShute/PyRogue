@@ -43,12 +43,12 @@ class TestGold(unittest.TestCase):
 
     def test_gold(self):
         """Test Elementary stuff"""
-        g = Gold(quantity=10)
+        g = Gold(count=10)
         assert str(g) == 'Gold(None,10)'
-        g = Gold(quantity=20, pos=Pos((20, 20)))
+        g = Gold(count=20, pos=Pos((20, 20)))
         assert str(g) == 'Gold(@(20,20),20)'
         assert g.name == 'gold'
-        assert g.quantity == 20
+        assert g.count == 20
         assert repr(g) == repr(eval(repr(g)))
         self.assertTrue(True)
 
@@ -63,7 +63,7 @@ class TestFood(unittest.TestCase):
         f = Food(pos=Pos(20, 20), which=Food.FRUIT)
         assert str(f) == 'Food(@(20,20),fruit)'
         assert f.name == 'food'
-        assert f.quantity is None
+        assert f.count == 1
         assert repr(f) == repr(eval(repr(f)))
         self.assertTrue(True)
 

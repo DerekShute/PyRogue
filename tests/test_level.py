@@ -39,7 +39,7 @@ class TestLevel(unittest.TestCase):
         lvl = Level(1, 10, 10, None)
         lvl.add_room(0, Room(Pos(0, 0), Pos(7, 7)))
         assert lvl.items_at(Pos(5, 5)) == []
-        gold = Gold(quantity=10, pos=Pos(5, 5), parent=lvl)
+        gold = Gold(count=10, pos=Pos(5, 5), parent=lvl)
         lvl.add_item(gold)
         # Gold is present at level at (5, 5)
         assert gold.pos == Pos(5, 5)
