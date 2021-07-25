@@ -7,6 +7,7 @@ from position import Pos
 from factories import unpack_template
 from potions import potion_effect
 from scrolls import scroll_effect
+from sticks import stick_effect
 # TODO: can't import Entity because recursion
 
 # TODO: colors go somewhere
@@ -37,6 +38,7 @@ class Item:  # union thing
     _color: Tuple[int, int, int] = COLOR_WHITE  # No good default
     parent = None  # Inventory or floor
     desc: str = ''
+    known: bool = False  # Known exactly: charges, bonuses, etc.
 
     def __init__(self, name: str, char: str, color: Tuple[int, int, int], desc: str = None, pos: Pos = None, parent=None):
         self.pos = pos
@@ -172,7 +174,6 @@ class Equipment(Item):
     state: Set[str] = set()
     hplus: int = 0
     dplus: int = 0
-    known: bool = False  # TODO: Do you know exactly what it does/is?
 
     # Types
     ARMOR = 0
@@ -301,6 +302,8 @@ class Consumable(Item):
             now_known = potion_effect(self.name, entity)
         elif self.etype == Consumable.SCROLL:
             now_known = scroll_effect(self.name, entity)
+        elif self.etype in (Consumable.WAND, Consumable.STAFF):
+            now_known = stick_effect(self.name, entity)  # TODO: target
         if now_known:
             entity.known.add(self.desc)
         self.charges -= 1
