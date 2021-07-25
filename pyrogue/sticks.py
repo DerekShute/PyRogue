@@ -1,8 +1,7 @@
 """
     Waving some kind of stick around
 """
-# todo import position
-# TODO targeting.  Always gets a direction...
+from position import Pos
 
 
 # ===== Stick Effects =====================================
@@ -31,11 +30,12 @@ STICK_EFFECTS = {
 }
 
 
-def stick_effect(name: str, entity) -> bool:  # do_zap
+def stick_effect(name: str, entity, pos: Pos, target) -> bool:  # do_zap
     """Dispatch the stick name to the callback that implements the effect"""
     call = STICK_EFFECTS.get(name)
     if call is None:
         entity.add_msg(f'No idea what a {name} does')
+        print(f'...to a {pos} or {target}')
         return
     return call(entity)
     # WONT-DO: If effect is not obvious, opportunity to slap a name on it

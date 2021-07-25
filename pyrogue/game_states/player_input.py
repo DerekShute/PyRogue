@@ -63,11 +63,11 @@ class PlayerInputHandler(InputHandler):
                                          msg='Use which item?')
 
         elif key == tcod.event.K_z:
-            return TargetInputHandler(usage='zap',
+            return InventoryInputHandler(usage='zap',
                                       previous=self,
                                       entity=self.entity,
                                       action=ZapAction(),
-                                      msg='Zap where?')
+                                      msg='Zap which item?')
 
         if key in MOVE_KEYS:
             return BumpAction(*MOVE_KEYS[key])

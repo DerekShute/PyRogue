@@ -321,17 +321,13 @@ class Player(Entity):
             item.set_parent(self)
             # TODO: after verifying you can
 
-    def use(self, item: Item):
+    def use(self, item: Item, pos: Pos = None, target: Entity = None):
         """Use an item"""
-        destroy = item.use(self)
+        destroy = item.use(self, pos, target)
         if destroy:
             item.set_parent(None)
             self.remove_item(item)
             del item
-
-    def zap(self, item: Item, pos: Pos = None, target: Entity = None):
-        """Zap a thing"""
-        print(f'Zapping at {pos} target {target}')
 
     # ===== Timer / AI / Action Interface ==========================
 
