@@ -6,7 +6,7 @@ import random
 from entity import Entity
 from dataclasses import dataclass
 from typing import Tuple, Dict, Set, List
-from item import Item, Food, Equipment, Consumable
+from item import Item, Food, Equipment
 from position import Pos
 from message import MessageBuffer
 from level import Level

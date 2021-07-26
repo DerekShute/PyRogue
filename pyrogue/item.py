@@ -81,7 +81,7 @@ class Item:  # union thing
 
     # ===== Item callbacks from Entity ====================
 
-    def use(self, entity, pos = None, target = None) -> bool:
+    def use(self, entity, pos=None, target=None) -> bool:
         entity.add_msg(f'Can\'t do that with a {self.description(entity.known)}!')
         return False
 
@@ -128,7 +128,7 @@ class Food(Item):
 
     # ===== Item callbacks ================================
 
-    def use(self, entity, pos = None, target = None) -> bool:
+    def use(self, entity, pos=None, target=None) -> bool:
         """Eat it.  You know you want to."""
         if self.which == self.FRUIT:
             entity.add_msg(f'my, that was a yummy {self.desc}')
@@ -294,7 +294,7 @@ class Consumable(Item):
         kwargs['desc'] = desc
         return Consumable(etype, **kwargs)
 
-    def use(self, entity, pos = None, target = None) -> bool:
+    def use(self, entity, pos=None, target=None) -> bool:
         """Drink the mystery fluid found in a dungeon, etc.  What could go wrong?"""
         now_known = False
         if self.etype == Consumable.POTION:

@@ -4,7 +4,6 @@ from game_states import InputHandler, CancelHandler, MOVE_KEYS
 from game_states.chat_input import ChatInputHandler
 from game_states.response_input import ResponseInputHandler
 from game_states.inventory_input import InventoryInputHandler
-from game_states.target_input import TargetInputHandler
 
 
 # ===== PlayerInputHandler ================================
@@ -64,10 +63,10 @@ class PlayerInputHandler(InputHandler):
 
         elif key == tcod.event.K_z:
             return InventoryInputHandler(usage='zap',
-                                      previous=self,
-                                      entity=self.entity,
-                                      action=ZapAction(),
-                                      msg='Zap which item?')
+                                        previous=self,
+                                        entity=self.entity,
+                                        action=ZapAction(),
+                                        msg='Zap which item?')
 
         if key in MOVE_KEYS:
             return BumpAction(*MOVE_KEYS[key])

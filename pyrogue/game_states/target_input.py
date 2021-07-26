@@ -6,6 +6,7 @@ from game_states import InputHandler, CancelHandler
 from actions import Action
 from position import Pos
 
+
 # ===== TargetInputHandler ================================
 
 class TargetInputHandler(InputHandler):

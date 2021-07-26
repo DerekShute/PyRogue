@@ -13,11 +13,12 @@ TODO:
 
     Menu becomes List of Tuple (<description> <Item of topmost identical thing>)
         Where ordinal 'a'..'z' is figured out by InputHandler display of it (?)
-        
+
     Technically wands and staves can be equipped as weapons
 
     ...then we can say use item X -> need a directional or targeting specifier
 """
+
 
 def describe_item(player, item: Item) -> str:
     """Describe item in ten words or less"""
