@@ -24,7 +24,7 @@ class TargetInputHandler(InputHandler):
         display.msg(x=0, y=ysize - 1, string=self.msg.ljust(xsize))
 
     def ev_quit(self, event: tcod.event.Quit):
-        return CancelAction()
+        return CancelHandler()
 
     def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown):
         """Left click confirms a selection."""
