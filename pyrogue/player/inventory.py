@@ -2,7 +2,7 @@
     Player inventory dialogs
 """
 from menu import Menu
-from item import Item, Equipment, Consumable
+from item import Item, Equipment, Consumable, Food
 
 
 """
@@ -41,17 +41,20 @@ def do_inventory(player, usage: str) -> Menu:
             inventory.append(describe_item(player, item))
             listing += 1
             continue
-        if usage == 'use' and isinstance(item, Equipment):
+        inv = set()
+        inv.add('drop')
+        if isinstance(item, Equipment):
+            inv.add('equip')
+        if isinstance(item, Food):
+            inv.add('use')
+        if isinstance(item, Consumable):
+            if item.etype in (Consumable.WAND, Consumable.STAFF):
+                inv.add('zap')
+            else:
+                inv.add('use')
+        if usage not in inv:
             listing += 1
             continue
-        if usage == 'zap':
-            if not isinstance(item, Consumable) or item.etype not in (Consumable.WAND, Consumable.STAFF):
-                listing += 1
-                continue
-        if usage == 'equip':
-            if item.name == 'food' or isinstance(item, Consumable):
-                listing += 1
-                continue
         inventory.append(f'{chr(listing)}: {describe_item(player, item)}')
         listing += 1
     return Menu(title=title, text=inventory)

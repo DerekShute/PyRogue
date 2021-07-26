@@ -1,14 +1,12 @@
 IN PROGRESS
 
-    Targeting
-        * For now, 'z'ap wands.
-
+    TargetInputHandler : need visual of targeting (highlight)
+   
 BUGS:
     * Wizard chat backspace at empty string
     * Still ways to get multiple actions in the player action queue and that means an offset.
     * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
         * Countdown on a single message: remains for 3 moves or something
-    * QuantityItem exists
 
 BIG TODO:
 
