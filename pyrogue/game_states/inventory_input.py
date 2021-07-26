@@ -1,6 +1,7 @@
 import tcod
-from actions import Action
+from actions import Action, ZapAction
 from game_states import InputHandler, CancelHandler
+from game_states.target_input import TargetInputHandler
 from menu import Menu
 
 
@@ -27,7 +28,15 @@ class InventoryInputHandler(InputHandler):
         key = event.sym
         if self.usage != '':
             if key >= ord('a') and key <= ord('z'):
-                return self.action.incorporate(key - ord('a'))
+                self.action.incorporate(key - ord('a'))
+                if isinstance(self.action, ZapAction):
+                    return TargetInputHandler(usage='zap',
+                                              previous=self.previous,
+                                              entity=self.entity,
+                                              action=self.action,
+                                              msg='Zap where?')
+                else:
+                    return self.action
         return self.previous
 
     def render_layer(self, display):

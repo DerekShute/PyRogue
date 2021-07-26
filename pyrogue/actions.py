@@ -133,6 +133,27 @@ class UseAction(Action):
         return self
 
 
+class ZapAction(Action):
+    """Zap an item (wand/staff) in entity inventory"""
+    index: int = 0
+    pos: Pos = None
+
+    def perform(self, entity: Entity) -> None:
+        if self.index >= len(entity.pack):
+            entity.add_msg('No such item to zap!')
+            return
+        targets = entity.level.monsters_at(self.pos)
+        target = targets[0] if len(targets) > 0 else None
+        entity.use(entity.pack[self.index], pos=self.pos, target=target)
+
+    def incorporate(self, index: int = None, pos: Pos = None):
+        if index is not None:
+            self.index = index
+        if pos is not None:
+            self.pos = pos
+        return self
+
+
 class EquipAction(Action):
     """Equip an item in entity inventory"""
     index: int = 0

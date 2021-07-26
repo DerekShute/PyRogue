@@ -6,7 +6,7 @@ import random
 from entity import Entity
 from dataclasses import dataclass
 from typing import Tuple, Dict, Set, List
-from item import Item, Food, Equipment, Consumable
+from item import Item, Food, Equipment
 from position import Pos
 from message import MessageBuffer
 from level import Level
@@ -321,9 +321,9 @@ class Player(Entity):
             item.set_parent(self)
             # TODO: after verifying you can
 
-    def use(self, item: Item):
+    def use(self, item: Item, pos: Pos = None, target: Entity = None):
         """Use an item"""
-        destroy = item.use(self)
+        destroy = item.use(self, pos, target)
         if destroy:
             item.set_parent(None)
             self.remove_item(item)

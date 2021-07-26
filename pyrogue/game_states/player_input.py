@@ -1,5 +1,5 @@
 import tcod
-from actions import QuitAction, DescendAction, BumpAction, PickupAction, UseAction, DropAction, EquipAction
+from actions import QuitAction, DescendAction, BumpAction, PickupAction, UseAction, DropAction, EquipAction, ZapAction
 from game_states import InputHandler, CancelHandler, MOVE_KEYS
 from game_states.chat_input import ChatInputHandler
 from game_states.response_input import ResponseInputHandler
@@ -60,6 +60,13 @@ class PlayerInputHandler(InputHandler):
                                          entity=self.entity,
                                          action=UseAction(),
                                          msg='Use which item?')
+
+        elif key == tcod.event.K_z:
+            return InventoryInputHandler(usage='zap',
+                                         previous=self,
+                                         entity=self.entity,
+                                         action=ZapAction(),
+                                         msg='Zap which item?')
 
         if key in MOVE_KEYS:
             return BumpAction(*MOVE_KEYS[key])

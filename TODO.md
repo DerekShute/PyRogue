@@ -1,18 +1,20 @@
 IN PROGRESS
 
-    Targeting
-        * Rework of 'inventory' menu generation and contents
-
+    TargetInputHandler : need visual of targeting (highlight)
+   
 BUGS:
     * Wizard chat backspace at empty string
     * Still ways to get multiple actions in the player action queue and that means an offset.
     * "Turn off effect" message appears to not be seen very much, probably based on how it is being rendered
         * Countdown on a single message: remains for 3 moves or something
-    * QuantityItem exists
 
 BIG TODO:
 
     "Bravely bravely bravely run away" suggests my son
+
+    Inventory
+        * Combine like items for ISMULT -- food, scroll, potion
+        * This means drop can drop a quantity and that means having to spawn out a new Item
 
     invoke pylint programmatically
 
