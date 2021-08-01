@@ -178,10 +178,6 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
                   top.y + rand(1, BLOCK_Y_SIZE - 3))
         return Room(pos, Pos(0, 0))
 
-    # Set room type
-
-    # TODO: Dark and maze
-
     # Find a place and size for a random room
 
     # else not maze...
@@ -191,6 +187,12 @@ def room_factory(level: Level, levelno: int, roomno: int, gone: bool = False):  
     pos = Pos(top.x + rand(1, BLOCK_X_SIZE - size.x - 2),
               top.y + rand(1, BLOCK_Y_SIZE - size.y - 2))
     r = Room(pos, size)
+
+    # Set room type
+
+    if rand(1, 10) < levelno - 1:
+        r.dark = True
+        # TODO: 1 out of 15 of being a maze room
 
     # Put the gold in
     # TODO: if not amulet and max_level calc

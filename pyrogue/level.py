@@ -19,19 +19,22 @@ import tcod
 # ===== Service Routines ==================================
 
 def lit_area(player: Entity) -> Tuple[slice, slice]:
-    """The section of the map that is guaranteed to be lit by the player"""
-    # TODO: complete darkness
+    """The section of the map that is lit:
+        * Blind is just yourself
+        * non-dark rooms is the entire room, unless you see in the dark
+        * otherwise a 3x3 square
+    """
     if player is None:
         return None
-    if 'blind' in player.effects:
+    if 'blind' in player.effects:  # No lantern
         return slice(player.pos.x, player.pos.x + 1), slice(player.pos.y, player.pos.y + 1)
     room = player.room
-    if room is not None and room.max_pos.x > room.pos.x:  # Not a gone room
-        p1 = room.pos
-        p2 = room.max_pos  # TODO: gone rooms
-    else:
+    if room is None or room.max_pos.x <= room.pos.x or room.dark:  # Gone room, dark room
         p1 = player.pos
         p2 = Pos(player.pos.x + 1, player.pos.y + 1)  # Slices are weird
+    else:
+        p1 = room.pos
+        p2 = room.max_pos
     return slice(p1.x - 1, p2.x + 1), slice(p1.y - 1, p2.y + 1)
 
 
@@ -184,7 +187,7 @@ class Level:
         for item in self.items:
             if item.magic and 'detect magic' in self.player.effects:
                 self.map.lit_tile(item.pos)
-            self.map.set_char(*item.char)
+            self.map.set_char(*item.char, dark_ok=True)
         for monster in self.monsters:
             pos, char, color = monster.char
             if 'hallucinating' in self.player.effects:

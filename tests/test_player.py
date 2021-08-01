@@ -222,6 +222,7 @@ class TestPlayerActionCallback(unittest.TestCase):
 
     def test_bump(self):
         p = Player.factory(pos=Pos(10, 10))
+        p.attach_level(Level(1, 80, 25, None))
         p.bump(Pos(10, 9))
         assert p.pos == Pos(10, 10)
         assert p.curr_msg == 'Ouch!'

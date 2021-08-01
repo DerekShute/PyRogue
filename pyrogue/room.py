@@ -19,8 +19,9 @@ class Room:  # struct room
     """
     # TODO maybe a dataclass
     _pos: Pos = None  # Upper left
-    _max: Pos = None  # Size TODO lower right?
+    _max: Pos = None  # Size
     found: bool = False
+    dark: bool = False
 
     def __init__(self, pos=None, size=None):
         self._pos = Pos(pos)

@@ -221,8 +221,8 @@ class Player(Entity):
             self.actionq.append(action)
 
     def bump(self, pos: Pos):
-        assert pos
         self.add_msg('Ouch!')
+        self.level.map.explore_tile(pos)
 
     def chat(self, text: str):
         if 'wizard' in self.state:
