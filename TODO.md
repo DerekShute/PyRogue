@@ -1,7 +1,9 @@
 IN PROGRESS
 
-    TargetInputHandler : need visual of targeting (highlight)
-   
+    Darkness and light
+        * If you can't see the monster (blind/invisible/dark) then it shouldn't use the name
+        * Rework in HIT_NAMES etc and add_hit_msg
+
 BUGS:
     * Wizard chat backspace at empty string
     * Still ways to get multiple actions in the player action queue and that means an offset.
@@ -15,12 +17,13 @@ BIG TODO:
     Inventory
         * Combine like items for ISMULT -- food, scroll, potion
         * This means drop can drop a quantity and that means having to spawn out a new Item
+        * knowing what a thing is is not the same as identified (reveals charges)
 
     invoke pylint programmatically
 
     roll() and friends go in one place
 
-    Sticks: light -> room darkness, invisibility, lightning, fire, cold, polymorph, magic missile,
+    Sticks: invisibility, lightning, fire, cold, polymorph, magic missile,
         haste monster, slow monster, drain life, nothing, teleport away, teleport to, cancellation
         * have 'dmg' and 'hurldmg'
 

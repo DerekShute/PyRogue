@@ -101,10 +101,10 @@ class GameMap:
             return self.tiles[p.x, p.y]['walkable']
         return False
 
-    def set_char(self, p: Pos, char: int, color: Tuple[int, int, int]):
+    def set_char(self, p: Pos, char: int, color: Tuple[int, int, int], dark_ok: bool = False):
         """Set a single character"""
-        # TODO: set the rgb directly somehow?  How do you define background color?
-        if self.visible[p.x, p.y] and self._display:
+        do_print = True if self.visible[p.x, p.y] else True if self.explored[p.x, p.y] and dark_ok else False
+        if self._display and do_print:
             self._display.set_char(x=p.x, y=p.y, ch=char, fg=color)
 
     def msg(self, text):
