@@ -7,12 +7,20 @@ import unittest
 from unittest.mock import patch
 from player import Player, Stats
 from position import Pos
-from actions import BumpAction, PickupAction, DescendAction, DropAction, UseAction, EquipAction
+from actions import Action, BumpAction, PickupAction, DescendAction, DropAction, UseAction, EquipAction
+from game_states import InputHandler
 from level import Level
 from item import Gold, Food, Equipment
 
 
 # ===== Service Routines ==================================
+
+def do_player_action(p: Player, action: Action):
+    with patch.object(InputHandler, 'get_action', return_value=action) as patched_handler:
+        p.input_handler = InputHandler()
+        p.perform()
+        patched_handler.assert_called()
+
 
 def randint_return_min(*args, **kwargs):
     """If asked to random.randint(x,y), return x"""
@@ -317,19 +325,12 @@ class TestPlayerActionCallback(unittest.TestCase):
 
 class TestPlayerAI(unittest.TestCase):
 
-    def test_perform_no_action(self):
-        """No action in perform"""
-        p = Player.factory(pos=Pos(10, 10))
-        p.perform()
-        self.assertTrue(True)
-
     def test_perform_move_allowed(self):
         """Player was allowed to move"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(BumpAction(-1, -1))
         with patch.object(Level, 'can_enter', return_value=True) as patched_level:
             p.attach_level(Level(1, 80, 25, None))
-            p.perform()
+            do_player_action(p, BumpAction(-1, -1))
             patched_level.assert_called()
         assert p.pos == Pos(9, 9)
         assert p.curr_msg == p.display
@@ -338,10 +339,9 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_move_denied(self):
         """Player was not allowed to move"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(BumpAction(-1, -1))
         with patch.object(Level, 'can_enter', return_value=False) as patched_level:
             p.attach_level(Level(1, 80, 25, None))
-            p.perform()
+            do_player_action(p, BumpAction(-1, -1))
             patched_level.assert_called_once()
         assert p.pos == Pos(10, 10)
         assert p.curr_msg == 'Ouch!'
@@ -350,11 +350,10 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_pickup_gold(self):
         """Pick up an Item"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(PickupAction())
         level = Level(1, 80, 25, None)
         level.add_item(Gold(count=10, pos=Pos(10, 10), parent=level))
         p.attach_level(level)
-        p.perform()
+        do_player_action(p, PickupAction())
         assert level.items == []  # Gone from map
         assert p.display == 'Level: 1 Gold: 10 Hp:12/12 Str:16(16) Arm: 10 Exp:1(0)'
         assert p.curr_msg == 'You pick up 10 gold pieces!'
@@ -363,10 +362,9 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_pickup_denied(self):
         """Pick up an Item"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(PickupAction())
         level = Level(1, 80, 25, None)
         p.attach_level(level)
-        p.perform()
+        do_player_action(p, PickupAction())
         assert p.curr_msg == 'No item there to pick up!'
         self.assertTrue(True)
 
@@ -374,14 +372,13 @@ class TestPlayerAI(unittest.TestCase):
         """Pick up an Item"""
         level = Level(1, 80, 25, None)
         p = Player(pos=Pos(10, 10))
-        p.queue_action(PickupAction())
         p.attach_level(level)
         food = Food(which=Food.FRUIT, pos=Pos(10, 10), parent=level)
         level.add_item(food)
         # Smoke test: is where we think
         assert level.items == [food]
         assert food.parent == level
-        p.perform()
+        do_player_action(p, PickupAction())
         # Action occurred
         assert p.curr_msg == 'You pick up the slime-mold'
         # Gone from level
@@ -393,12 +390,11 @@ class TestPlayerAI(unittest.TestCase):
 
     def test_perform_descend(self):
         """Stumble down the stairs"""
-        p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(DescendAction())
         level = Level(1, 80, 25, None)
         level.add_stairs(Pos(10, 10))
+        p = Player.factory(pos=Pos(10, 10))
         level.add_player(p)
-        p.perform()
+        do_player_action(p, DescendAction())
         assert p.level is None  # No longer on this level
         assert p.levelno == 2
         assert p.curr_msg == 'You stumble down the stairs.'
@@ -408,10 +404,9 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_descend_denied(self):
         """Try to stumble down non-existent stairs"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(DescendAction())
         level = Level(1, 80, 25, None)
         level.add_player(p)
-        p.perform()
+        do_player_action(p, DescendAction())
         assert p.level == level  # Haven't moved
         assert p.levelno == 1
         assert p.curr_msg == 'No stairs here!'
@@ -420,15 +415,14 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_drop_food(self):
         """Drop the thing in your inventory"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(DropAction().incorporate(0))
+        level = Level(1, 80, 25, None)
+        level.add_player(p)
         # Factory creates a food in player inventory
         assert p.pack != []
         food = p.pack[0]
         assert food.parent == p
         assert food.pos is None
-        level = Level(1, 80, 25, None)
-        level.add_player(p)
-        p.perform()
+        do_player_action(p, DropAction().incorporate(0))
         assert food.parent == level
         assert food.pos == p.pos
         assert food in level.items
@@ -437,39 +431,35 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_drop_badindex(self):
         """Invalid object index - drop"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(DropAction().incorporate(1))
         # Factory creates a food in player inventory
-        p.perform()
+        do_player_action(p, DropAction().incorporate(1))
         assert p.curr_msg == 'No such item to drop!'
         self.assertTrue(True)
 
     def test_perform_use_badindex(self):
         """Invalid object index - use"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(UseAction().incorporate(1))
         # Factory creates a food in player inventory
-        p.perform()
+        do_player_action(p, UseAction().incorporate(1))
         assert p.curr_msg == 'No such item to use!'
         self.assertTrue(True)
 
     def test_perform_equip_badindex(self):
         """Invalid object index - equip"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(EquipAction().incorporate(1))
         # Factory creates a food in player inventory
-        p.perform()
+        do_player_action(p, EquipAction().incorporate(1))
         assert p.curr_msg == 'No such item to equip!'
         self.assertTrue(True)
 
     def test_perform_equip_armor(self):
         """Drop the nonexistent food in your inventory"""
         p = Player(pos=Pos(10, 10))
-        p.queue_action(EquipAction().incorporate(0))
-        assert p.armor is None
         armor = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
         p.add_item(armor)
+        assert p.armor is None
         assert p.pack == [armor]
-        p.perform()
+        do_player_action(p, EquipAction().incorporate(0))
         assert p.pack == [armor]
         assert p.armor == armor
         assert p.curr_msg == 'You put on the fake armor'
@@ -480,11 +470,11 @@ class TestPlayerAI(unittest.TestCase):
         p = Player.factory(pos=Pos(10, 10))
         level = Level(1, 80, 25, None)
         level.add_player(p)
-        p.queue_action(DropAction().incorporate(1))  # Factory gives one food
+        # Factory gives one food at index 0
         armor = Equipment.factory(etype=Equipment.ARMOR, template='name=fake_armor value=6 worth=10')
         p.add_item(armor)
         p.armor = armor
-        p.perform()
+        do_player_action(p, DropAction().incorporate(1))
         assert armor not in p.pack
         assert p.curr_msg == 'You take off the fake armor --MORE--'
         p.advance_msg()
@@ -494,10 +484,9 @@ class TestPlayerAI(unittest.TestCase):
     def test_perform_use_food(self):
         """Use the nonexistent food in your inventory"""
         p = Player.factory(pos=Pos(10, 10))
-        p.queue_action(UseAction().incorporate(0))
         # Factory creates a food in player inventory
         assert p.pack != []
-        p.perform()
+        do_player_action(p, UseAction().incorporate(0))
         print(p.curr_msg)
         assert p.pack == []
         # TODO: can't test existence of food

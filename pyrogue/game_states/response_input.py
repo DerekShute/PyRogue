@@ -36,9 +36,9 @@ class ResponseInputHandler(InputHandler):
             return self.previous
         return self
 
-    def render_layer(self, display):
+    def render_layer(self):
         if len(self.string) > 0:
-            xsize, ysize = display.size
-            display.msg(x=0, y=ysize - 1, string=self.string.ljust(xsize))
+            xsize, ysize = self.display.size
+            self.display.msg(x=0, y=ysize - 1, string=self.string.ljust(xsize))
 
 # EOF

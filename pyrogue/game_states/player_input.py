@@ -12,7 +12,7 @@ class PlayerInputHandler(InputHandler):
     """Base input handler for ordinary game input"""
 
     def ev_quit(self, event: tcod.event.Quit):
-        return CancelHandler()  # Out the door immediately
+        return CancelHandler()  # TODO: raises
 
     def ev_keydown(self, event: tcod.event.KeyDown):
         key = event.sym
@@ -73,10 +73,10 @@ class PlayerInputHandler(InputHandler):
 
         return self
 
-    def render_layer(self, display):
+    def render_layer(self):
         # Note: original uses line 0, this uses last line
         if self.entity is not None:
-            xsize, ysize = display.size
-            display.msg(x=0, y=ysize - 1, string=self.entity.curr_msg.ljust(xsize))
+            xsize, ysize = self.display.size
+            self.display.msg(x=0, y=ysize - 1, string=self.entity.curr_msg.ljust(xsize))
 
 # EOF

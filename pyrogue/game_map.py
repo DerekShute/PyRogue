@@ -141,14 +141,17 @@ if __name__ == '__main__':
         m.lit(rectangle(0, 0, 10, 25), True)
         # NOTE: lit but not explored is odd
         m.explore(rectangle(0, 0, 40, 10), True)
+        m.render(None)
         m.set_char(Pos((7, 7)), char=ord('*'), color=(255, 255, 0))
         d.present()
         time.sleep(2)
         m.lit(rectangle(0, 0, 10, 25), False)
+        m.render(None)
         d.present()
 
         time.sleep(2)
         m.explore(rectangle(5, 5, 20, 20), False)
+        m.render(None)
         d.present()
         time.sleep(2)
 

@@ -6,7 +6,6 @@ Stolen liberally from tcod_tutorial_v2
 
 from typing import Any, Tuple
 import tcod
-from game_states import InputHandler
 from menu import Menu
 
 
@@ -66,18 +65,12 @@ class Display:
         """Perform update"""
         self._context.present(self._console)
 
-    def dispatch_event(self, input_handler: InputHandler):
+    def dispatch_event(self, input_handler):
         """Burying the TCOD details somewhere"""
         for event in tcod.event.wait():  # TODO: use get() for no-wait operation
             self._context.convert_event(event)  # mouse pixel -> tile
             return input_handler.dispatch(event)
         return input_handler
-
-    def display(self, input_handler: InputHandler):
-        """Burying the TCOD details somewhere"""
-        input_handler.render_layer(self)
-        self.present()
-        return self.dispatch_event(input_handler)
 
     def draw_menu(self, x: int, menu: Menu):
         x = 42 if x <= 40 else 0

@@ -2,6 +2,7 @@ import tcod
 from typing import Any
 from entity import Entity
 from position import Pos
+from display import Display
 
 
 MOVE_KEYS = {
@@ -19,17 +20,24 @@ class InputHandler(tcod.event.EventDispatch[Any]):
     previous: 'InputHandler' = None
     mouse: Pos = None
     mousedown: bool = False
+    display: Display = None
 
-    def __init__(self, entity: Entity = None, previous: 'InputHandler' = None):
+    def __init__(self, entity: Entity = None, previous: 'InputHandler' = None, display: Display = None):
+        """Note that this will inherit previous.display if not given explicitly"""
         super().__init__()
         self.previous = previous
         self.entity = entity
+        if display is None and previous is not None:
+            self.display = previous.display
+        else:
+            self.display = display
 
-    def get_action(self):
-        """Pull out an action for the Player"""
-        raise NotImplementedError()
+    def get_action(self):  # TODO return value type
+        self.render_layer()
+        self.display.present()
+        return self.display.dispatch_event(self)
 
-    def render_layer(self, display):
+    def render_layer(self):
         """Display extra stuff needed for this InputHandler"""
         return None
 

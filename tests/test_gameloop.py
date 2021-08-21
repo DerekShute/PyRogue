@@ -4,7 +4,7 @@
 
 import unittest
 from unittest.mock import Mock
-from game_states.gameloop import MainMenuState, MainGameloop, RIPGameState
+from game_states.gameloop import MainMenuState, RunGame, RIPGameState
 from player import Player
 
 
@@ -24,7 +24,7 @@ class TestMainMenuState(unittest.TestCase):
         event_return = Mock(return_value='new')
         display_mock = Mock(dispatch_event=event_return)
         loop = MainMenuState(display=display_mock).run()
-        assert isinstance(loop, MainGameloop)
+        assert isinstance(loop, RunGame)
         self.assertTrue(True)
 
     def test_nonsense(self):

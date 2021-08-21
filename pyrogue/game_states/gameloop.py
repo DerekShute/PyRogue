@@ -59,7 +59,7 @@ class RIPGameState(Gameloop):
 
 # ===== Main Game Loop ====================================
 
-class MainGameloop(Gameloop):
+class RunGame(Gameloop):
     """Main gameplay loop: moving around and doing things"""
 
     def __init__(self, *args, wizard: bool = False, **kwargs):
@@ -72,7 +72,7 @@ class MainGameloop(Gameloop):
     def run(self) -> Gameloop:
         if self.player is None:
             self.player = Player.factory(wizard=self.wizard)
-            self.input_handler = PlayerInputHandler(entity=self.player)
+            self.player.input_handler = PlayerInputHandler(entity=self.player, display=self._display)
             self.player.add_msg('Welcome to the dungeon!')
         if self.player.level is None:
             del self.level
@@ -81,17 +81,9 @@ class MainGameloop(Gameloop):
             if 'wizard' in self.player.state:
                 self.player.add_effect('monster detection', 20)
                 self.player.add_effect('detect magic', 20)
-        self.player.level.render()
-        while True:
-            ret = self._display.display(self.input_handler)
-            if isinstance(ret, Action):
-                self.player.queue_action(ret)
-                self.input_handler = PlayerInputHandler(entity=self.player)
-                break
-            if isinstance(ret, CancelHandler):
-                return self._previous
-            self.input_handler = ret if ret is not None else self.input_handler
 
+        # TODO: Cancellation is an exception, player death an exception
+        self.player.level.render()
         self.player.level.run_queue()
         if self.player.demise is not None:
             del self.level
@@ -118,7 +110,7 @@ class MainMenuState(Gameloop):
         result = self._display.dispatch_event(self.input_handler)
         if result == 'new' or result == 'wizard':  # New Game
             game_init()
-            return MainGameloop(display=self._display, previous=self, wizard=True if result == 'wizard' else False)
+            return RunGame(display=self._display, previous=self, wizard=True if result == 'wizard' else False)
         if result == 'quit':  # Exit
             return None
         # TODO: continue

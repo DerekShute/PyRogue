@@ -39,10 +39,10 @@ class InventoryInputHandler(InputHandler):
                     return self.action
         return self.previous
 
-    def render_layer(self, display):
+    def render_layer(self):
         self.inventory = self.entity.render_inventory(self.usage)
-        display.draw_menu(self.entity.pos.x, self.inventory)
-        xsize, ysize = display.size
-        display.msg(x=0, y=ysize - 1, string=self.msg.ljust(xsize))  # TODO: all messages appear to go here
+        self.display.draw_menu(self.entity.pos.x, self.inventory)
+        xsize, ysize = self.display.size
+        self.display.msg(x=0, y=ysize - 1, string=self.msg.ljust(xsize))  # TODO: all messages appear to go here
 
 # EOF

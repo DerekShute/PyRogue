@@ -12,6 +12,7 @@ from message import MessageBuffer
 from level import Level
 from player.wizard import wizard_request
 from player.inventory import do_inventory
+from game_states import InputHandler
 
 
 ACTION_COST = 8
@@ -141,7 +142,6 @@ class Player(Entity):
     purse: int = 0  # Gold collected, an infinitely large pocket
     levelno: int = 0  # How deep in the dungeon? (May disconnect from _level, so keep here)
     room = None  # Room
-    actionq = []
     armor: Equipment = None
     weapon: Equipment = None
     rings: List[Equipment] = []
@@ -156,7 +156,6 @@ class Player(Entity):
         self._stats = stats
         self._food_left = food_left
         self.levelno = 0
-        self.actionq = []
         self.demise = None
         self.max_str = stats.stren if stats is not None else None
         self.effects = {}
@@ -214,11 +213,6 @@ class Player(Entity):
     def quit_action(self, cause: str):
         """Player has quit or player has died"""
         self.demise = cause
-
-    def queue_action(self, action):
-        """Input handler drops an Action onto the queue"""
-        if action is not None:
-            self.actionq.append(action)
 
     def bump(self, pos: Pos):
         self.add_msg('Ouch!')
@@ -333,13 +327,17 @@ class Player(Entity):
 
     def perform(self) -> bool:
         """Act.  Return True to indicate reschedule"""
-        if len(self.actionq) > 0:
-            action = self.actionq.pop(0)
-            self.advance_msg()
-            action.perform(self)  # TODO: action cost, haste and slow effects
-            self.key = self.key + ACTION_COST
-            self.countdown_effects()
-            # TODO: hunger and ring effects on hunger
+        handler = self.input_handler
+        while isinstance(handler, InputHandler):
+            action_or_handler = handler.get_action()
+            if action_or_handler is not None:
+                handler = action_or_handler
+        action = action_or_handler
+        self.advance_msg()
+        action.perform(self)  # TODO: action cost, haste and slow effects
+        self.key = self.key + ACTION_COST
+        self.countdown_effects()
+        # TODO: hunger, and ring effects on hunger
         return True
 
     # ===== Stat interface ================================

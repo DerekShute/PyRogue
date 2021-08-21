@@ -20,9 +20,9 @@ class TargetInputHandler(InputHandler):
         self.msg = msg
         self.action = action
 
-    def render_layer(self, display):
-        xsize, ysize = display.size
-        display.msg(x=0, y=ysize - 1, string=self.msg.ljust(xsize))
+    def render_layer(self):
+        xsize, ysize = self.display.size
+        self.display.msg(x=0, y=ysize - 1, string=self.msg.ljust(xsize))
 
     def ev_quit(self, event: tcod.event.Quit):
         return CancelHandler()

@@ -1,8 +1,9 @@
 IN PROGRESS
 
-    Darkness and light
-        * If you can't see the monster (blind/invisible/dark) then it shouldn't use the name
-        * Rework in HIT_NAMES etc and add_hit_msg
+	MASSIVE REWORK
+
+		* TCOD events as part of Player.perform()
+		* Rework Action/Handler to incorporate direction/inventory item more gracefully
 
 BUGS:
     * Wizard chat backspace at empty string
