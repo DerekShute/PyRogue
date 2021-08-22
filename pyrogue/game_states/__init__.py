@@ -17,7 +17,11 @@ MOVE_KEYS = {
 # ===== Exceptions ========================================
 
 class QuitGame(Exception):
-    """Quitting bounces you out: immediate departure"""
+    """Closing the window bounces you out: immediate departure"""
+
+
+class PlayerDemise(Exception):
+    """Also a more organized 'quit game'"""
 
 
 # ===== InputHandler Base Class ===========================

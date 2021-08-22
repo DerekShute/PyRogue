@@ -12,7 +12,7 @@ from message import MessageBuffer
 from level import Level
 from player.wizard import wizard_request
 from player.inventory import do_inventory
-from game_states import InputHandler
+from game_states import InputHandler, PlayerDemise
 
 
 ACTION_COST = 8
@@ -145,7 +145,6 @@ class Player(Entity):
     armor: Equipment = None
     weapon: Equipment = None
     rings: List[Equipment] = []
-    demise: str = None
     max_str: int = 0
     effects: Dict[str, int] = {}  # Things affecting player: being confused, being hasted...
     known: Set[str] = set()       # Things that are known: what a blue potion is, etc...
@@ -156,7 +155,6 @@ class Player(Entity):
         self._stats = stats
         self._food_left = food_left
         self.levelno = 0
-        self.demise = None
         self.max_str = stats.stren if stats is not None else None
         self.effects = {}
         if wizard:
@@ -209,10 +207,6 @@ class Player(Entity):
         return self._msg.count
 
     # ===== Action ========================================
-
-    def quit_action(self, cause: str):
-        """Player has quit or player has died"""
-        self.demise = cause
 
     def bump(self, pos: Pos):
         self.add_msg('Ouch!')
@@ -416,7 +410,7 @@ class Player(Entity):
 
     def death(self, entity):
         self.add_msg(f'You were killed by the {entity.name}!')  # TODO traps?
-        self.demise = entity.name
+        raise PlayerDemise(f'a {entity.name}')
 
     def kill(self, entity):  # TODO: monster
         self.add_msg(f'You killed the {entity.name}!')

@@ -29,7 +29,8 @@ class ResponseInputHandler(InputHandler):
         # TODO: special meaning escape key
         if key < 257 and chr(key) in self.responses:  # Condition met.  Don't feed large numbers into chr()
             if self.entity is not None and self.action is not None:
-                return self.action.incorporate(key)
+                ret = self.action.incorporate(key)
+                return ret if ret is not None else self.previous
             return self.previous
         return self
 

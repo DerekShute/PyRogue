@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from position import Pos
+from game_states import PlayerDemise
 
 if TYPE_CHECKING:
     from entity import Entity
@@ -19,19 +20,19 @@ class Action:
         """
         raise NotImplementedError()
 
-    def incorporate(self, key: int) -> None:
-        """Gotten some additional information to meld into this Action"""
+    def incorporate(self, key: int) -> 'Action':
+        """Gotten some additional information to meld into this Action.  Can be None"""
         raise NotImplementedError()
 
 
 class QuitAction(Action):
-    def incorporate(self, key: int) -> Action:
-        if chr(key) == 'Y' or chr(key) == 'y':
-            return self
-        return None
+    """Quitting by organized in-game key"""
 
-    def perform(self, entity: Entity) -> None:
-        entity.quit_action('quit')
+    def incorporate(self, key: int) -> Action:
+        """Note: never actually gets to perform() - we kill it here"""
+        if chr(key) == 'Y' or chr(key) == 'y':
+            raise PlayerDemise('quitted')
+        return None
 
 
 class BumpAction(Action):

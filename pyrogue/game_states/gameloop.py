@@ -5,7 +5,7 @@
 """
 
 from player import Player
-from game_states import Gameloop
+from game_states import Gameloop, PlayerDemise
 from game_states.player_input import PlayerInputHandler
 from game_states.rip_input import RIPInputHandler
 from game_states.mainmenu_input import MainMenuInputHandler
@@ -24,26 +24,28 @@ class RIPGameState(Gameloop):
     """RIP: Player has died or quit"""
     # TODO: or won
 
-    def __init__(self, player: Player = None, situation: str = '', **kwargs):
+    def __init__(self, player: Player = None, situation: str = '', text: str = '', **kwargs):
         super().__init__(**kwargs)
         self.input_handler = RIPInputHandler()
         self.player = player
         self.situation = situation
+        self.text = text
 
     def run(self) -> Gameloop:
         """I don't feel like drawing out a tombstone"""
         self._display.clear()
-        # Killed by
         pname = 'wizard' if 'wizard' in self.player.state else 'adventurer'
         if 'wizard' in self.player.state:
             self._display.centered_msg(y=8, string='A DIGNIFIED STRATEGIC WITHDRAWAL BY', **TEXT_COLOR)
-        elif self.player.demise == 'quit':
+        elif self.text == 'quitted':
             self._display.centered_msg(y=8, string='A COWARDLY ESCAPE BY', **TEXT_COLOR)
         else:
             self._display.centered_msg(y=8, string='REST IN PEACE', **TEXT_COLOR)
         self._display.centered_msg(y=10, string=f'A level {self.player.lvl} {pname}', **TEXT_COLOR)
-        self._display.centered_msg(y=12, string=f'On level {self.player.levelno} of The Dungeon of Doom', **TEXT_COLOR)
-        self._display.centered_msg(y=14, string=f'Clutching {self.player.purse} gold pieces', **TEXT_COLOR)
+        if self.text != 'quitted':
+            self._display.centered_msg(y=12, string=f'Killed by {self.text}', **TEXT_COLOR)  # Note expect 'a XXX'
+        self._display.centered_msg(y=14, string=f'On level {self.player.levelno} of The Dungeon of Doom', **TEXT_COLOR)
+        self._display.centered_msg(y=16, string=f'Clutching {self.player.purse} gold pieces', **TEXT_COLOR)
         self._display.present()
 
         # TODO: scorecard if wizard or died: have amulet?  Total winner?
@@ -84,10 +86,11 @@ class RunGame(Gameloop):
 
         # TODO: Cancellation is an exception, player death an exception
         self.player.level.render()
-        self.player.level.run_queue()
-        if self.player.demise is not None:
+        try:
+            self.player.level.run_queue()
+        except PlayerDemise as ex:
             del self.level
-            return RIPGameState(display=self._display, previous=self._previous, player=self.player)
+            return RIPGameState(display=self._display, previous=self._previous, player=self.player, text=str(ex))
         return self
 
 
