@@ -1,5 +1,5 @@
 import tcod
-from game_states import InputHandler, CancelHandler
+from game_states import InputHandler
 from actions import ChatAction
 
 
@@ -8,9 +8,6 @@ from actions import ChatAction
 class ChatInputHandler(InputHandler):
     """Base input handler for ordinary game input"""
     text: str = ''
-
-    def ev_quit(self, event: tcod.event.Quit):
-        return CancelHandler()  # Out the door immediately
 
     def ev_keydown(self, event: tcod.event.KeyDown):
         key = event.sym

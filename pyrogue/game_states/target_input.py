@@ -2,7 +2,7 @@
     Used to target a location.  Stolen liberally from tcod tutorial
 """
 import tcod
-from game_states import InputHandler, CancelHandler
+from game_states import InputHandler
 from actions import Action
 from position import Pos
 
@@ -23,9 +23,6 @@ class TargetInputHandler(InputHandler):
     def render_layer(self):
         xsize, ysize = self.display.size
         self.display.msg(x=0, y=ysize - 1, string=self.msg.ljust(xsize))
-
-    def ev_quit(self, event: tcod.event.Quit):
-        return CancelHandler()
 
     def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown):
         """Left click confirms a selection."""

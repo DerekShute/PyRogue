@@ -14,6 +14,12 @@ MOVE_KEYS = {
 }
 
 
+# ===== Exceptions ========================================
+
+class QuitGame(Exception):
+    """Quitting bounces you out: immediate departure"""
+
+
 # ===== InputHandler Base Class ===========================
 
 class InputHandler(tcod.event.EventDispatch[Any]):
@@ -40,6 +46,10 @@ class InputHandler(tcod.event.EventDispatch[Any]):
     def render_layer(self):
         """Display extra stuff needed for this InputHandler"""
         return None
+
+    def ev_quit(self, event: tcod.event.Quit):
+        """TCOD window closed"""
+        raise QuitGame()  # Out the door immediately
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion):
         """Mouse has moved"""

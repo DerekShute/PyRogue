@@ -23,9 +23,6 @@ class ResponseInputHandler(InputHandler):
         self.action = action
         self.string = string
 
-    def ev_quit(self, event: tcod.event.Quit):
-        return self.previous
-
     def ev_keydown(self, event: tcod.event.KeyDown):
         key = event.sym
 

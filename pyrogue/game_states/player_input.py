@@ -1,6 +1,6 @@
 import tcod
 from actions import QuitAction, DescendAction, BumpAction, PickupAction, UseAction, DropAction, EquipAction, ZapAction
-from game_states import InputHandler, CancelHandler, MOVE_KEYS
+from game_states import InputHandler, MOVE_KEYS
 from game_states.chat_input import ChatInputHandler
 from game_states.response_input import ResponseInputHandler
 from game_states.inventory_input import InventoryInputHandler
@@ -10,9 +10,6 @@ from game_states.inventory_input import InventoryInputHandler
 
 class PlayerInputHandler(InputHandler):
     """Base input handler for ordinary game input"""
-
-    def ev_quit(self, event: tcod.event.Quit):
-        return CancelHandler()  # TODO: raises
 
     def ev_keydown(self, event: tcod.event.KeyDown):
         key = event.sym

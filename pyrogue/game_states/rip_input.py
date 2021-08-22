@@ -10,9 +10,6 @@ class RIPInputHandler(InputHandler):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def ev_quit(self, event: tcod.event.Quit) -> str:
-        return 'quit'
-
     def ev_keydown(self, event: tcod.event.KeyDown) -> str:
         return 'quit'
 

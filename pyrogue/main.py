@@ -2,6 +2,7 @@
     Let's see if this all hangs together
 """
 from display import Display
+from game_states import QuitGame
 from game_states.gameloop import MainMenuState
 
 
@@ -12,11 +13,14 @@ NUMLINES = 25
 
 def main():
     with Display(NUMCOLS, NUMLINES + 1, title='PyRogue') as d:
-        loop = MainMenuState(display=d)
-        while True:
-            loop = loop.run()
-            if loop is None:
-                break
+        try:
+            loop = MainMenuState(display=d)
+            while True:
+                loop = loop.run()
+                if loop is None:
+                    break
+        except QuitGame:
+            raise SystemExit()
 
 
 # ===== NOT TESTING =======================================
